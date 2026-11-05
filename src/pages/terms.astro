@@ -1,0 +1,71 @@
+---
+// Terms of use for theaha.co, operated by Dawning Inc. for a US audience.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { contact } from '../data/site';
+
+const updated = 'November 3, 2026';
+const address = 'Dawning Inc. (dba The Aha Company), 108 W. 13th Street, Suite 100, Wilmington, DE 19801, United States';
+---
+<BaseLayout title="Terms of use | The Aha Company" description="Terms of use for theaha.co, operated by Dawning Inc. (dba The Aha Company), a Delaware corporation: information only, no offer or advice, Delaware law.">
+  <main data-main="1">
+    <section>
+      <div class="lg_container">
+        <div class="lg_header">
+          <p class="v-eyebrow page_eyebrow">Terms</p>
+          <h1 class="intro_h1">Terms of use</h1>
+          <p class="art_lede" data-rv="terms-lede">The rules for using theaha.co. In short: the site informs, it does not advise or offer anything, and Delaware law governs it.</p>
+        </div>
+        <div class="lg_meta">
+          <div class="lg_metaitem"><span class="lg_metalabel">Last updated</span><span class="lg_metavalue" data-rv="terms-date">{updated}</span></div>
+          <div class="lg_metaitem"><span class="lg_metalabel">Operator</span><span class="lg_metavalue" data-rv="legal-entities">Dawning Inc. (dba The Aha Company)</span></div>
+          <div class="lg_metaitem"><span class="lg_metalabel">Contact</span><a class="lg_metavalue" href={`mailto:${contact.email}`}>{contact.email}</a></div>
+        </div>
+        <div class="lg_body" data-rv="terms-body">
+          <h2 class="lg_h2">About these terms</h2>
+          <p>These terms govern your use of theaha.co, operated by Dawning Inc., a Delaware corporation doing business as The Aha Company (“we”, “us”), 108 W. 13th Street, Suite 100, Wilmington, DE 19801, United States. By using the site, you accept them. If you do not, please do not use the site.</p>
+
+          <h2 class="lg_h2">Who this site is for</h2>
+          <p>The site is intended for businesses and professionals in the United States and is written in English. We make no claim that its content is appropriate or available elsewhere. If you access it from another country, you do so on your own initiative and are responsible for complying with local law.</p>
+
+          <h2 class="lg_h2">Information only</h2>
+          <p>The site describes our services and our work. It is not an offer to sell, or a solicitation of an offer to buy, any security, token or financial product, and nothing on it is legal, financial, investment, tax or regulatory advice. Contacting us, booking a call or sending us information does not create a client relationship: engagements are governed by a written agreement signed by both parties.</p>
+
+          <h2 class="lg_h2">Case studies, figures and names</h2>
+          <p data-rv="terms-names">Case studies describe work we have done or are doing. Figures carry the date they were counted and may have changed since, and past results do not guarantee future ones. Some clients are described without their names, under confidentiality agreements. Names and logos of clients, partners, networks and projects belong to their owners. They appear to identify work we did or networks we build on, and do not mean their owners endorse us, except where a quote says so.</p>
+
+          <h2 class="lg_h2">Our content and the site’s source code</h2>
+          <p data-rv="terms-code">The text, design, graphics and logos of this site are owned by Dawning Inc. or used with permission. You may quote short passages with a link to the source, but not reuse the content otherwise without our consent. The site’s source code is public at <a href="https://github.com/theahaco/website">github.com/theahaco/website</a> so anyone can read how it is built, but it is not open source: all rights are reserved, and no license is granted to use, copy, modify, distribute or host it without our written permission.</p>
+          <p>The open-source tools we build or contribute to are published in their own repositories, under the licenses stated there. Those licenses, not these terms, govern their use.</p>
+
+          <h2 class="lg_h2" data-rv="terms-host">Hosting</h2>
+          <p data-rv="terms-host-p">The site is hosted by Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, United States. Its source code is hosted by GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States.</p>
+
+          <h2 class="lg_h2">Links and third-party services</h2>
+          <p>The site links to other websites and uses third-party services, such as Calendly for scheduling, GitHub for code and block explorers for onchain records. We do not control them and are not responsible for their content or practices; their own terms and policies apply.</p>
+
+          <h2 class="lg_h2">Acceptable use</h2>
+          <p>Do not use the site in a way that breaks the law, interferes with its operation or security, attempts to gain unauthorized access to it, or sends malicious code or unsolicited bulk messages through its forms.</p>
+
+          <h2 class="lg_h2">No warranty</h2>
+          <p>The site is provided “as is” and “as available”. To the fullest extent the law allows, we disclaim all warranties, express or implied, including warranties of accuracy, merchantability, fitness for a particular purpose and non-infringement. We work to keep the content accurate and current, but we do not guarantee that it is complete, current or free of errors, or that the site will be available without interruption.</p>
+
+          <h2 class="lg_h2">Limitation of liability</h2>
+          <p data-rv="terms-liability">To the fullest extent the law allows, Dawning Inc. and its affiliates, officers, employees and contractors are not liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, data or goodwill, arising from your use of the site or your reliance on its content. Our total liability for any claim arising from the site is limited to one hundred US dollars (US$100). Some jurisdictions do not allow these limitations, so they may not apply to you.</p>
+
+          <h2 class="lg_h2">Governing law</h2>
+          <p data-rv="terms-law">These terms are governed by the laws of the State of Delaware, without regard to its conflict-of-law rules. Any dispute arising from them or from the site will be brought in the state or federal courts located in Delaware, and you and we consent to their jurisdiction.</p>
+
+          <h2 class="lg_h2">Changes</h2>
+          <p>We may update these terms. The date at the top shows the latest version, and using the site after an update means you accept it.</p>
+
+          <h2 class="lg_h2">Contact</h2>
+          <p>{address}. <a href={`mailto:${contact.email}`}>{contact.email}</a>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+  .lg_body a { color: var(--deep-blue); text-decoration: underline; text-underline-offset: 3px; }
+  .lg_body a:hover { color: var(--green-ink); }
+</style>

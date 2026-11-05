@@ -1,0 +1,91 @@
+---
+// Home page section "Ways to work with us": the four engagement models, each
+// with a small diagram of who does what (src/components/visuals/WaysDiagram),
+// then the team photo.
+import Icon from '../Icon.astro';
+import WaysDiagram from '../visuals/WaysDiagram.astro';
+
+interface Way { title: string; body: string; first: string; diagram: 'partner' | 'lead' | 'embedded' | 'programs' }
+
+const ways: Way[] = [
+  { title: 'Integration partner', body: 'Fixed scope, milestone-based, our team end to end. As with EURCV and LI.FI.', first: 'scoping session', diagram: 'partner' },
+  { title: 'Architecture lead with your engineers', body: 'We design the system and lead delivery inside your engineering team. As with the settlement stablecoin of a top US commercial bank.', first: 'architecture note', diagram: 'lead' },
+  { title: 'Embedded principal engineer', body: 'A principal engineer placed with your team for a quarter or more. As with the Stellar Development Foundation.', first: 'onboarding', diagram: 'embedded' },
+  { title: 'Programs for ecosystems', body: 'DevX audits, tooling roadmaps, accelerator and hackathon mentoring. As with Ripple.', first: 'DevX audit', diagram: 'programs' },
+];
+---
+<section class="ways_section" id="ways">
+  <div class="section-inner">
+    <header class="wy-head">
+      <div class="wy-titles">
+        <p class="v-eyebrow">Engagement models</p>
+        <h2 class="section_h2">Ways to work with us</h2>
+      </div>
+      <p aria-hidden="true" class="wy-legend"><span class="wy-key wy-key--ours"></span>Our engineers<span class="wy-key wy-key--yours"></span>Your team</p>
+    </header>
+
+    <ul class="wy-grid" role="list">
+      {ways.map((w) => (
+        <li class="wy-card">
+          <div class="wy-fig"><WaysDiagram kind={w.diagram} /></div>
+          <h3 class="wy-h3">{w.title}</h3>
+          <p class="wy-body">{w.body}</p>
+          <p class="wy-first"><Icon name="calendar-check" size={20} /><span class="wy-first-text"><span class="wy-first-label">First two weeks</span> <span class="wy-first-val">{w.first}</span></span></p>
+        </li>
+      ))}
+    </ul>
+
+    <figure class="wy-team">
+      <picture><source media="(max-width: 767px)" srcset="/images/photos/team-photo-office-960.webp 960w, /images/photos/team-photo-office.webp 1600w" sizes="100vw" width="1600" height="1065" /><img alt="The Aha Company engineering team" class="wy-team-img" decoding="async" height="483" loading="lazy" sizes="(max-width: 1199px) 92vw, 1104px" src="/images/photos/team-band-1104.webp" srcset="/images/photos/team-band-1104.webp 1104w, /images/photos/team-band-2208.webp 2208w" width="1104" /></picture>
+      <figcaption class="wy-caption"><Icon name="users-three" size={18} /><span class="wy-caption-title">The team</span><span aria-hidden="true" class="wy-sep">·</span><span data-rv="ways-team-caption">United States · Europe · Brazil</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .wy-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 24px; }
+  .wy-titles { display: flex; flex-direction: column; gap: 20px; }
+  .wy-legend { display: inline-flex; align-items: center; gap: 8px; margin: 0; color: var(--ink-2); font-size: 14px; font-weight: 500; line-height: 1; }
+  .wy-key { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+  .wy-key--ours { background: var(--vibrant-green); }
+  .wy-key--yours { margin-left: 12px; border: 2px solid var(--deep-blue); background: #fff; }
+
+  /* One frame, the cards sharing 1 px rules (as the other grids of the page) */
+  .wy-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+  /* Titles, texts and "First two weeks" line up across a row (subgrid) */
+  .wy-card { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; overflow: hidden; background: var(--white); }
+  /* The diagram on a faint blueprint grid */
+  .wy-fig { display: grid; place-items: center; height: 180px; padding: 12px 14px; border-bottom: 1px solid var(--line); background-color: var(--paper); background-image: linear-gradient(rgba(26, 59, 96, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(26, 59, 96, .05) 1px, transparent 1px); background-size: 24px 24px; background-position: center; }
+  .wy-h3 { margin: 0; padding: 24px 24px 10px; color: var(--deep-blue); font-family: var(--font-display); font-size: 24px; font-style: italic; font-weight: 400; line-height: 1.2; text-wrap: balance; }
+  .wy-body { margin: 0; padding: 0 24px 20px; color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+  .wy-first { display: flex; align-items: center; align-self: end; justify-self: start; gap: 12px; margin: 0 24px 24px; padding: 11px 18px 11px 14px; border-radius: 12px; background: var(--tint-pink); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .45; }
+  .wy-first :global(.icon) { color: var(--deep-blue); }
+  .wy-first-text { display: flex; flex-direction: column; gap: 3px; }
+  .wy-first-label { color: var(--deep-blue); font-size: 12px; font-weight: 600; line-height: 1.2; letter-spacing: .08em; text-transform: uppercase; }
+  .wy-first-val { color: var(--ink); font-size: 15px; font-weight: 500; line-height: 1.3; }
+  .wy-first-val::first-letter { text-transform: uppercase; }
+
+  /* The team photo, wide, with its caption on it */
+  .wy-team { position: relative; margin: 16px 0 0; overflow: hidden; border-radius: var(--radius-lg); background: var(--deep-blue); }
+  .wy-team-img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 7; object-fit: cover; object-position: 50% 58%; }
+  .wy-caption { position: absolute; left: 20px; bottom: 20px; display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 40px); padding: 10px 16px 10px 12px; border-radius: 999px; background: rgba(255, 255, 255, .94); box-shadow: var(--shadow-1); color: var(--ink-2); font-size: 15px; line-height: 1.3; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
+  .wy-caption :global(.icon) { color: var(--deep-blue); }
+  .wy-caption-title { color: var(--deep-blue); font-weight: 600; }
+  .wy-sep { color: var(--muted); }
+
+  @media (max-width: 1199px) { .wy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 767px) {
+    .wy-team { background: none; overflow: visible; border-radius: 0; }
+    .wy-team-img { aspect-ratio: 3 / 2; border-radius: var(--radius-lg); }
+    .wy-caption { position: static; flex-wrap: wrap; row-gap: 2px; margin-top: 12px; padding: 0; background: none; box-shadow: none; }
+    .wy-sep { display: none; }
+    .wy-caption [data-rv] { flex-basis: 100%; padding-left: 26px; }
+  }
+  @media (max-width: 599px) {
+    .wy-grid { grid-template-columns: minmax(0, 1fr); }
+    .wy-fig { height: 172px; }
+    .wy-h3 { padding: 22px 20px 10px; }
+    .wy-body { padding: 0 20px 18px; }
+    .wy-first { margin: 0 20px 20px; }
+  }
+</style>

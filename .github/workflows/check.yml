@@ -1,0 +1,41 @@
+name: Check
+
+# On every pull request: build the site and check every internal link, image
+# and anchor, so a file with an error never reaches main. Nothing is deployed.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build (as theaha.co)
+        run: npm run build
+
+      - name: Check links, images and anchors
+        run: npm run check
+
+      # Scheduled articles are only built in the preview: check them now, not
+      # on the morning they go live.
+      - name: Build as the preview (scheduled articles included)
+        run: npm run build
+        env:
+          SITE_URL: https://theahaco.github.io
+          BASE_PATH: /website
+
+      - name: Check the preview build
+        run: npm run check
+        env:
+          BASE_PATH: /website

@@ -1,0 +1,79 @@
+---
+// Generated from the Webflow page "/networks". Edit freely: this file is the source now.
+// The four-question route builder is filled in by src/scripts/integrate.js
+// (data-net hooks); the network cards are shared with the home page
+// (src/components/NetworkCards.astro), with this page's own lines.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Cta from '../../components/Cta.astro';
+import NetworkCards from '../../components/NetworkCards.astro';
+import { networkMarks } from '../../lib/content';
+
+// Header figure: one open question, four networks (the marks of the cards
+// below), drawn like the route builder: 2 px rules, a deep blue node.
+const hub = [
+  { id: 'stellar', logo: networkMarks.Stellar, w: 106 / 26, h: 24 },
+  { id: 'xrpl', logo: networkMarks.XRPL, w: 313 / 80, h: 28 },
+  { id: 'canton', logo: networkMarks.Canton, w: 1432 / 369, h: 24 },
+  { id: 'ethereum', logo: networkMarks.Ethereum, w: 320 / 80, h: 26 },
+].map((n, i) => {
+  const y = 10 + i * 76;
+  const lw = n.w * n.h;
+  return { ...n, y, cy: y + 26, lx: 140 + (186 - lw) / 2, ly: y + (52 - n.h) / 2, lw };
+});
+const cards = [
+  { id: 'stellar', name: 'Stellar', logo: networkMarks.Stellar, href: '/networks/stellar', cta: 'Integrate with Stellar', desc: 'Core contributors, Stellar Community Fund reviewers, tooling maintainers. EURCV and LI.FI live on mainnet.' },
+  { id: 'xrpl', name: 'XRPL', logo: networkMarks.XRPL, href: '/networks/xrpl', cta: 'Integrate with XRPL', desc: 'Ripple program partner: accelerator cohorts, hackathons, continuous work on developer experience.' },
+  { id: 'canton', name: 'Canton', logo: networkMarks.Canton, desc: 'Privacy between parties by design. Integrations in progress.' },
+  { id: 'ethereum', name: 'Ethereum', logo: networkMarks.Ethereum, desc: 'EVM counterpart for <span class="nobr">cross-chain</span> work, as in the <a class="net_inlinelink" href="/case-studies/lifi">LI.FI integration</a>.' },
+];
+---
+<BaseLayout title={'Stellar, XRPL, Canton or Ethereum: which network fits?'} description={'Stellar, XRPL, Canton or Ethereum: four questions that shape the choice of network for a tokenized asset or an integration, and where we build.'}>
+<main data-main="1">
+  <section>
+    <div class="svc_introcontainer">
+      <div class="net_intro">
+        <div class="lg_header"><p class="v-eyebrow page_eyebrow">Integrate</p><h1 class="intro_h1">Which network fits your case?</h1><p class="art_lede">Four questions shape the choice. We do not score networks on a web page: the answer depends on your custody, your counterparties and your regulator. Pick your branches, then bring them to a thirty-minute call.</p><p class="net_jump">Already chose? <a href="/networks/stellar"><img alt="" class="cs_netmark" height="16" src={networkMarks.Stellar} width="16" />Stellar</a> · <a href="/networks/xrpl"><img alt="" class="cs_netmark" height="16" src={networkMarks.XRPL} width="21" />XRPL</a></p></div>
+        <figure aria-hidden="true" class="net_hub">
+          <svg viewBox="0 0 330 300" width="330" height="300">
+            <g fill="none" stroke="rgba(26,59,96,.2)" stroke-width="2">
+              {hub.map((n) => <path d={`M56 150 C 100 150, 96 ${n.cy}, 140 ${n.cy}`} />)}
+            </g>
+            <circle cx="30" cy="150" r="26" fill="#1A3B60" />
+            <text x="30" y="156" fill="#fff" font-family="Space Grotesk, system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">?</text>
+            {hub.map((n) => (
+              <g>
+                <rect x="140" y={n.y} width="186" height="52" rx="12" fill="#fff" stroke="rgba(26,59,96,.2)" stroke-width="2" />
+                <image href={n.logo} x={n.lx.toFixed(1)} y={n.ly.toFixed(1)} width={n.lw.toFixed(1)} height={n.h} />
+              </g>
+            ))}
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+  <section class="ab_white"><div class="net_treegrid"><ol aria-label="Questions" class="net_qs" data-net="qs" role="list"></ol><aside aria-label="Your route" class="net_route"><div class="net_routehead"><span class="net_routelabel">Your route</span><span class="net_routeprogress" data-net="progress">0 of 4</span></div><ul class="net_routelist" data-net="routelist" role="list"></ul><div class="net_routefoot"><p class="net_verdict" data-net="verdict">Pick a branch on each question. The route fills in here.</p><a class="btn-green" data-net="cta" href="/contact">Schedule a call with these answers</a><a class="net_reset w-button" data-net="reset" href="#">Start over</a></div></aside></div></section>
+  <section class="footer_section">
+    <div class="ab_container">
+      <div class="net_explorehead">
+        <p class="v-eyebrow">Four networks</p>
+        <h2 class="ab_h2">Explore the networks we build on</h2>
+        <p class="net_carddesc">What we ship on each, how an integration runs there, and the funding programs that apply.</p>
+      </div>
+      <div data-net="cards"><NetworkCards items={cards} /></div>
+    </div>
+  </section>
+</main>
+<Cta heading={'Not sure which network? That is the first thing we settle.'} />
+</BaseLayout>
+
+<style>
+  .net_jump .cs_netmark { margin-right: 6px; vertical-align: -3px; }
+  .net_hub { display: none; margin: 0; }
+  .net_hub svg { display: block; width: 100%; height: auto; }
+  @media (min-width: 1200px) {
+    .net_intro { display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 1fr); column-gap: 24px; align-items: center; }
+    .net_hub { display: block; justify-self: end; width: 100%; max-width: 330px; }
+  }
+  .net_explorehead { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .net_explorehead .ab_h2, .net_explorehead .net_carddesc { margin: 0; }
+</style>

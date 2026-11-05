@@ -1,0 +1,129 @@
+---
+// Article template (Webflow collection "Blog Posts"). The body is the
+// Markdown file's content; "In this article" lists its H2 headings.
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Cta from '../../components/Cta.astro';
+import { posts, team, formatDate, parseDate, ogImageFor, coverFor, nobr } from '../../lib/content';
+import { siteUrl, ld } from '../../lib/ld';
+
+export async function getStaticPaths() {
+  return (await posts()).map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const d = post.data;
+const cover = coverFor(post.id, d.cover);
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const author = d.author ? (await team()).find((m) => m.id === d.author) : undefined;
+const portrait = author?.data.portrait || '';
+const more = (await posts()).filter((p) => p.id !== post.id).slice(0, 2);
+const base = siteUrl(Astro.site);
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const publishedAt = d.date && !Number.isNaN(parseDate(d.date).getTime()) ? parseDate(d.date).toISOString() : undefined;
+const published = publishedAt?.slice(0, 10);
+// Long titles carry no suffix, so search results do not cut them.
+const title = d.metaTitle || (d.title.length > 42 ? d.title : `${d.title} | The Aha Company`);
+const articleLd = ld({
+  '@type': 'BlogPosting',
+  headline: d.title,
+  description: d.description || d.lede || undefined,
+  url: pageUrl,
+  mainEntityOfPage: pageUrl,
+  datePublished: published,
+  image: cover ? new URL(cover.replace(/^\//, ''), base).href : undefined,
+  author: d.authorName ? { '@type': 'Person', name: d.authorName, url: d.author ? new URL(`team/${d.author}/`, base).href : undefined } : undefined,
+  publisher: { '@type': 'Organization', '@id': base + '#organization', name: 'The Aha Company', url: base },
+});
+---
+<BaseLayout title={title} description={d.description || d.lede || undefined} image={ogImageFor(post.id) || cover || undefined} imageAlt={d.title} ogType="article" publishedTime={publishedAt}>
+  <Fragment slot="head"><script type="application/ld+json" set:html={articleLd} /></Fragment>
+  <main>
+    <article>
+      <div class="art_header">
+        <a class="art_back" href="/work?view=articles">← All articles</a>
+        <div class="art_head-block">
+          {d.category && <p class="eyebrow">{d.category}</p>}
+          <h1 class="art_h1" set:html={nobr(d.title)} />
+          {d.lede && <p class="art_lede">{d.lede}</p>}
+        </div>
+        <div class="art_byline">
+          <div class="art_author">
+            {portrait && <img alt="" class="art_avatar" src={portrait} />}
+            <div>
+              {d.authorName && <p class="art_author-name">{d.authorName}</p>}
+              {d.authorRole && <p class="art_author-role">{d.authorRole}</p>}
+            </div>
+          </div>
+          <div class="blog_author">
+            {d.date && <time class="inline-text" datetime={published}>{formatDate(d.date, 'long')}</time>}{d.date && d.readMinutes && <span class="inline-text"> · </span>}{d.readMinutes && <span class="inline-text">{d.readMinutes} min read</span>}
+          </div>
+          <div class="art_share">
+            <a aria-label="Share on LinkedIn" class="share_pill" data-share="linkedin" href="#">LinkedIn</a>
+            <a aria-label="Share on X" class="share_pill" data-share="x" href="#">X</a>
+            <a class="share_pill w-button" data-share="copy" href="#">Copy link</a>
+          </div>
+        </div>
+      </div>
+      {cover && (
+        <figure class="art_cover">
+          <img alt="" class="art_cover-img" src={cover} />
+          {d.coverCaption && <figcaption class="art_cover-caption">{d.coverCaption}</figcaption>}
+        </figure>
+      )}
+      <div class="art_grid">
+        <aside aria-label="In this article" class="art_rail" style={toc.length ? undefined : 'display:none'}>
+          <p class="art_rail-label">In this article</p>
+          <ul class="art_rail-list" role="list">
+            {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ul>
+        </aside>
+        <div class="blog_richtext w-richtext"><Content /></div>
+        <div class="art_footer">
+          <div class="art_authorcard">
+            {portrait && <img alt="" class="art_avatar48" src={portrait} />}
+            <div>
+              {d.authorName && <p class="art_author-name">{d.authorName}</p>}
+              {d.authorBio && <p class="art_bio">{d.authorBio}</p>}
+            </div>
+          </div>
+          {d.relatedWorkLabel && (
+            <div class="art_related">
+              <p class="work_eyebrow">Related work</p>
+              <a class="art_related-link" href={d.relatedWork ? `/case-studies/${d.relatedWork}` : '/#work'}>{d.relatedWorkLabel}</a>
+            </div>
+          )}
+        </div>
+      </div>
+    </article>
+    {more.length > 0 && (
+      <section class="footer_section">
+        <div class="more_inner">
+          <div class="more_header">
+            <h2 class="more_h2">More articles</h2>
+            <a class="more_all" href="/work?view=articles">All articles ↗</a>
+          </div>
+          <div class="w-dyn-list">
+            <div class="work_list w-dyn-items" role="list">
+              {more.map((p) => (
+                <div class="work_item w-dyn-item" role="listitem">
+                  <a class="more_row w-inline-block" href={`/blog/${p.id}`}>
+                    <div class="more_stack">
+                      <span class="work_eyebrow">{p.data.category}</span>
+                      <span class="more_title">{p.data.title}</span>
+                    </div>
+                    <div class="more_meta">
+                      <span class="inline-text">{formatDate(p.data.date, 'long')}</span><span class="inline-text"> · </span>{p.data.readMinutes && <span class="inline-text">{p.data.readMinutes}</span>}<span class="inline-text"> min ↗</span>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+  <Cta heading="Working on something similar? Talk to an engineer." />
+</BaseLayout>

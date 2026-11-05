@@ -1,0 +1,137 @@
+---
+// Home page section "How an engagement runs": one tab per audience, each a
+// four-step timeline (numbered nodes on a line: across on desktop, down on
+// phones), every step ending with its output. Tabs markup as in
+// src/scripts/tabs.js (.w-tabs > .w-tab-menu / .w-tab-content).
+import Icon from '../Icon.astro';
+
+interface Step { title: string; icon: string; body: string; output: string; rv?: string }
+interface Track { tab: string; label: string; icon: string; steps: Step[] }
+
+const tracks: Track[] = [
+  {
+    tab: 'Tab 1',
+    label: 'Financial institutions',
+    icon: 'bank',
+    steps: [
+      { title: 'Scoping', icon: 'magnifying-glass', body: 'One technical session on authorities, custody and compliance controls.', output: 'the end-to-end process, who does what.' },
+      { title: 'Structure', icon: 'signature', body: 'NDA, then an MOU with milestones your team can verify.', output: 'signed MOU, milestone plan, funding application where one applies.' },
+      { title: 'Build', icon: 'code', body: 'A first release of two or three use cases, on testnet with your operations team.', output: 'contracts and integration live on testnet, validated milestone by milestone.' },
+      { title: 'Mainnet and after', icon: 'rocket-launch', body: 'We stay on the account for the changes production surfaces.', output: 'mainnet deployment, runbooks, handover, ongoing support.' },
+    ],
+  },
+  {
+    tab: 'Tab 2',
+    label: 'Protocols and products',
+    icon: 'plugs-connected',
+    steps: [
+      { title: 'Roadmap', icon: 'map-trifold', body: 'We map your integration surface to the target network and size the work.', output: 'integration map and sizing.' },
+      { title: 'Proposal', icon: 'clipboard-text', body: 'Milestone-based scope, with or without an ecosystem program behind it.', output: 'milestone proposal, program application where one applies.' },
+      { title: 'Build', icon: 'code', body: 'Native contracts, adapters and SDKs, tested against your existing suite.', output: 'contracts, adapters and SDKs passing your test suite.' },
+      { title: 'Mainnet', icon: 'rocket-launch', body: 'Launch, docs, and a maintenance plan your engineers can run.', output: 'mainnet launch, docs, maintenance plan.' },
+    ],
+  },
+  {
+    tab: 'Tab 3',
+    label: 'Ecosystems and foundations',
+    icon: 'graph',
+    steps: [
+      { title: 'DevX audit', icon: 'list-magnifying-glass', body: 'Two engineers, two weeks, on your real onboarding path.', output: 'audit report of the onboarding path, ranked friction points.' },
+      { title: 'Roadmap', icon: 'map-trifold', body: 'Tooling priorities with the ecosystem’s engineering team.', output: 'prioritized tooling roadmap.' },
+      { title: 'Build', icon: 'terminal-window', body: 'CLIs, scaffolding, sandboxes, registries, wallets.', output: 'shipped tooling, open source, with docs.', rv: 'eco-build' },
+      { title: 'Maintain', icon: 'arrows-clockwise', body: 'Quarterly public-goods proposal and review.', output: 'maintained releases and a quarterly proposal.', rv: 'eco-maintain' },
+    ],
+  },
+];
+---
+<section class="process_section">
+  <div class="section-inner">
+    <div class="w-tabs eg-tabs" data-current="Tab 1" data-duration-in="300" data-duration-out="100" data-easing="ease">
+      <div class="eg-titles">
+        <p class="v-eyebrow v-eyebrow--dark">Process</p>
+        <h2 class="process_h2">How an engagement runs</h2>
+      </div>
+
+      <div aria-label="Engagement type" class="w-tab-menu eg-menu">
+        {tracks.map((t, i) => (
+          <a class:list={['w-inline-block w-tab-link eg-tab', i === 0 && 'w--current']} data-w-tab={t.tab}><Icon name={t.icon} size={18} />{t.label}</a>
+        ))}
+      </div>
+
+      <div class="w-tab-content eg-panels">
+        {tracks.map((t, i) => (
+          <div class:list={['w-tab-pane', i === 0 && 'w--tab-active']} data-w-tab={t.tab}>
+            <ol aria-label={t.label} class="eg-steps" role="list">
+              {t.steps.map((s, n) => (
+                <li class:list={['eg-step', n === t.steps.length - 1 && 'eg-step--last']} data-rv={s.rv}>
+                  <div aria-hidden="true" class="eg-rail">
+                    <span class="eg-node"><Icon name={s.icon} size={26} /><span class="eg-num">{n + 1}</span></span>
+                    <span class="eg-line"></span>
+                  </div>
+                  <h3 class="eg-h3">{s.title}</h3>
+                  <p class="eg-text">{s.body}</p>
+                  <p class="eg-out"><Icon name="check-circle" size={20} /><span><strong>Output:</strong> {s.output}</span></p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Heading, then the tabs, then the timeline */
+  .eg-tabs { display: flex; flex-direction: column; align-items: flex-start; }
+  .eg-tabs::before, .eg-tabs::after { display: none; }
+  .eg-titles { display: flex; flex-direction: column; gap: 20px; }
+  .eg-menu { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-top: 32px; padding: 4px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; background: rgba(255, 255, 255, .06); }
+  .eg-panels { align-self: stretch; margin-top: 56px; overflow: visible; }
+
+  .eg-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px 0 12px; border: 0; border-radius: 999px; background: transparent; color: rgba(255, 255, 255, .72); font-family: var(--font-ui); font-size: 15px; font-weight: 600; line-height: 1.2; white-space: nowrap; cursor: pointer; transition: background-color .2s, color .2s; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
+  .eg-tab:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+  .eg-tab.w--current { background: #fff; color: var(--deep-blue); }
+  .eg-tab:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+  /* Timeline: across on desktop; titles, texts and outputs line up (subgrid) */
+  .eg-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 32px; margin: 0; padding: 0; list-style: none; }
+  .eg-step { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; }
+  .eg-rail { display: flex; align-items: center; margin-bottom: 28px; }
+  .eg-node { position: relative; display: grid; place-items: center; flex-shrink: 0; width: 56px; height: 56px; border: 2px solid rgba(246, 226, 255, .55); border-radius: 50%; background: var(--deep-blue-2); color: #fff; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+  .eg-step--last .eg-node { border-color: var(--vibrant-green); background: var(--vibrant-green); --icon-tint: #fff; --icon-tint-opacity: .3; }
+  /* The step number, cut out of the node's ring */
+  .eg-num { position: absolute; top: -6px; right: -8px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 999px; background: var(--cool-pink); box-shadow: 0 0 0 3px var(--deep-blue); color: var(--deep-blue); font-size: 12px; font-weight: 700; line-height: 1; }
+  .eg-line { flex: 1; height: 2px; margin-right: -32px; background: rgba(246, 226, 255, .3); }
+  .eg-step--last .eg-line { visibility: hidden; }
+
+  .eg-h3 { margin: 0 0 10px; color: #fff; font-family: var(--font-ui); font-size: 20px; font-style: normal; font-weight: 600; line-height: 1.3; }
+  .eg-text { margin: 0 0 20px; color: rgba(255, 255, 255, .72); font-size: 15px; line-height: 1.55; }
+  .eg-out { display: flex; align-items: flex-start; align-self: start; gap: 10px; margin: 0; padding: 12px 14px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 12px; background: rgba(255, 255, 255, .05); color: #fff; font-size: 15px; line-height: 1.45; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .35; }
+  .eg-out :global(.icon) { color: var(--vibrant-green); margin-top: 1px; }
+  .eg-out strong { font-weight: 600; }
+
+  /* Timeline: down on tablets and phones, the node and its line on the left */
+  @media (max-width: 991px) {
+    .eg-panels { margin-top: 48px; }
+    .eg-steps { grid-template-columns: minmax(0, 1fr); }
+    .eg-step { grid-row: auto; grid-template-columns: 48px minmax(0, 1fr); grid-template-rows: auto; column-gap: 20px; }
+    .eg-rail { flex-direction: column; grid-column: 1; grid-row: 1 / span 3; margin: 0; }
+    .eg-node { width: 48px; height: 48px; }
+    .eg-line { width: 2px; height: auto; margin: 0; }
+    .eg-h3, .eg-text, .eg-out { grid-column: 2; }
+    .eg-h3 { padding-top: 11px; }
+    .eg-out { margin-bottom: 40px; }
+    .eg-step--last .eg-out { margin-bottom: 0; }
+    /* Tighter tabs, so the three fit on one line on tablets */
+    .eg-menu { gap: 2px; }
+    .eg-tab { gap: 7px; padding: 0 12px 0 10px; }
+  }
+  /* Phones: the three tabs stacked, full width */
+  @media (max-width: 767px) {
+    .eg-tabs { align-items: stretch; }
+    .eg-menu { display: flex; flex-direction: column; border-radius: 16px; }
+    .eg-tab { min-height: 44px; padding: 0 16px 0 12px; border-radius: 12px; white-space: normal; }
+  }
+  @media (pointer: coarse) { .eg-tab { min-height: 44px; } }
+</style>

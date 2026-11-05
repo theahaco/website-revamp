@@ -1,0 +1,187 @@
+---
+// Case study template (Webflow collection "Case Studies").
+// Empty fields are skipped, as the Webflow site's script did after load.
+import Icon from '../../components/Icon.astro';
+import { factIcon } from '../../lib/factIcons';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Cta from '../../components/Cta.astro';
+import { caseStudies, team, tools, networks, orderBy, md, serviceAnchor, networkMarks, publicQuote, ogImageFor, nobr } from '../../lib/content';
+import { site as siteData } from '../../data/site';
+import { moreWork, moreWorkFor } from '../../data/curation';
+
+export async function getStaticPaths() {
+  return (await caseStudies()).map((cs) => ({ params: { slug: cs.id }, props: { cs } }));
+}
+
+const { cs } = Astro.props;
+const d = cs.data;
+const all = await caseStudies();
+// In the order the case study lists them: the first person is the lead.
+const people = await team();
+const members = d.team.flatMap((id) => people.filter((m) => m.id === id));
+const facts = d.facts.filter((f) => f.value);
+const metrics = d.metrics.filter((m) => m.figure);
+const sections = d.sections.filter((s) => s.body.trim());
+const receipts = md(d.receipts);
+// "More work": chosen by hand for some pages (curation.ts), otherwise two other
+// case studies, those for the same audience first. Alliances are never listed.
+type MoreItem = { href: string; eyebrow: string; title: string; meta: string };
+const toolList = await tools();
+const asCase = (c: (typeof all)[number]): MoreItem => ({ href: `/case-studies/${c.id}`, eyebrow: c.data.eyebrow, title: c.data.shortTitle || c.data.title, meta: c.data.year });
+const fromRef = (ref: string): MoreItem | undefined => {
+  if (ref.startsWith('/open-source/')) {
+    const t = toolList.find((x) => x.id === ref.slice('/open-source/'.length));
+    if (!t) return undefined;
+    const sub = t.data.title.startsWith(t.data.name + ':') ? t.data.title.slice(t.data.name.length + 1).trim() : t.data.title;
+    return { href: ref, eyebrow: `Open source · ${t.data.network}`, title: `${t.data.name}: ${sub}`, meta: t.data.category };
+  }
+  const c = all.find((x) => x.id === ref);
+  return c ? asCase(c) : undefined;
+};
+const candidates = orderBy(all, moreWork).filter((c) => c.id !== cs.id && !c.data.alliance);
+const more: MoreItem[] = moreWorkFor[cs.id]
+  ? moreWorkFor[cs.id].map(fromRef).filter((x): x is MoreItem => Boolean(x)).slice(0, 2)
+  : [...candidates.filter((c) => c.data.audience === d.audience), ...candidates.filter((c) => c.data.audience !== d.audience)].slice(0, 2).map(asCase);
+// The network fact links to the network's page, when it has one.
+const networkPages = new Map((await networks()).filter((n) => n.data.heading).map((n) => [n.data.name, `/networks/${n.id}`]));
+const cta = d.cta || 'Bringing a fund or deposit onchain? Talk to the engineers who did it.';
+const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData.productionOrigin);
+---
+<BaseLayout title={d.metaTitle || `${d.title} | Case study | The Aha Company`} description={d.description || d.lede || d.ndaSummary || undefined} image={ogImageFor(cs.id) || d.hero.image || undefined} imageAlt={d.hero.alt || undefined} noindex={d.alliance}>
+  <main>
+    <article>
+      <div class="cs_header">
+        <a class="art_back" href="/work">← All work</a>
+        <div class="cs_headgrid">
+          <div class="cs_intro">
+            {d.eyebrow && <p class="cs_eyebrow">{d.eyebrow}</p>}
+            <h1 class="art_h1" set:html={nobr(d.title)} />
+            {d.lede && <p class="art_lede">{d.lede}</p>}
+          </div>
+          <dl class="cs_facts">
+            {facts.map((f) => (
+              <div class="cs_fact">
+                <dt class="cs_dt">{factIcon(f.label) && <Icon name={factIcon(f.label)!} size={15} class="cs_dticon" />}{f.label}</dt>
+                {f.style === 'net' ? (
+                  <dd class="cs_dd-net">
+                    {f.label === 'Network' && networkMarks[f.value] && <img alt="" class="cs_netmark" data-cs="netmark" src={networkMarks[f.value]} />}
+                    {f.live && <span aria-hidden="true" class="cs_dot" data-cs="dot"></span>}
+                    {f.label === 'Network' && networkPages.has(f.value) ? <a class="cs_netlink" href={networkPages.get(f.value)}>{f.value}</a> : <span>{f.value}</span>}
+                  </dd>
+                ) : (
+                  <dd class="cs_dd">{f.value}</dd>
+                )}
+                {f.label === 'Client' && d.nda && <dd data-cs="nda-line" class="cs_dd-sub">Under NDA</dd>}
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+      {quote.text ? (
+        <section class="cs_quoteband cs_quoteband--top" data-cs="quote">
+          <div class="cs_quoteinner">
+            <p class="cs_quotelabel">{quote.label}</p>
+            <blockquote class="cs_quote">{quote.text}</blockquote>
+            <p class="cs_quoteattrib">{quote.portrait && <img alt="" class="cs_quoteavatar" height="40" loading="lazy" src={quote.portrait} width="40" />}<span><span data-cs="q-author">{quote.author}</span>, <span data-cs="q-role">{quote.role}</span></span></p>
+          </div>
+        </section>
+      ) : d.hero.image && (
+        <figure class="cs_hero" data-cs="hero">
+          <img alt={d.hero.alt} class="cs_heroimg" src={d.hero.image} />
+          {d.hero.caption && <figcaption class="cs_herocaption">{d.hero.caption}</figcaption>}
+        </figure>
+      )}
+      {metrics.length > 0 && (
+        <section aria-label="Outcomes" class="cs_outcomes" data-cs="outcomes">
+          <ul class="cs_metrics" role="list">
+            {metrics.map((m) => (
+              <li class="cs_metric">
+                <span class="cs_fig">
+                  <span>{m.figure}</span>
+                  {m.receipt && <a aria-label={`Receipt: ${m.label}`} class="cs_figmark" href={m.receipt}>✓</a>}
+                </span>
+                <span class="cs_metriclabel">{m.label}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      <div class="cs_bodygrid">
+        <div class="cs_sections">
+          {sections.map((s) => (
+            <section class="cs_section" id={s.id}>
+              <h2 class="cs_h2">{s.title}</h2>
+              <div class="blog_richtext w-richtext" set:html={md(s.body)} />
+            </section>
+          ))}
+        </div>
+        <aside aria-label="Case details" class="cs_aside">
+          {d.tech.length > 0 && (
+            <div class="cs_card" data-cs="tech-card">
+              <p class="cs_cardlabel">Tech</p>
+              <ul class="cs_pills" role="list">{d.tech.map((t) => <li class="cs_pill">{t}</li>)}</ul>
+            </div>
+          )}
+          {receipts.includes('<li') && (
+            <div class="cs_card" data-cs="receipts-card">
+              <p class="cs_cardlabel">Receipts</p>
+              <div class="cs_receipts w-richtext" set:html={receipts} />
+            </div>
+          )}
+          {d.relatedService && (
+            <div class="art_related" data-cs="related-card">
+              <p class="cs_cardlabel-green">Related service</p>
+              <a class="art_related-link" href={serviceAnchor(d.eyebrow)}>{d.relatedService}</a>
+            </div>
+          )}
+          {members.length > 0 && (
+            <div class="cs_teamcard" data-cs="team-card">
+              <p class="cs_cardlabel">{members.length === 1 ? 'Engagement lead' : 'Team on this engagement'}</p>
+              <div class="w-dyn-list">
+                <div class="cs_teamlist w-dyn-items" role="list">
+                  {members.map((m) => (
+                    <div class="w-dyn-item" role="listitem">
+                      <a class="cs_teamrow w-inline-block" href={`/team/${m.id}`}>
+                        <span class="cs_avatar32">{m.data.portrait && <img alt="" class="cs_avatarimg" src={m.data.portrait} />}</span>
+                        <span class="cs_namestack">
+                          <span class="cs_teamname">{m.data.name}</span>
+                          {m.data.role && <span class="cs_teamrole">{m.data.role}</span>}
+                        </span>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+    </article>
+    {more.length > 0 && (
+      <section class="footer_section" data-cs="morework">
+        <div class="more_inner">
+          <div class="more_header">
+            <h2 class="more_h2">More work</h2>
+            <a class="more_all" href="/work">All work ↗</a>
+          </div>
+          <div class="w-dyn-list">
+            <div class="w-dyn-items" role="list">
+              {more.map((c) => (
+                <div class="work_item w-dyn-item" role="listitem">
+                  <a class="more_row w-inline-block" href={c.href}>
+                    <div class="more_stack">
+                      <span class="work_eyebrow">{c.eyebrow}</span>
+                      <span class="more_title">{c.title}</span>
+                    </div>
+                    <div class="more_meta"><span class="inline-text">{c.meta}</span><span class="inline-text"> ↗</span></div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+  <Cta heading={cta} />
+</BaseLayout>

@@ -1,0 +1,185 @@
+---
+// Network page template (Webflow collection "Networks"). A network without a
+// heading has no page yet: its URL redirects to /networks, as on Webflow.
+import Icon from '../../components/Icon.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Redirect from '../../layouts/Redirect.astro';
+import Cta from '../../components/Cta.astro';
+import { site as siteData } from '../../data/site';
+import { networks, orderBy, publicQuote } from '../../lib/content';
+import { otherNetworksOrder } from '../../data/curation';
+
+export async function getStaticPaths() {
+  return (await networks()).map((n) => ({ params: { slug: n.id }, props: { net: n } }));
+}
+
+const { net } = Astro.props;
+const d = net.data;
+// Icons for the integration items and steps (src/icons); a title without one shows none.
+const involveIcons: Record<string, string> = { Contracts: 'file-text', 'Adapters and SDKs': 'plugs-connected', 'Routing and liquidity': 'path', 'Onboarding and wallets': 'wallet', 'Issuer controls': 'shield-check', 'Mint, burn and custody': 'vault', 'Token design': 'coins', 'Compliance primitives': 'seal-check', 'Custody and keys': 'key', 'Markets and settlement': 'arrows-left-right' };
+const stepIcons: Record<string, string> = { Roadmap: 'map-trifold', Proposal: 'file-text', Build: 'wrench', Mainnet: 'rocket-launch' };
+const others = orderBy(await networks(), otherNetworksOrder).filter((n) => n.id !== net.id);
+const q = publicQuote(d.proof.quote, !Astro.site || Astro.site.origin === siteData.productionOrigin);
+---
+{!d.heading ? (
+  <Redirect to="/networks" title={`${d.name} | The Aha Company`} />
+) : (
+  <BaseLayout title={d.metaTitle || `Integrate with ${d.name} | The Aha Company`} description={d.description || d.lede || undefined}>
+    <main data-main="1" data-nx="page">
+      <section>
+        <div class="nx_herowrap">
+          <div class="nx_herogrid">
+            <div class="nx_heroleft">
+              <a class="art_back" data-back="1" href="/networks">← All networks</a>
+              <div class="nx_eyebrowrow">
+                <p class="cs_eyebrow">Integrate with</p>
+                {d.mark && <img alt={d.markAlt} class="nx_mark" src={d.mark} />}
+              </div>
+              <h1 class="intro_h1">{d.heading}</h1>
+              {d.lede && <p class="art_lede" data-nx="lede">{d.lede}</p>}
+              <div class="nf_actions">
+                <a class="btn-primary" href="/contact">Schedule a call</a>
+                {d.secondaryCta.label && <a class="btn-secondary" data-nx="cta2" href={d.secondaryCta.href}>{d.secondaryCta.label}</a>}
+              </div>
+              {d.stats.length > 0 && (
+                <ul aria-label="Key figures" class="nx_stats" data-nx="stats" role="list">
+                  {d.stats.map((s) => (
+                    <li class="nxjs_stat"><span class="nxjs_statv">{s.value}</span><span class="nxjs_statl">{s.label}</span></li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {d.ship.rows.length > 0 && (
+              <div class="nx_shipcard" data-nx="shipcard">
+                <div class="nx_shiphead">
+                  <span class="nx_shiptitle" data-nx="shiptitle">{d.ship.title}</span>
+                  <span class="nx_shipmeta" data-nx="shipmeta">{d.ship.meta}</span>
+                </div>
+                <div data-nx="shiprows">
+                  {d.ship.rows.map((r) => (
+                    <div class="nxjs_shiprow">
+                      <div>{r.href ? <a class="nxjs_shipname nxjs_shiplink" href={r.href}>{r.name} <span aria-hidden="true">→</span></a> : <span class="nxjs_shipname">{r.name}</span>}<span class="nxjs_shipdesc">{r.description}</span></div>
+                      <span class="nxjs_shipbadge"><span class="nxjs_shipdot" aria-hidden="true"></span>{r.badge}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+      {d.involves.length > 0 && (
+        <section class="ab_white" data-nx="involves-sec">
+          <div class="ab_container">
+            <h2 class="ab_h2">What the integration involves</h2>
+            <div class="svc_cardgrid" data-nx="involves">
+              {d.involves.map((r) => (
+                <div class="ab_rolecard">{involveIcons[r.title] && <span class="v-iconbox nx_invicon"><Icon name={involveIcons[r.title]} size={26} /></span>}<h3 class="nxjs_invh3">{r.title}</h3><p class="nxjs_invp">{r.description}</p></div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      {d.steps.length > 0 && (
+        <section class="nx_steps" data-nx="steps-sec">
+          <div class="ab_container">
+            <div class="ab_howhead">
+              <h2 class="nx_h2light">How the integration runs</h2>
+              {d.stepsLede && <p class="nx_stepslede" data-nx="stepslede">{d.stepsLede}</p>}
+            </div>
+            <ul class="nx_stepsgrid" data-nx="steps" role="list">
+              {d.steps.map((s, i) => (
+                <li class="nxjs_step">
+                  <span class="nx_stephead"><span class="nxjs_stepnum">{i + 1}</span>{stepIcons[s.title] && <span class="v-iconbox v-iconbox--dark v-iconbox--sm"><Icon name={stepIcons[s.title]} size={20} /></span>}</span>
+                  <h3 class="nxjs_steph3">{s.title}</h3>
+                  <p class="nxjs_stepbody">{s.description}</p>
+                  <p class="nxjs_stepout"><span style="font-weight:600">Output: </span>{s.output}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+      {d.proof.heading && (
+        <section class="nx_proof" data-nx="proof-sec">
+          <div class="ab_container">
+            <div class="ab_howgrid">
+              <div class="ab_howhead">
+                {d.proof.eyebrow && <p class="cs_eyebrow" data-nx="proofeyebrow">{d.proof.eyebrow}</p>}
+                <h2 class="ab_h2" data-nx="proofheading">{d.proof.heading}</h2>
+                {d.proof.body && <p class="net_carddesc" data-nx="proofbody">{d.proof.body}</p>}
+                <a class="svc_casecta" data-nx="prooflink" href={d.proof.caseStudy ? `/case-studies/${d.proof.caseStudy}` : '#'}>{d.proof.linkLabel || 'See the case study →'}</a>
+              </div>
+              {q.text && (
+                <figure class="nx_quotecard">
+                  <p class="nx_quotetag" data-nx="quotetag">{q.label}</p>
+                  <blockquote class="nx_quote" data-nx="quote">{q.text}</blockquote>
+                  <figcaption class="nx_quoteattr">
+                    {q.portrait && <img alt={q.portraitAlt} class="nx_avatar" src={q.portrait} loading="lazy" />}
+                    <div class="cs_namestack">
+                      <p class="cs_teamname" data-nx="quotename">{q.author}</p>
+                      <p class="tm_gridrole" data-nx="quoterole">{q.role}</p>
+                    </div>
+                  </figcaption>
+                  {q.logo && <img alt={q.logoAlt} class="nx_quotelogo" src={q.logo} loading="lazy" />}
+                </figure>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+      {d.funding.rows.length > 0 && (
+        <section class="ab_white" data-nx="funding-sec">
+          <div class="ab_container">
+            <div class="ab_howgrid">
+              <div class="ab_howhead">
+                <h2 class="ab_h2" data-nx="fundingheading">{d.funding.heading}</h2>
+                {d.funding.body && <p class="net_carddesc" data-nx="fundingbody">{d.funding.body}</p>}
+              </div>
+              <ul class="nx_fundinglist" data-nx="funding" role="list">
+                {d.funding.rows.map((r) => (
+                  <li class="nxjs_fundrow">
+                    <div><span class="nxjs_fundname">{r.name}</span><span class="nxjs_funddesc">{r.description}</span></div>
+                    <span class="nxjs_fundbadge">{r.badge}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+      {others.length > 0 && (
+        <section class="footer_section" data-nx="othernets">
+          <div class="ab_officescontainer">
+            <div class="more_header">
+              <h2 class="more_h2">Other networks</h2>
+              <a class="more_all" href="/networks">All networks ↗</a>
+            </div>
+            <div class="w-dyn-list">
+              <div class="net_cards w-dyn-items" role="list">
+                {others.map((o) => (
+                  <div class="w-dyn-item" role="listitem">
+                    {o.data.heading ? (
+                      <a class="net_card w-inline-block" href={`/networks/${o.id}`}>
+                        {o.data.card.logo && <img alt={o.data.card.logoAlt} class="net_cardlogo" src={o.data.card.logo} loading="lazy" />}
+                        <span class="net_cardname" data-on="name">{o.data.card.name}</span>
+                        <span class="net_carddesc" data-on="line">{o.data.card.line}</span>
+                      </a>
+                    ) : (
+                      <div class="net_card net_card--plain">
+                        {o.data.card.logo && <img alt={o.data.card.logoAlt} class="net_cardlogo" src={o.data.card.logo} loading="lazy" />}
+                        <span class="net_cardname" data-on="name">{o.data.name}</span>
+                        <span class="net_carddesc" data-on="line">{o.data.card.line}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+    </main>
+    <Cta heading={d.cta || 'Bring your institution or protocol onchain, with the team that builds the tooling.'} />
+  </BaseLayout>
+)}

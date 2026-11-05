@@ -1,0 +1,13 @@
+# Cloudflare Pages permanent redirects (GitHub Pages ignores this file and
+# uses the stub pages in src/pages instead).
+/blog                /work/?view=articles  301
+/blog/               /work/?view=articles  301
+/networks/canton     /networks/            301
+/networks/canton/    /networks/            301
+/networks/ethereum   /networks/            301
+/networks/ethereum/  /networks/            301
+/case-studies        /work/                301
+/case-studies/       /work/                301
+/team                /about/#team          301
+/team/               /about/#team          301
+/sitemap.xml         /sitemap-index.xml    301

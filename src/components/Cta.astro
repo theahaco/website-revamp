@@ -1,0 +1,53 @@
+---
+// Closing call-to-action band, at the bottom of every page. Only the heading
+// changes between pages. Intro calls are taken by one of our engineers: the
+// portraits beside the button are some of them (decorative, face-centred
+// 96 px crops of the team portraits, in public/images/team/avatars).
+import { contact } from '../data/site';
+
+interface Props {
+  heading: string;
+}
+const { heading } = Astro.props;
+// Engineers across the United States, Europe and Brazil (src/content/team).
+const faces = ['willem-wyndham', 'pamela-selle', 'fabricius-zatti', 'hugo-heer', 'chad-ostrowski', 'pamphile-roy', 'roberson-costa-dresch'];
+---
+<section class="cta_section">
+  <div class="cta_container">
+    <h2 class="cta_h2">{heading}</h2>
+    <div class="cta_foot">
+      <div class="cta_people">
+        <div aria-hidden="true" class="cta_faces">
+          {faces.map((f) => <img src={`/images/team/avatars/${f}-96.webp`} alt="" width="48" height="48" loading="lazy" decoding="async" />)}
+        </div>
+        <p class="cta_note">Calls are with one of our engineers.</p>
+      </div>
+      <div class="cta_actions">
+        <a class="btn-green" href="/contact">Schedule a call</a>
+        <a class="cta_email" href={`mailto:${contact.email}`}>{contact.email}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The closing title stays below the hero's size */
+  .cta_h2 { font-size: clamp(32px, 3.6vw, 48px); }
+  .cta_foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px 48px; width: 100%; padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, .16); }
+  .cta_actions { order: 1; }
+  .cta_people { order: 2; display: flex; align-items: center; gap: 16px; }
+  .cta_faces { display: flex; flex-shrink: 0; }
+  .cta_faces img { display: block; width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background: var(--deep-blue-2); box-shadow: 0 0 0 3px var(--deep-blue); }
+  .cta_faces img + img { margin-left: -10px; }
+  .cta_note { margin: 0; font-size: 15px; line-height: 1.45; color: rgba(255, 255, 255, .72); }
+  .cta_email { padding: 12px 0; margin: -12px 0; }
+  /* Tablets and phones: the people above the button */
+  @media (max-width: 1023px) {
+    .cta_foot { flex-direction: column; align-items: flex-start; padding-top: 32px; }
+    .cta_people { order: 0; }
+  }
+  @media (max-width: 767px) {
+    .cta_people { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .cta_faces img { width: 44px; height: 44px; }
+  }
+</style>

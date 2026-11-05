@@ -1,0 +1,39 @@
+---
+// Thumbnail of a Work row (home "Selected work", Work page): the diagram
+// thumbnail, a header image or cover shown by its right side, or an icon on
+// the audience tint (src/lib/visuals.ts decides). Decorative: the row's text
+// says the same. It fills the box its parent gives it (size, aspect ratio).
+import Icon from './Icon.astro';
+import type { Visual } from '../lib/visuals';
+
+interface Props {
+  visual: Visual;
+  eager?: boolean;
+}
+const { visual: v, eager = false } = Astro.props;
+---
+<span class:list={['wv_thumb', `wv_thumb--${v.kind}`, v.kind === 'icon' && `wv_tone--${v.tone}`]} aria-hidden="true">
+  {v.src ? (
+    <img class="wv_img" src={v.src} alt="" width={v.width} height={v.height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+  ) : (
+    <span class="v-iconbox wv_icon"><Icon name={v.icon} size={28} /></span>
+  )}
+</span>
+
+<style>
+  .wv_thumb { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--tint-paper); transition: border-color .2s ease, box-shadow .2s ease; }
+  .wv_img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+  /* Header images and covers: the diagram sits on their right side */
+  .wv_thumb--crop .wv_img { object-position: 100% 50%; }
+  .wv_thumb--icon { display: grid; place-items: center; }
+  .wv_icon { background: var(--white); }
+  .wv_tone--blue { background: var(--tint-blue); }
+  .wv_tone--green { background: var(--tint-green); }
+  .wv_tone--pink { background: var(--tint-pink); }
+  .wv_tone--tan { background: var(--tint-tan); }
+  :global(a:hover) .wv_thumb, :global(a:focus-visible) .wv_thumb { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  @media (prefers-reduced-motion: no-preference) {
+    .wv_img { transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
+    :global(a:hover) .wv_img { transform: scale(1.04); }
+  }
+</style>

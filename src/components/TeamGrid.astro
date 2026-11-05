@@ -1,0 +1,32 @@
+---
+// Team cards: the About page grid, or "The rest of the team" on a team page.
+import { team, orderBy } from '../lib/content';
+import { teamPanelOrder } from '../data/curation';
+
+interface Props {
+  variant: 'about' | 'member';
+  exclude?: string;
+}
+const { variant, exclude } = Astro.props;
+const all = await team();
+// About uses the team order; team pages use the order Webflow showed there.
+const members = (variant === 'about' ? all : orderBy(all, teamPanelOrder)).filter((m) => m.id !== exclude);
+---
+<div class="w-dyn-list">
+  <div class={variant === 'about' ? 'ab_teamgrid w-dyn-items' : 'tm_grid w-dyn-items'} role="list">
+    {members.map((m) => (
+      <div class="w-dyn-item" role="listitem">
+        <a class="tm_gridlink w-inline-block" href={`/team/${m.id}`}>
+          <div class="tm_gridportrait">
+            {m.data.portrait && <img alt="" class="tm_portraitimg" src={m.data.portrait} loading="lazy" />}
+          </div>
+          <span class="cs_namestack">
+            <span class="tm_gridname" data-cell={variant === 'member' ? 'name' : undefined}>{m.data.name}</span>
+            {m.data.role && <span class="tm_gridrole" data-cell={variant === 'member' ? 'role' : undefined}>{m.data.role}</span>}
+            {variant === 'about' && m.data.location && <span class="ab_teamloc">{m.data.location}</span>}
+          </span>
+        </a>
+      </div>
+    ))}
+  </div>
+</div>

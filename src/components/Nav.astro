@@ -1,0 +1,55 @@
+---
+// Site header. Markup and classes are the Webflow "Nav" component.
+// `path` is the page path without base or trailing slash ("/", "/services",
+// "/case-studies/lifi"...). Current-page state follows the Webflow site:
+// Webflow marked exact matches (w--current), and its script coloured the
+// section a CMS page belongs to (case studies -> Work, team -> About...).
+import { nav } from '../data/site';
+
+interface Props {
+  path: string;
+}
+const { path } = Astro.props;
+
+function sectionOf(p: string): string | null {
+  if (p === '/services') return '/services';
+  if (p === '/work' || p.startsWith('/case-studies/') || p.startsWith('/blog')) return '/work';
+  if (p === '/open-source' || p.startsWith('/open-source/')) return '/open-source';
+  if (p === '/networks' || p.startsWith('/networks/')) return '/networks';
+  if (p === '/about' || p.startsWith('/team/')) return '/about';
+  return null;
+}
+const section = sectionOf(path);
+const exact = (href: string) => href === path;
+const isHome = path === '/';
+const isContact = path === '/contact';
+const linkClass = (base: string, href: string) => (exact(href) ? `${base} w--current` : base);
+const current = (href: string) => (exact(href) || section === href ? 'page' : undefined);
+---
+<a class="skip_link" href="#main">Skip to content</a>
+<header class="nav_wrap">
+  <nav aria-label="Main" class="nav_bar">
+    <a
+      aria-current={isHome ? 'page' : undefined}
+      aria-label="The Aha Company home"
+      class={isHome ? 'nav_logo-link w-inline-block w--current' : 'nav_logo-link w-inline-block'}
+      href="/"
+    ><img alt="The Aha Company" class="nav_logo" src="/images/brand/horizontallogo_blue.svg" width="144" height="66" /></a>
+    <ul class="nav_links" role="list">
+      {nav.map((item) => (
+        <li><a class={linkClass('nav_link', item.href)} aria-current={current(item.href)} href={item.href}>{item.label}</a></li>
+      ))}
+      <li><a class={isContact ? 'nav_cta w--current' : 'nav_cta'} aria-current={isContact ? 'page' : undefined} href="/contact">Schedule a call</a></li>
+    </ul>
+    <div class="nav_mobile">
+      {!isContact && <a class="nav_cta nav_cta--compact" href="/contact">Book a call</a>}
+      <a aria-controls="mobile-menu" aria-expanded="false" class="nav_menu-btn w-button" href="#">Menu</a>
+    </div>
+  </nav>
+  <ul class="nav_menu" id="mobile-menu" role="list">
+    {nav.map((item) => (
+      <li><a class={linkClass('nav_menu-link', item.href)} aria-current={current(item.href)} href={item.href}>{item.label}</a></li>
+    ))}
+    {!isContact && <li class="nav_menu-cta-item"><a class="nav_menu-cta" href="/contact">Schedule a call</a></li>}
+  </ul>
+</header>

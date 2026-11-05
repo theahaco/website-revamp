@@ -1,0 +1,22 @@
+---
+// Home page section: networks. One card per network (src/components/HomeNetworks.astro).
+import HomeNetworks from '../HomeNetworks.astro';
+---
+<section class="networks_section" id="networks">
+  <div class="section-inner">
+    <div class="nws_head">
+      <div class="nws_title">
+        <p class="v-eyebrow">Where we build</p>
+        <h2 class="section_h2">Networks</h2>
+      </div>
+      <a class="networks_github" href="/networks">Which network fits your case? <span aria-hidden="true">→</span></a>
+    </div>
+    <HomeNetworks />
+  </div>
+</section>
+
+<style>
+  .nws_head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 24px; }
+  .nws_title { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .nws_head .networks_github { padding: 12px 0; margin: -12px 0; }
+</style>

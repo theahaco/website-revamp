@@ -1,0 +1,71 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Daily rebuild at 05:30 UTC, so scheduled articles go live on their date.
+  schedule:
+    - cron: '30 5 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - id: pages
+        uses: actions/configure-pages@v6
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # https://theahaco.github.io + /website on the default Pages URL,
+          # https://theaha.co + "" once the custom domain is set.
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      # A broken link, image or anchor stops the deploy: the live site keeps
+      # its previous version until the file is fixed.
+      - name: Check links, images and anchors
+        run: npm run check
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      # On theaha.co, refuse to publish a build that search engines would skip.
+      - name: Check the production build is indexable
+        if: endsWith(steps.pages.outputs.host, 'theaha.co')
+        run: |
+          if grep -q 'name="robots" content="noindex"' dist/index.html dist/services/index.html; then echo '::error::The production build is marked noindex'; exit 1; fi
+          grep -q '^Allow: /' dist/robots.txt
+          grep -q 'rel="canonical" href="https://theaha.co/"' dist/index.html
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

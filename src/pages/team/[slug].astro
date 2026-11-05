@@ -1,0 +1,162 @@
+---
+// Team member template (Webflow collection "Team"). Empty facts and links are
+// skipped, as the Webflow site's script did.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Cta from '../../components/Cta.astro';
+import TeamGrid from '../../components/TeamGrid.astro';
+import { team, caseStudies, posts, tools, orderBy, formatDate } from '../../lib/content';
+import { siteUrl, ld } from '../../lib/ld';
+import { engagementOrder } from '../../data/curation';
+
+export async function getStaticPaths() {
+  return (await team()).map((m) => ({ params: { slug: m.id }, props: { member: m } }));
+}
+
+const { member } = Astro.props;
+const d = member.data;
+const { render } = await import('astro:content');
+const { Content } = await render(member);
+const hasBio = Boolean(member.body && member.body.trim());
+const facts = [
+  { key: 'location', label: 'Based in', value: d.location },
+  { key: 'focus', label: 'Focus', value: d.focus },
+  { key: 'networks', label: 'Networks', value: d.networks },
+  { key: 'since', label: 'Since', value: d.since },
+].filter((f) => f.value);
+const links = [
+  { key: 'linkedin', label: 'LinkedIn', href: d.links.linkedin },
+  { key: 'github', label: 'GitHub', href: d.links.github },
+  // "jane@theaha.co" works as well as "mailto:jane@theaha.co".
+  { key: 'email', label: 'Email', href: d.links.email && d.links.email.includes('@') && !d.links.email.startsWith('mailto:') ? `mailto:${d.links.email}` : d.links.email },
+].filter((l) => l.href && l.href !== '#');
+const engagements = orderBy(await caseStudies(), engagementOrder).filter((c) => c.data.team.includes(member.id));
+const writing = (await posts()).filter((p) => p.data.author === member.id);
+const built = (await tools()).filter((t) => t.data.built.includes(member.id));
+const base = siteUrl(Astro.site);
+// "Fabricius (Fifo) Zatti": the name without the nickname, the nickname apart.
+const plainName = d.name.replace(/ \(.*\)/, '');
+const nickname = (d.name.match(/\(([^)]+)\)/) || [])[1];
+const networksText = d.networks ? d.networks.split(' · ').join(', ').replace(/, ([^,]*)$/, ' and $1') : '';
+const description = [`${plainName}, ${d.role || 'engineer'} at The Aha Company.`, d.focus ? `${d.focus}${networksText ? `, on ${networksText}` : ''}.` : ''].filter(Boolean).join(' ');
+const personLd = ld({
+  '@type': 'Person',
+  name: plainName,
+  alternateName: nickname,
+  jobTitle: d.role ? d.role.split(' · ')[0] : undefined,
+  url: Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined,
+  image: d.portrait ? new URL(d.portrait.replace(/^\//, ''), base).href : undefined,
+  worksFor: { '@type': 'Organization', '@id': base + '#organization', name: 'The Aha Company', url: base },
+  sameAs: [d.links.linkedin, d.links.github].filter((u) => u && u !== '#'),
+});
+---
+<BaseLayout title={`${d.name}${d.role ? `, ${d.role}` : ''} | The Aha Company`} description={description} image={d.portrait || undefined} imageAlt={d.portrait ? plainName : undefined}>
+  <Fragment slot="head"><script type="application/ld+json" set:html={personLd} /></Fragment>
+  <main>
+    <article class="tm_article">
+      <a class="art_back" href="/about">← The team</a>
+      <div class="tm_header">
+        <div class="tm_portraitbox">{d.portrait && <img alt={d.name} class="tm_portraitimg" src={d.portrait} />}</div>
+        <div class:list={['tm_col', links.length === 0 && 'tm_col--nolinks']}>
+          <div class="tm_intro">
+            <p class="cs_eyebrow">Team</p>
+            <h1 class="intro_h1">{d.name}</h1>
+            {d.role && <p class="art_lede" data-tm="role">{d.role}</p>}
+          </div>
+          {facts.length > 0 && (
+            <dl class="tm_facts">
+              {facts.map((f) => (
+                <div class="cs_fact" data-fact={f.key}><dt class="cs_dt">{f.label}</dt><dd class="cs_dd">{f.value}</dd></div>
+              ))}
+            </dl>
+          )}
+          {hasBio && <div class="blog_richtext w-richtext" data-tm="bio"><Content /></div>}
+          {links.length > 0 && (
+            <ul aria-label="Links" class="tm_links" role="list">
+              {links.map((l) => <li data-pill={l.key}><a class="share_pill" href={l.href}>{l.label}</a></li>)}
+            </ul>
+          )}
+        </div>
+      </div>
+      {engagements.length > 0 && (
+        <section class="tm_section" data-tm="engagements">
+          <div class="more_header">
+            <h2 class="more_h2">Engagements</h2>
+            <a class="more_all" href="/#work">All work ↗</a>
+          </div>
+          <div class="w-dyn-list">
+            <div class="work_list w-dyn-items" role="list">
+              {engagements.map((c) => (
+                <div class="work_item w-dyn-item" role="listitem">
+                  <a class="work_article-link w-inline-block" href={`/case-studies/${c.id}`}>
+                    <span class="work_num"></span>
+                    <div class="work_stack">
+                      <div class="work_meta">
+                        <span class="work_eyebrow" data-eng="eyebrow">{c.data.eyebrow}</span>
+                        <span class="work_yeararrow"><span data-eng="year">{c.data.year}</span><span> ↗</span></span>
+                      </div>
+                      <span class="tm_rowtitle" data-eng="title">{c.data.shortTitle || c.data.title}</span>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      {built.length > 0 && (
+        <section class="tm_section" data-tm="tools">
+          <div class="more_header">
+            <h2 class="more_h2">Open source</h2>
+            <a class="more_all" href="/open-source">All tools ↗</a>
+          </div>
+          <div role="list">
+            {built.map((t) => (
+              <div class="work_item" role="listitem">
+                <a class="more_row" href={`/open-source/${t.id}`}>
+                  <div class="more_stack">
+                    <span class="work_eyebrow">{t.data.category} · {t.data.network}</span>
+                    <span class="more_title">{t.data.name}</span>
+                  </div>
+                  <div class="more_meta"><span class="inline-text">{[t.data.headline?.figure, t.data.headline?.label].filter(Boolean).join(' ')}</span><span class="inline-text"> ↗</span></div>
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      {writing.length > 0 && (
+        <section class="tm_section" data-tm="writing">
+          <div class="more_header">
+            <h2 class="more_h2">Writing</h2>
+            <a class="more_all" href="/work?view=articles">All articles ↗</a>
+          </div>
+          <div class="w-dyn-list">
+            <div class="w-dyn-items" role="list">
+              {writing.map((p) => (
+                <div class="work_item w-dyn-item" role="listitem">
+                  <a class="more_row w-inline-block" href={`/blog/${p.id}`}>
+                    <div class="more_stack">
+                      <span class="work_eyebrow" data-wri="cat">{p.data.category}</span>
+                      <span class="more_title" data-wri="title">{p.data.title}</span>
+                    </div>
+                    <div class="more_meta">
+                      <span class="inline-text" data-wri="date">{formatDate(p.data.date, 'long')}</span><span class="inline-text"> · </span>{p.data.readMinutes && <span class="inline-text" data-wri="min">{p.data.readMinutes}</span>}<span class="inline-text"> min ↗</span>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      <section class="tm_teampanel" data-tm="team">
+        <div class="tm_teamhead">
+          <h2 class="tm_teamh2">The rest of the team</h2>
+          <p class="tm_count" data-rv="team-count">Core team · 12+ engineers across the United States, Europe and Brazil</p>
+        </div>
+        <TeamGrid variant="member" exclude={member.id} />
+      </section>
+    </article>
+  </main>
+  <Cta heading="Talk to an engineer, not a sales team." />
+</BaseLayout>

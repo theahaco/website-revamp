@@ -1,0 +1,18 @@
+---
+// Home page "Networks" cards, from src/content/networks: each network's mark,
+// its home line, and a link only when it has its own page (a heading); the
+// others are plain cards, without a link or an arrow.
+import NetworkCards from './NetworkCards.astro';
+import { networks, networkMarks, nobr } from '../lib/content';
+
+const list = await networks();
+const items = list.map((n) => ({
+  id: n.id,
+  name: n.data.name,
+  logo: n.data.mark || networkMarks[n.data.name] || '',
+  desc: nobr(n.data.homeDescription || ''), // escaped, hyphenated words kept whole
+  href: n.data.heading ? `/networks/${n.id}` : undefined,
+  cta: n.data.homeCta,
+}));
+---
+<NetworkCards items={items} />

@@ -1,0 +1,27 @@
+---
+// Static redirect page (GitHub Pages has no server-side redirects).
+import { normalizeUrl } from '../../integrations/base-path.mjs';
+
+interface Props {
+  to: string;
+  title?: string;
+}
+const { to, title = 'Redirecting | The Aha Company' } = Astro.props;
+const target = normalizeUrl(to, import.meta.env.BASE_URL);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>{title}</title>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+  </head>
+  <body>
+    <a href={target}>Continue</a>
+    <script is:inline define:vars={{ target }}>
+      location.replace(target);
+    </script>
+  </body>
+</html>

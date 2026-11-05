@@ -1,0 +1,32 @@
+---
+// Generated from the Webflow page "/". Edit freely: this file is the source now.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeHero from '../components/home/Hero.astro';
+import HomeLogos from '../components/home/Logos.astro';
+import HomeWorkSection from '../components/home/Work.astro';
+import HomeOpenSource from '../components/home/OpenSource.astro';
+import HomeServices from '../components/home/Services.astro';
+import HomeProcess from '../components/home/Process.astro';
+import HomeWays from '../components/home/Ways.astro';
+import HomeNetworksSection from '../components/home/Networks.astro';
+import Cta from '../components/Cta.astro';
+import { siteUrl, organization, ld } from '../lib/ld';
+const base = siteUrl(Astro.site);
+const orgLd = ld(organization(base));
+const webLd = ld({ '@type': 'WebSite', name: 'The Aha Company', url: base, publisher: { '@id': base + '#organization' } });
+---
+<BaseLayout title={'Blockchain integration partner | The Aha Company'} description={"Stablecoins, tokenized funds and protocol integrations on Stellar, XRPL and Canton, by core contributors to Stellar's tooling. €20M+ of EURCV issued."}>
+<main>
+  <HomeHero />
+  <HomeLogos />
+  <HomeWorkSection />
+  <HomeServices />
+  <HomeProcess />
+  <HomeWays />
+  <HomeOpenSource />
+  <HomeNetworksSection />
+</main>
+<Cta heading={'Bring your institution or protocol onchain, with the team that builds the tooling.'} />
+
+<Fragment slot="head"><script type="application/ld+json" set:html={orgLd} /><script type="application/ld+json" set:html={webLd} /></Fragment>
+</BaseLayout>

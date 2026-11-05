@@ -1,0 +1,60 @@
+---
+// Index of every suggestion (src/data/review.ts). Built only for preview
+// deployments: on the production domain this page does not exist.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { review, type ReviewItem } from '../../data/review';
+import { site as siteData } from '../../data/site';
+
+export function getStaticPaths() {
+  const site = import.meta.env.SITE;
+  const production = !site || new URL(site).origin === siteData.productionOrigin;
+  return production ? [] : [{ params: { slug: undefined } }];
+}
+
+const KIND = { new: 'New', changed: 'Changed', check: 'Check' };
+const COLOR = { new: '#367A12', changed: '#2F6FB0', check: '#B45309' };
+const groups = new Map<string, ReviewItem[]>();
+for (const r of review) {
+  if (!groups.has(r.page)) groups.set(r.page, []);
+  groups.get(r.page)!.push(r);
+}
+const counts = { new: 0, changed: 0, check: 0 };
+review.forEach((r) => counts[r.kind]++);
+---
+<BaseLayout title="Review: suggested content | The Aha Company" noindex>
+  <main>
+    <section>
+      <div class="lg_container">
+        <div class="lg_header">
+          <p class="cs_eyebrow">Review</p>
+          <h1 class="intro_h1">Suggested content</h1>
+          <p class="art_lede">
+            {review.length} suggestions on {groups.size} pages: {counts.new} new, {counts.changed} changed, {counts.check} to check.
+            On each page they are outlined and numbered, with a panel in the bottom-left corner. This page and the marks only exist on the preview.
+          </p>
+        </div>
+        <div class="lg_body">
+          {[...groups].map(([page, items]) => (
+            <>
+              <h2 class="lg_h2"><a href={page === '/' ? '/' : page}>{page === '/' ? 'Home' : page}</a></h2>
+              <ol class="rv-index">
+                {items.map((r) => (
+                  <li>
+                    <span class="rv-index-kind" style={`color:${COLOR[r.kind]}`}>{KIND[r.kind]}</span>
+                    <strong>{r.title}.</strong> {r.note}
+                  </li>
+                ))}
+              </ol>
+            </>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+  .lg_h2 a { color: inherit; text-decoration: none; }
+  .lg_h2 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .rv-index { padding-left: 20px; display: flex; flex-direction: column; gap: 10px; margin: 0 0 8px; }
+  .rv-index-kind { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-right: 6px; }
+</style>

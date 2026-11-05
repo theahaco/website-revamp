@@ -1,0 +1,94 @@
+---
+// Shared page shell: <head>, nav, footer and the site scripts.
+import '../styles/fonts.css';
+import '../styles/webflow.css';
+import '../styles/site.css';
+import '../styles/visual.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import ReviewOverlay from '../components/ReviewOverlay.astro';
+import Analytics from '../components/Analytics.astro';
+import { site } from '../data/site';
+import { pagePath } from '../lib/paths';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  image?: string;
+  /** Alt text of the share image. */
+  imageAlt?: string;
+  noindex?: boolean;
+  /** 'article' on blog posts, with their publication date (ISO). */
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  /** Extra markup that must sit inside .page-body after the footer (Calendly badge on home). */
+}
+const {
+  title = site.defaultTitle,
+  description = site.defaultDescription,
+  ogTitle,
+  ogDescription,
+  image = site.ogImage,
+  imageAlt,
+  noindex = false,
+  ogType = 'website',
+  publishedTime,
+} = Astro.props;
+
+const path = pagePath(Astro.url.pathname);
+const isProduction = !Astro.site || Astro.site.origin === site.productionOrigin;
+const base = import.meta.env.BASE_URL;
+// A page that asks not to be indexed (404, review) names no canonical URL.
+const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+// Share images are 1200 x 630 PNGs (public/images/og/); other images keep their own size.
+const ogSize = /\/images\/og\//.test(image) ? { width: '1200', height: '630' } : null;
+const imageUrl = Astro.site ? new URL(base.replace(/\/$/, '') + image, Astro.site).href : image;
+---
+<!doctype html>
+<html lang="en" data-base={base}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {(noindex || !isProduction) && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content={ogType} />
+    {ogType === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    <meta property="og:title" content={ogTitle ?? title} />
+    {(ogDescription ?? description) && <meta property="og:description" content={ogDescription ?? description} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={imageUrl} />
+    {ogSize && <meta property="og:image:width" content={ogSize.width} />}
+    {ogSize && <meta property="og:image:height" content={ogSize.height} />}
+    {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    <meta property="og:site_name" content={site.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle ?? title} />
+    {(ogDescription ?? description) && <meta name="twitter:description" content={ogDescription ?? description} />}
+    <meta name="twitter:image" content={imageUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script is:inline>!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+    <slot name="head" />
+    {isProduction && <Analytics />}
+  </head>
+  <body>
+    <div class="page-body">
+      <Nav path={path} />
+      <span id="main" tabindex="-1"></span>
+      <slot />
+      <Footer />
+      <slot name="after-footer" />
+    </div>
+    <script>
+      import '../scripts/site.js';
+    </script>
+    {!isProduction && path !== '/review' && <ReviewOverlay path={path} />}
+  </body>
+</html>

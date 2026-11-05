@@ -1,0 +1,33 @@
+---
+// Site footer (Webflow "Footer" component).
+import { contact, footer, nav, footerLinks } from '../data/site';
+---
+<footer class="footer_section">
+  <div class="footer_container">
+    <div class="footer_grid">
+      <div class="footer_brand">
+        <img alt="The Aha Company" class="footer_logo" loading="lazy" src="/images/brand/horizontallogo_blue.svg" width="144" height="66" />
+        <p class="footer_desc">{footer.description}</p>
+        <p class="footer_locations">{footer.locations}</p>
+      </div>
+      <ul class="footer_col" role="list">
+        <li class="footer_col-title">Company</li>
+        {[...nav, ...footerLinks].map((item) => <li><a class="footer_link" href={item.href}>{item.label}</a></li>)}
+      </ul>
+      <ul class="footer_col" role="list">
+        <li class="footer_col-title">Contact</li>
+        <li><a class="footer_link" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+        <li><a class="footer_link" href={contact.github}>GitHub</a></li>
+        <li><a class="footer_link" href={contact.linkedin}>LinkedIn</a></li>
+        <li><a class="footer_link is-strong" href="/contact">Schedule a call →</a></li>
+      </ul>
+      <ul class="footer_col" role="list">
+        <li class="footer_col-title">Legal</li>
+        {footer.legal.map((line) => <li class="footer_legal-text">{line}</li>)}
+        <li><a class="footer_link" href="/privacy">Privacy</a></li>
+        <li><a class="footer_link" href="/terms">Terms</a></li>
+      </ul>
+    </div>
+    <p class="footer_copyright">{footer.copyright}</p>
+  </div>
+</footer>

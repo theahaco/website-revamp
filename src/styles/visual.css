@@ -1,0 +1,72 @@
+/* Visual system (2026 revamp), shared by every section: tints, eyebrow
+   pills, icon boxes, framed cells, live dots. Section-specific styles live in
+   each component's <style> block. Brand palette: Deep Blue #1A3B60, Vibrant
+   Green #47A019, Light Tan #D6BDBE, Cool Pink #F6E2FF; Space Grotesk and
+   Spectral. Green text uses --green-ink (#367A12) for contrast; Vibrant
+   Green is for dots, fills and icons only. */
+
+:root {
+  --tint-blue: #e9eef4;
+  --tint-green: #e6f2dd;
+  --tint-pink: #f6e2ff;
+  --tint-tan: #efe3e3;
+  --tint-paper: #f3f1ec;
+  --deep-blue-2: #13304f;
+  --shadow-1: 0 1px 2px rgba(20, 36, 58, .06), 0 8px 24px rgba(20, 36, 58, .06);
+  --shadow-2: 0 2px 6px rgba(20, 36, 58, .08), 0 24px 48px rgba(20, 36, 58, .1);
+  --radius-lg: 16px;
+}
+
+/* Icons (src/components/Icon.astro) */
+.icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+.icon [opacity] { fill: var(--icon-tint, currentColor); opacity: var(--icon-tint-opacity, .2); }
+
+/* Eyebrow pill: "● Selected work" */
+.v-eyebrow { display: inline-flex; align-items: center; gap: 8px; width: max-content; max-width: 100%; margin: 0; padding: 6px 12px 6px 10px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--white); color: var(--deep-blue); font-family: var(--font-ui); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
+.v-eyebrow::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
+.v-eyebrow--dark { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .24); color: #fff; }
+
+/* Icon box: a tinted square holding one icon */
+.v-iconbox { display: inline-grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 12px; background: var(--tint-blue); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+.v-iconbox--green { background: var(--tint-green); }
+.v-iconbox--pink { background: var(--tint-pink); }
+.v-iconbox--tan { background: var(--tint-tan); }
+.v-iconbox--dark { background: rgba(255, 255, 255, .08); color: #fff; --icon-tint: var(--vibrant-green); }
+.v-iconbox--sm { width: 36px; height: 36px; border-radius: 10px; }
+
+/* Live dot: a green dot that pulses (still when motion is reduced) */
+.v-live { display: inline-block; flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--vibrant-green); }
+@keyframes v-pulse { 0% { box-shadow: 0 0 0 0 rgba(71, 160, 25, .45); } 70% { box-shadow: 0 0 0 7px rgba(71, 160, 25, 0); } 100% { box-shadow: 0 0 0 0 rgba(71, 160, 25, 0); } }
+@media (prefers-reduced-motion: no-preference) { .v-live { animation: v-pulse 2.4s ease-out infinite; } }
+
+/* Blueprint grid: a faint square grid behind a visual */
+.v-blueprint { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 32px 32px; }
+
+/* Fact labels with an icon (case study and tool pages) */
+.cs_dt:has(.cs_dticon) { display: flex; align-items: center; gap: 6px; }
+.cs_dticon { color: var(--muted); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
+
+/* Network pages: icons on the integration items and the steps */
+.nx_invicon { margin-bottom: 16px; }
+.nx_stephead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* Page label above each page title (the pill), with the old label's spacing */
+.page_eyebrow { margin-bottom: 4px; }
+
+/* Arrow icons are drawn without their duotone fill (at small sizes it reads as a box) */
+.kpi_linkicon .icon [opacity], .wd-arrow .icon [opacity], .lg_arrow .icon [opacity] { opacity: 0; }
+
+/* Client logos in one tone; a linked tile gets its colours back on hover */
+.lg_logo { filter: grayscale(1); opacity: .82; transition: filter .2s, opacity .2s; }
+.lg_tile--link:hover .lg_logo, .lg_tile--link:focus-visible .lg_logo { filter: none; opacity: 1; }
+
+/* People in one tone: testimonial portraits and the engineers' faces */
+.work_portrait, .cta_faces img, .fc_faces img { filter: grayscale(1) contrast(1.04); }
+
+/* Line lengths: case lines and quotes stay readable on mid-size screens */
+.hw_link .work_para { max-width: 66ch; }
+.work_blockquote { max-width: 46ch; }
+
+/* Contact form placeholders at AA contrast; fact values (emails, URLs) wrap on small phones */
+.form_textarea::placeholder, .form_input::placeholder { color: var(--muted); }
+.cs_dd, .cs_dd-net { overflow-wrap: anywhere; }

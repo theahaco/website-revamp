@@ -1,0 +1,146 @@
+---
+// Home hero: the proof panel. Three engagements live on mainnet, each row
+// linking to its case study, with the facts of src/content/case-studies
+// (status, network, the EURCV figure and its receipt, the two audits).
+// The bank is under NDA: no logo, a bank icon. Tile tints follow the
+// audience colors (financial institutions blue, protocols green).
+import Icon from '../Icon.astro';
+
+const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G';
+---
+<figure aria-label="Live on mainnet" class="hp">
+  <div aria-hidden="true" class="hp_grid v-blueprint"></div>
+  <div aria-hidden="true" class="hp_sheet hp_sheet--back"></div>
+  <div aria-hidden="true" class="hp_sheet hp_sheet--mid"></div>
+  <div class="hp_card">
+    <div class="hp_head">
+      <p class="hp_title">Live on mainnet</p>
+    </div>
+    <ul class="hp_rows" role="list">
+      <li class="hp_row">
+        <span class="hp_tile hp_tile--blue"><img alt="" class="hp_logo-forge" src="/images/logos/logo-light-sgforge.svg" width="73" height="21" /></span>
+        <p class="hp_name"><a class="hp_link" href="/case-studies/societe-generale-forge">Société Générale-FORGE<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
+        <p class="hp_desc">EURCV regulated euro stablecoin · Stellar</p>
+        <div class="hp_meta">
+          <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span data-rv="card-eurcv">Live since Q1 2026</span></span>
+        </div>
+        <div class="hp_fig"><span class="hp_figv">€20M+</span><span class="hp_figl">issued<a aria-label="Receipt: EURCV on the Stellar explorer" class="receipt-badge hp_receipt" href={receipt} title="Receipt">✓</a></span></div>
+      </li>
+      <li class="hp_row">
+        <span class="hp_tile hp_tile--blue"><Icon name="bank" size={28} /></span>
+        <p class="hp_name"><a class="hp_link" href="/case-studies/nda-settlement-stablecoin">Top US commercial bank<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
+        <p class="hp_desc">Settlement stablecoin · Stellar</p>
+        <div class="hp_meta">
+          <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span data-rv="card-bank">Live since Q3 2026</span></span>
+        </div>
+      </li>
+      <li class="hp_row">
+        <span class="hp_tile hp_tile--green"><img alt="" class="hp_logo-lifi" src="/images/logos/logo-light-lifi.svg" width="55" height="20" /></span>
+        <p class="hp_name"><a class="hp_link" href="/case-studies/lifi">LI.FI<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
+        <p class="hp_desc">Cross-chain asset transfers · Stellar</p>
+        <div class="hp_meta">
+          <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span>Live</span></span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <p class="hp_float hp_float--hacken"><span class="hp_floaticon"><Icon name="shield-check" size={18} /></span><span>EURCV audited by Hacken before mainnet</span></p>
+  <p class="hp_float hp_float--halborn"><span class="hp_floaticon"><Icon name="shield-check" size={18} /></span><span>LI.FI audited by Halborn before production</span></p>
+</figure>
+
+<style>
+  /* Stage: the card on two offset sheets, over a faint blueprint grid */
+  .hp { position: relative; margin: 0; padding: 22px 26px 36px 4px; container-type: inline-size; }
+  .hp_grid { position: absolute; inset: -64px -40px -72px -72px; z-index: 0; -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent); mask-image: radial-gradient(closest-side, #000 45%, transparent); }
+  .hp_sheet { position: absolute; z-index: 0; border: 1px solid var(--line); border-radius: 20px; }
+  .hp_sheet--back { inset: 48px 0 8px 30px; background: var(--tint-pink); }
+  .hp_sheet--mid { inset: 35px 13px 22px 17px; background: var(--tint-blue); }
+
+  .hp_card { position: relative; z-index: 1; background: var(--white); border: 1px solid var(--line-strong); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); }
+  .hp_head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: var(--deep-blue); border-radius: 15px 15px 0 0; color: var(--white); }
+  .hp_title { margin: 0; font-family: var(--font-display); font-size: 22px; font-style: italic; line-height: 1.2; }
+
+  .hp_rows { margin: 0; padding: 0; list-style: none; }
+  .hp_row { position: relative; display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; grid-template-areas: 'tile name fig' 'tile desc fig' 'tile meta fig'; column-gap: 16px; align-items: center; padding: 18px 20px; border-top: 1px solid var(--line); transition: background-color .2s; }
+  .hp_row:first-child { border-top: 0; }
+  .hp_row:last-child { border-radius: 0 0 15px 15px; }
+  .hp_row:hover { background: var(--paper); }
+
+  .hp_tile { grid-area: tile; align-self: center; display: grid; place-items: center; width: 76px; height: 56px; border-radius: 12px; color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+  .hp_tile--blue { background: var(--tint-blue); }
+  .hp_tile--green { background: var(--tint-green); }
+  .hp_logo-forge { width: 62px; height: auto; }
+  .hp_logo-lifi { width: auto; height: 18px; }
+
+  .hp_name { grid-area: name; margin: 0; min-width: 0; font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--deep-blue); }
+  .hp_link { color: inherit; text-decoration: none; }
+  /* The whole row is the link to the case study; the receipt stays its own link above it */
+  .hp_link::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+  .hp_link:focus-visible { outline: none; }
+  .hp_link:focus-visible::after { outline: 2px solid var(--green-ink); outline-offset: -3px; }
+  .hp_row:last-child .hp_link::after { border-radius: 0 0 15px 15px; }
+  .hp_arrow { position: relative; left: 0; font-weight: 500; color: var(--muted); transition: left .2s, color .2s; }
+  .hp_row:hover .hp_link { color: var(--green-ink); }
+  .hp_row:hover .hp_arrow { left: 3px; color: var(--green-ink); }
+
+  .hp_desc { grid-area: desc; margin: 4px 0 0; font-size: 15px; line-height: 1.4; color: var(--muted); }
+  .hp_meta { grid-area: meta; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+  .hp_net, .hp_status { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px 0 7px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1; white-space: nowrap; }
+  .hp_net { border: 1px solid var(--line); background: var(--white); color: var(--ink); }
+  .hp_status { gap: 7px; padding: 0 10px 0 9px; background: var(--tint-green); color: #2f6e10; }
+  .hp_status .v-live { width: 7px; height: 7px; }
+
+  .hp_fig { grid-area: fig; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; justify-self: end; align-self: center; color: var(--deep-blue); }
+  .hp_figv { font-size: 26px; font-weight: 500; line-height: 1; letter-spacing: -.025em; white-space: nowrap; }
+  .hp_figl { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1; color: var(--muted); }
+  .hp_receipt { z-index: 2; }
+
+  /* Floating facts, over the card edges */
+  .hp_float { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 8px 14px 8px 9px; background: var(--white); border: 1px solid var(--line-strong); border-radius: 999px; box-shadow: var(--shadow-2); font-size: 13px; font-weight: 600; line-height: 1.2; color: var(--deep-blue); white-space: nowrap; pointer-events: none; }
+  .hp_floaticon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--tint-green); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .6; }
+  .hp_float--hacken { top: 2px; right: 4px; }
+  .hp_float--halborn { bottom: 0; left: -22px; }
+  @media (prefers-reduced-motion: reduce) { .hp_row, .hp_arrow { transition: none; } .hp_row:hover .hp_arrow { left: 0; } }
+  .hp_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* Narrow panel (1024 px): the figure under the facts, and the card lower
+     so the floating fact clears the title */
+  @container (max-width: 460px) {
+    .hp_card { margin-top: 12px; }
+    .hp_float--hacken { top: 0; }
+    .hp_row { grid-template-columns: 64px minmax(0, 1fr); grid-template-areas: 'tile name' 'tile desc' 'tile meta' 'tile fig'; column-gap: 14px; padding: 16px 18px 16px 16px; }
+    .hp_tile { width: 64px; height: 48px; border-radius: 10px; }
+    .hp_logo-forge { width: 52px; }
+    .hp_logo-lifi { height: 15px; }
+    .hp_fig { flex-direction: row; align-items: center; gap: 8px; justify-self: start; margin-top: 12px; }
+    .hp_head { padding: 14px 18px; }
+  }
+  /* Phones: the tile next to the name, the facts at full width under it */
+  @container (max-width: 380px) {
+    .hp_row { grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: 'tile name' 'desc desc' 'meta meta' 'fig fig'; column-gap: 12px; padding: 16px; }
+    .hp_tile { width: 56px; height: 40px; border-radius: 9px; }
+    .hp_tile :global(svg) { width: 24px; height: 24px; }
+    .hp_logo-forge { width: 46px; }
+    .hp_logo-lifi { height: 14px; }
+    .hp_desc { margin-top: 12px; }
+    .hp_head { padding: 13px 16px; }
+    .hp_title { font-size: 20px; }
+  }
+
+  @media (max-width: 991px) {
+    .hp { max-width: 640px; padding: 22px 22px 36px 0; }
+    .hp_grid { inset: -40px -12px -48px -12px; }
+    .hp_float--halborn { left: 14px; }
+    .hp_float--hacken { right: 0; }
+  }
+  @media (max-width: 479px) {
+    .hp { padding: 20px 14px 30px 0; }
+    .hp_sheet--back { inset: 44px 0 6px 26px; }
+    .hp_sheet--mid { inset: 32px 7px 18px 13px; }
+    .hp_grid { inset: -24px -24px -32px -24px; }
+    .hp_float { font-size: 12px; padding: 6px 12px 6px 7px; }
+    .hp_floaticon { width: 22px; height: 22px; }
+    .hp_float--hacken { top: 0; right: 0; }
+    .hp_float--halborn { position: static; margin: 12px 0 0 14px; }
+  }
+</style>

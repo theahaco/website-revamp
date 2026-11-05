@@ -1,0 +1,288 @@
+/* Custom code that lived in Webflow embeds (nav component and home page),
+   kept verbatim. The Webflow stylesheet itself is in webflow.css. */
+
+@keyframes logo-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.logos_track{animation:logo-marquee 38s linear infinite}
+.logos_track:hover{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.logos_track{animation:none}}
+.logos_mask{-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+/* Client and network logos in their official colors (each organisation's own
+   file, for light backgrounds): a white band, no opacity or tint on them. */
+.logos_section{background-color:var(--white);color:var(--ink);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.logos_track,.logos_networks-list{opacity:1}
+.logos_networks{border-top-color:var(--line)}
+.logos_networks-label{color:var(--muted)}
+.nav_wrap{-webkit-backdrop-filter:blur(8px)}
+.work_toggle-btn.w--current{background-color:#1A3B60;color:#fff}
+.process_tab.w--current{background-color:transparent;border-bottom-color:#47A019;color:#fff}
+.work_list{counter-reset:work}
+.work_item{counter-increment:work}
+.work_num::before{content:counter(work,decimal-leading-zero)}
+.work_quote-label:empty{display:none}
+summary.faq_q::-webkit-details-marker{display:none}
+summary.faq_q{list-style:none}
+details[open]>summary>.faq_icon{transform:rotate(45deg)}
+h1,h2,h3,.text-lead,.hero_lead,.faq_answer,.footer_desc,.work_para,.cta_h2,.blog_excerpt,.art_lede{text-wrap:pretty}
+body{-webkit-font-smoothing:antialiased}
+.art_related-link::after{content:" \2197"}
+.blog_richtext>*{margin:0}
+.blog_richtext>*+*{margin-top:24px}
+.blog_richtext p{text-wrap:pretty}
+.blog_richtext h2{font-family:Spectral,Georgia,serif;font-style:italic;font-weight:400;font-size:clamp(26px,2.6vw,34px);line-height:1.2;color:#1A3B60;padding-top:16px}
+.blog_richtext a{text-decoration:underline;text-underline-offset:3px}
+.blog_richtext ul{display:flex;flex-direction:column;gap:10px;padding-left:0;list-style:none}
+.blog_richtext ul li{position:relative;padding-left:28px}
+.blog_richtext ul li::before{content:"\2192";color:#47A019;font-weight:700;position:absolute;left:0;top:0}
+.blog_richtext blockquote{font-family:Spectral,Georgia,serif;font-style:italic;font-size:clamp(22px,2.2vw,28px);line-height:1.35;color:#1A3B60;padding:8px 0 8px 24px;border-left:2px solid #47A019;background:transparent}
+.blog_richtext pre{padding:24px;background:#1A3B60;color:#fff;border-radius:8px;font:14px/1.6 ui-monospace,Menlo,monospace;overflow:auto}
+.blog_richtext figure{display:flex;flex-direction:column;gap:12px;max-width:100%}
+.blog_richtext figure img{border-radius:8px;width:100%}
+.blog_richtext figcaption{font-size:14px;color:#5A6B7E;text-align:left}
+.cs_receipts ul{display:flex;flex-direction:column;gap:10px;padding-left:0;list-style:none;margin:0}
+.cs_receipts li{display:flex;align-items:center;gap:10px}
+.cs_receipts li::before{content:"\2713";display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:999px;background:#47A019;color:#fff;font-size:10px;font-weight:700;flex-shrink:0}
+.cs_receipts a{text-decoration:none;color:#14243A}
+.cs_receipts a:hover{color:#367A12}
+.cs_receipts p{margin:0}
+.cs_teamcard .cs_cardlabel{color:#1A3B60}
+.cs_figmark:hover{background-color:#367A12}
+.cs_quotelabel:empty{display:none}
+.cs_teamrow:hover .cs_teamname{color:#367A12}
+.tm_gridlink:hover .tm_gridname{color:#367A12}
+a.art_back:hover{color:#367A12}
+.cs_fig,.cs_quote,.cs_herocaption{text-wrap:pretty}
+a[data-nda-link]{display:block;color:inherit;text-decoration:none}
+a[data-nda-link]:hover .work_nda-eyebrow{color:#367A12}
+a.work_case-link[href]:hover .work_h3{color:#367A12}
+.lg_li::before{content:"\2192";color:#47A019;font-weight:700;flex-shrink:0}
+[data-svc="arrows"] .svc_li::before{content:"\2192";color:#47A019;font-weight:700;flex-shrink:0}
+[data-svc="steps"]{counter-reset:svcstep}
+[data-svc="steps"] .svc_li{counter-increment:svcstep}
+[data-svc="steps"] .svc_li::before{content:counter(svcstep);font-family:Spectral,Georgia,serif;font-style:italic;color:#47A019;font-size:18px;flex-shrink:0;width:14px}
+.svc_pill:hover,.nf_card:hover,.net_card:hover,.svc_casecard:hover{border-color:#1A3B60}
+.wk_tab.is-on{background-color:#1A3B60;color:#fff}
+.wk_chip.is-on{background-color:#1A3B60;color:#fff;border-color:#1A3B60}
+.wk_empty.is-shown{display:flex}
+.nxjs_stat{display:flex;flex-direction:column;gap:2px}
+.nxjs_statv{display:flex;align-items:center;gap:8px;font-size:28px;font-weight:500;letter-spacing:-.02em;color:#1A3B60;line-height:1.1}
+.nxjs_statl{font-size:13px;color:#5A6B7E}
+.nxjs_shiprow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 24px;border-top:1px solid rgba(26,59,96,.14)}
+.nxjs_shipname{font-size:15px;font-weight:600;color:#1A3B60;display:block}
+.nxjs_shipdesc{font-size:13px;color:#5A6B7E;display:block}
+.nxjs_shipbadge{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#1A3B60;white-space:nowrap}
+.nxjs_shipdot{width:6px;height:6px;border-radius:999px;background:#47A019;flex-shrink:0}
+.nxjs_invh3{font-family:Spectral,Georgia,serif;font-style:italic;font-weight:400;font-size:24px;line-height:1.2;color:#1A3B60;margin:0}
+.nxjs_invp{font-size:15px;color:#3C4C60;margin:0}
+.nxjs_step{display:flex;flex-direction:column;gap:12px;padding-top:20px;border-top:1.5px solid rgba(255,255,255,.3)}
+.nxjs_stepnum{font-family:Spectral,Georgia,serif;font-style:italic;font-size:24px;line-height:1;color:#47A019}
+.nxjs_steph3{font-size:20px;font-weight:600;line-height:1.3;margin:0}
+.nxjs_stepbody{font-size:14px;line-height:1.5;color:rgba(255,255,255,.78);margin:0}
+.nxjs_stepout{font-size:14px;line-height:1.5;color:#fff;margin-top:auto}
+.nxjs_fundrow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid rgba(26,59,96,.14)}
+.nxjs_fundname{font-size:16px;font-weight:600;color:#1A3B60;display:block}
+.nxjs_funddesc{font-size:14px;color:#5A6B7E;display:block}
+.nxjs_fundbadge{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:#367A12;white-space:nowrap}
+
+/* Calendly badge (home page) */
+.calendly-badge-widget .calendly-badge-content{font-family:'Space Grotesk',system-ui,sans-serif!important;font-weight:600!important;font-size:15px!important;border-radius:4px!important;box-shadow:0 8px 24px -12px rgba(26,59,96,.5)!important}
+@media (max-width:767px){.calendly-badge-widget{display:none}}
+
+/* Current page in the nav (the Webflow site set this inline from its script) */
+.nav_link[aria-current="page"], .nav_menu-link[aria-current="page"] { color: #367A12; }
+
+/* "In this article" links (the Webflow site set these colours from its script) */
+.art_rail-list a { color: #3C4C60; }
+.art_rail-list a:hover { color: #367A12; }
+
+/* Team pages: Webflow kept the (empty) links list in the column for members
+   without links, which adds one 28px row gap under the facts. Same spacing here. */
+.tm_col--nolinks::after { content: ""; }
+
+/* Home "Selected work": a row without a testimonial shows the relationship
+   label and the logo in the quote slot. */
+.work_quote--plain { row-gap: 12px; }
+.work_quote--plain .work_client-logo { height: 28px; }
+
+/* About: link to the open-source page under "Roles we hold in the ecosystems". */
+.os_aboutlink { display: inline-block; margin-top: 24px; }
+
+/* Rich text: tables and inline code (tool pages, articles) */
+.tl_tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.blog_richtext table{width:100%;border-collapse:collapse;font-size:15px;line-height:1.45}
+.blog_richtext th[align=right],.blog_richtext td[align=right]{text-align:right;white-space:nowrap;padding-right:0}
+.blog_richtext th{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#5A6B7E;text-align:left;padding:0 16px 10px 0;border-bottom:1px solid rgba(26,59,96,.24)}
+.blog_richtext td{padding:12px 16px 12px 0;border-bottom:1px solid rgba(26,59,96,.12);vertical-align:top;color:#3C4C60}
+.blog_richtext td:first-child{color:#1A3B60;font-weight:500}
+.blog_richtext tr:last-child td{border-bottom:0}
+.blog_richtext code{font:.88em/1.4 ui-monospace,Menlo,monospace;background:rgba(26,59,96,.07);padding:1px 6px;border-radius:4px;color:#1A3B60;overflow-wrap:anywhere}
+.blog_richtext pre code{background:none;padding:0;color:inherit}
+
+/* Tool pages: visual band under the figures */
+.tl_visual{width:100%;max-width:1200px;margin:0 auto;padding:clamp(40px,5vw,64px) clamp(24px,4vw,48px) 0;display:flex;flex-direction:column;gap:12px}
+.tl_panel{display:flex;justify-content:center;align-items:flex-end;padding:40px 24px 0;border-radius:8px;overflow:hidden}
+.tl_panel--dark{background:#1A3B60}
+.tl_panel--light{background:#FBF3FF;border:1px solid rgba(26,59,96,.14)}
+.tl_panelimg{display:block;width:auto;height:auto;max-width:100%;max-height:520px}
+.tl_caption{font-size:14px;line-height:1.5;color:#5A6B7E;text-align:left}
+.tl_caption code{font:.92em ui-monospace,Menlo,monospace;color:#1A3B60}
+.tl_visual--code .tl_caption,.tl_visual--bars .tl_caption{max-width:820px;width:100%;margin:0 auto}
+.tl_code{width:100%;max-width:820px;margin:0 auto;background:#11213A;border-radius:12px;overflow:hidden}
+.tl_codebar{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.tl_codebar i{width:12px;height:12px;border-radius:999px;background:#D6BDBE}
+.tl_codebar i:nth-child(2){background:#F6E2FF}
+.tl_codebar i:nth-child(3){background:#47A019}
+.tl_codefile{margin-left:12px;font:14px ui-monospace,Menlo,monospace;color:rgba(255,255,255,.62)}
+.tl_pre{margin:0;padding:24px 28px;overflow-x:auto;font:15px/1.7 ui-monospace,Menlo,monospace;color:#E8EEF6;background:transparent;border-radius:0}
+.tl_str{color:#8FD068}
+.tl_chart{width:100%;max-width:820px;margin:0 auto;padding:28px;background:#fff;border:1px solid rgba(26,59,96,.14);border-radius:8px;display:flex;flex-direction:column;gap:20px}
+.tl_charttitle{margin:0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#5A6B7E}
+.tl_bars{display:flex;flex-direction:column;gap:16px;margin:0;padding:0;list-style:none}
+.tl_bar{display:grid;grid-template-columns:150px minmax(0,1fr) 150px;gap:16px;align-items:center}
+.tl_barlabel{display:flex;flex-direction:column;gap:2px}
+.tl_barname{font-size:15px;font-weight:600;color:#1A3B60}
+.tl_barsub{font-size:13px;color:#5A6B7E}
+.tl_bartrack{display:block;height:36px;background:rgba(26,59,96,.06);border-radius:4px;overflow:hidden}
+.tl_barfill{display:block;height:100%;background:#1A3B60;border-radius:4px}
+.tl_bar--hi .tl_barfill{background:#47A019}
+.tl_barvalue{font-size:15px;font-weight:600;color:#1A3B60;white-space:nowrap}
+@media (max-width:600px){.tl_bar{grid-template-columns:minmax(0,1fr) auto;row-gap:8px}.tl_bartrack{grid-column:1/-1;grid-row:2}.tl_chart{padding:20px}}
+.tl_builtnote{font-size:14px;color:#3C4C60;padding-left:44px}
+.blog_richtext a{color:#1A3B60}
+.blog_richtext a:hover{color:#367A12}
+.nxjs_shiplink{text-decoration:none}
+.nxjs_shiplink span{color:#47A019;font-weight:700}
+.nxjs_shiplink:hover{color:#367A12}
+.ab_rolelink{color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(26,59,96,.35)}
+.ab_rolelink:hover{color:#367A12}
+/* Home "Selected work": the open-source block under the NDA block, and the
+   two cards of the ecosystems section on Services. */
+.work_os-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.work_os-all{color:var(--deep-blue);font-size:14px;font-weight:500;text-decoration:none}
+.work_os-all:hover{color:#367A12}
+/* Home: the open-source block is a row of tool links; three NDA cases sit in one row on desktop. */
+.work_os-head{flex-wrap:wrap;row-gap:8px}
+.work_os-list{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.work_nda-label{text-wrap:balance}
+@media (max-width:767px){.work_os-head{display:contents}.work_os-list{order:1}.work_os-all{order:2}}
+@media (max-width:479px){.work_nda{padding:24px 20px}}
+@media (min-width:992px){.work_nda-list:has(>:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr));column-gap:40px}}
+@media (min-width:768px) and (max-width:991px){.work_nda-list:has(>:nth-child(3):last-child){grid-template-columns:1fr}}
+.svc_casestack{display:flex;flex-direction:column;gap:16px}
+
+/* ---------------------------------------------------------------- launch fixes, November 2026 */
+/* Contrast (WCAG AA: 4.5:1 for text under 18 px) */
+:root{--muted:#56677a;--muted-2:#56677a}
+.cs_dd-sub,.ab_teamloc,.wk_nda,.nx_quotetag{color:#56677a}
+.btn-green{background-color:var(--green-ink)}
+.btn-green:hover{background-color:#2f6e10}
+.ways_section,.art_related,.tm_teampanel,.ab_team,.nx_proof{--green-ink:#2f6e10}
+/* Client logos in "Selected work", sized per client rather than per row */
+.work_item[data-client="societe-generale-forge"] .work_client-logo{height:30px}
+.work_item[data-client="lifi"] .work_client-logo{height:20px}
+.work_item[data-client="pwc"] .work_client-logo{height:26px}
+.work_item[data-client="stellar-development-foundation"] .work_client-logo{height:18px}
+.work_item[data-client="ripple"] .work_client-logo{height:20px}
+/* Rows and cards without a page of their own (the alliance, networks without a page) */
+.wk_static,.net_card--plain{cursor:default}
+.net_inlinelink{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.work_all{grid-column:1 / -1;justify-self:start;margin-top:8px}
+/* Network names in the facts link to the network page */
+.cs_netlink{color:inherit;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px;transition:color .2s}
+.cs_netlink:hover{color:var(--green-ink)}
+/* Logo band: static, every logo whole (a moving band cannot be paused by touch or keyboard) */
+.logos_track{animation:none;width:auto;flex-wrap:wrap;justify-content:center;gap:24px 56px;padding-right:0}
+.logos_track>[aria-hidden="true"]{display:none}
+/* Calendly inline embed: the iframe fills its 700 px box (it was 150 px tall),
+   and gets the full width under 992 px (Calendly needs 320 px at least) */
+.calendar_widget .w-embed{height:100%}
+@media (max-width:991px){.contact-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:479px){.card.calendar{padding:20px 8px}.card.calendar>.card_h2,.card.calendar>.calendar_fallback{padding:0 8px}}
+/* Case studies and tool pages under 992 px: each heading above its own text */
+@media (max-width:991px){.cs_section>.cs_h2{grid-row:1}.cs_section>.blog_richtext{grid-row:2}}
+/* Pills on one line */
+.wk_nda{white-space:nowrap}
+/* Team grids: two per row on phones */
+@media (max-width:767px){.ab_teamgrid,.tm_grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Header on tablets and phones: a call button next to Menu; a shorter bar on phones */
+.nav_mobile{display:none;align-items:center;gap:8px}
+.nav_cta--compact{min-height:44px;padding:0 14px;font-size:15px}
+@media (max-width:991px){.nav_mobile{display:flex}}
+@media (max-width:767px){.nav_bar{height:64px}.nav_logo{height:40px}}
+/* Skip link (keyboard users) and visible focus on the home toggle */
+.skip_link{position:absolute;left:8px;top:-64px;z-index:100;background:var(--deep-blue);color:#fff;padding:10px 16px;border-radius:4px;font-weight:600;text-decoration:none}
+.skip_link:focus{top:8px}
+#main{outline:none}
+.work_toggle-btn:focus-visible{outline:2px solid var(--green-ink);outline-offset:2px}
+/* Home: the eyebrow is part of the H1 (search engines read "Blockchain integration partner"), styled as before */
+.h1_eyebrow{display:block;font-style:normal;line-height:1.5;margin-bottom:28px}
+/* "More" rows: a long figure wraps instead of widening the page on phones */
+@media (max-width:767px){.more_meta{white-space:normal}}
+/* Home hero card: the open-source figure links to its counting page */
+.hero_card-footlink{color:inherit;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
+.hero_card-footlink:hover{color:var(--green-ink)}
+/* Radio buttons keep their size next to two-line labels */
+.form_radio-input{flex-shrink:0}
+/* Calendar fallback line above the calendar */
+.card.calendar>.calendar_fallback{margin:-4px 0 0}
+/* Hero card: client names link to their case studies */
+.hero_card-link{color:inherit;text-decoration:none}
+.hero_card-link:hover{color:var(--green-ink);text-decoration:underline;text-underline-offset:3px}
+/* /networks: direct links under the introduction */
+.net_jump{margin:4px 0 0;color:var(--muted);font-size:15px}
+.net_jump a{color:var(--deep-blue);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+/* ---------------------------------------------------------------- design review, November 4 */
+/* Visible focus everywhere, white on the dark bands */
+:where(a,button,summary,[tabindex]:not([tabindex="-1"])):focus-visible{outline:2px solid var(--green-ink);outline-offset:2px}
+.process_tab:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+.cta_section :focus-visible,.process_section :focus-visible,.net_route :focus-visible{outline-color:#fff}
+/* Anchors and focused messages land below the sticky header */
+html{scroll-padding-top:125px}
+@media (max-width:991px){html{scroll-padding-top:101px}}
+@media (max-width:767px){html{scroll-padding-top:81px}}
+/* Contrast on Cool Pink */
+.tm_count,.tm_gridrole{color:#56677a}
+.art_related .cs_cardlabel-green,.nx_proof .cs_eyebrow{color:#2f6e10}
+/* One left edge for every page and band; the logo mark aligned with the text */
+.nav_bar,.nav_menu,.footer_container,.cta_container,.logos_container,.section-inner,.hero_section,.contact_main,.faq_main,.art_header,.art_cover,.art_grid,.more_inner{padding-left:clamp(24px,4vw,48px);padding-right:clamp(24px,4vw,48px)}
+.nav_logo,.footer_logo{margin-left:-13px}
+@media (max-width:991px){.nav_logo,.footer_logo{margin-left:-9px}}
+@media (max-width:767px){.nav_logo{margin-left:-8px}}
+/* Hyphenated names stay on one line in display headings */
+.nobr{white-space:nowrap}
+/* Network marks in the facts: the symbol only (the name is written next to it) */
+.cs_netmark{width:16px;height:16px;object-fit:cover;object-position:left center}
+.cs_netmark[src*="xrpl"]{width:21px}
+/* Hover feedback on list rows, FAQ questions and filter chips */
+.more_title,.networks_h3,.faq_q{transition:color .2s}
+a.more_row:hover .more_title,a.networks_row:hover .networks_h3,summary.faq_q:hover{color:var(--green-ink)}
+.wk_chip:not(.is-on):hover{border-color:var(--deep-blue)}
+/* 44 px touch targets without moving anything */
+.receipt-badge,.cs_figmark{position:relative}
+.receipt-badge::after,.cs_figmark::after{content:"";position:absolute;inset:-14px}
+.art_back{padding:11px 0;margin:-11px 0}
+@media (pointer:coarse){.wk_chip,.faq_pill,.share_pill,.svc_pill{min-height:44px}}
+/* Open mobile menu: an opaque header */
+.nav_wrap:has(.nav_menu.is-open){background-color:var(--paper)}
+/* Four cards or steps: 2 x 2 or 4 in a row, never 3 + 1 */
+@media (min-width:600px){.net_cards:has(>:nth-child(4):last-child),.svc_cardgrid:has(>:nth-child(4):last-child),.nx_stepsgrid,.process_steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:992px){.nx_stepsgrid,.process_steps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1200px){.net_cards:has(>:nth-child(4):last-child),.svc_cardgrid:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* "How an engagement runs": the heading gets the full width under 1200 px */
+@media (max-width:1199px){.section-inner.process_layout{grid-template-columns:1fr}.process_tabs{grid-row-start:2;grid-column-start:1;justify-self:start}.process_layout .work_panels{grid-row-start:3;grid-column:1/-1}}
+/* Work rows on phones: the number above the text, not in a column */
+@media (max-width:767px){.work_case-link,.work_article-link{grid-template-columns:minmax(0,1fr);row-gap:6px}.work_num{padding-top:0}}
+.faq_pill{font-size:14px;white-space:nowrap}
+.wk_filters[hidden],.wk_filtergroup[hidden]{display:none}
+/* Testimonials: portrait next to the name, attributions aligned */
+.nx_quoteattr{text-align:left}
+.cs_quoteattrib:has(.cs_quoteavatar){display:flex;align-items:center;gap:12px}
+.cs_quoteavatar{width:40px;height:40px;border-radius:999px;object-fit:cover;flex-shrink:0}
+/* Arrows stay with their last word */
+.art_related-link::after{content:"\00a0\2197"}
+.work_os-all{white-space:nowrap;flex-shrink:0}
+/* Status dot and network mark on the first line of a two-line value */
+.cs_dd-net{align-items:flex-start}
+.cs_dd-net .cs_dot{margin-top:8px}
+.cs_dd-net .cs_netmark{margin-top:4px}
+/* Case study header images on phones: square, on the diagram (the title is already the H1) */
+@media (max-width:767px){.cs_heroimg{aspect-ratio:1/1;object-fit:cover;object-position:100% 50%}}

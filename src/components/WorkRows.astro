@@ -1,0 +1,142 @@
+---
+// Rows of the Work page (case studies or articles). Eyebrow, filter data and
+// links are computed here; src/scripts/work.js only filters and switches views.
+// Each row has a thumbnail (src/lib/visuals.ts, WorkThumb).
+import { caseStudies, posts, tools, formatDate, nobr } from '../lib/content';
+import { caseVisual, articleVisual, toolVisual } from '../lib/visuals';
+import WorkThumb from './WorkThumb.astro';
+
+interface Props {
+  kind: 'cases' | 'articles';
+}
+const { kind } = Astro.props;
+const eyebrow = (aud: string, net: string) => (aud && net ? `${aud} · ${net}` : aud || net);
+const allCases = kind === 'cases' ? await caseStudies() : [];
+// Alliances (PwC US) are not client engagements: listed last, after the
+// open-source tools, without a link.
+const cases = allCases.filter((c) => !c.data.alliance);
+const alliances = allCases.filter((c) => c.data.alliance);
+const articles = kind === 'articles' ? await posts() : [];
+// Open-source tools are listed with the case studies, under "Ecosystems and
+// open source": each has a case-study page of its own (/open-source/<id>).
+const toolRows = kind === 'cases' ? await tools() : [];
+const toolAudience = 'Ecosystems and open source';
+const toolSubtitle = (name: string, title: string) => {
+  const s = title.startsWith(name + ':') ? title.slice(name.length + 1).trim() : title;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+const toolLine = (summary: string, figure?: string, label?: string) => [summary, figure && label ? `${figure} ${label}.` : ''].filter(Boolean).join(' ');
+// "XRPL and Stellar" matches both network filters.
+const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim()).filter(Boolean).join('|');
+---
+<div class="w-dyn-list">
+  <div class="work_list w-dyn-items" role="list">
+    {cases.map((cs, i) => (
+      <div class="work_item w-dyn-item" role="listitem" data-fa={cs.data.audience} data-fn={cs.data.network}>
+        <a class="work_article-link w-inline-block wr_link" href={`/case-studies/${cs.id}`}>
+          <span class="work_num"></span>
+          <span class="wr_thumb"><WorkThumb visual={caseVisual(cs.id, cs.data)} eager={i === 0} /></span>
+          <div class="work_stack">
+            <div class="wr_head">
+              <div class="work_meta">
+                <span class="work_eyebrow" data-row="eyebrow">{eyebrow(cs.data.audience, cs.data.network)}</span>
+                <span class="work_yeararrow"><span data-row="year">{cs.data.year}</span><span> ↗</span></span>
+              </div>
+            </div>
+            {cs.data.client && <p class="wk_client"><span data-row="client">{cs.data.client}</span>{cs.data.nda && <span class="wk_nda" data-row="nda">Under NDA</span>}</p>}
+            <h2 class="work_article-h3" data-row="title" set:html={nobr(cs.data.workTitle || cs.data.title)} />
+            {cs.data.workLine && <p class="wk_rowline" data-row="line" set:html={nobr(cs.data.workLine)} />}
+          </div>
+        </a>
+      </div>
+    ))}
+    {toolRows.map((tool) => (
+      <div class="work_item w-dyn-item" role="listitem" data-fa={toolAudience} data-fn={toolNets(tool.data.network)} data-wk-tool={tool.id}>
+        <a class="work_article-link w-inline-block wr_link" href={`/open-source/${tool.id}`}>
+          <span class="work_num"></span>
+          <span class="wr_thumb"><WorkThumb visual={toolVisual(tool.id)} /></span>
+          <div class="work_stack">
+            <div class="wr_head">
+              <div class="work_meta">
+                <span class="work_eyebrow" data-row="eyebrow">{eyebrow(toolAudience, tool.data.network)}</span>
+                <span class="work_yeararrow"><span data-row="year">{tool.data.category}</span><span> ↗</span></span>
+              </div>
+            </div>
+            <p class="wk_client"><span data-row="client">{tool.data.name}</span><span class="wk_nda" data-row="nda">Open source</span></p>
+            <h2 class="work_article-h3" data-row="title" set:html={nobr(toolSubtitle(tool.data.name, tool.data.title))} />
+            <p class="wk_rowline" data-row="line" set:html={nobr(toolLine(tool.data.summary, tool.data.headline?.figure, tool.data.headline?.label))} />
+          </div>
+        </a>
+      </div>
+    ))}
+    {alliances.map((cs) => (
+      <div class="work_item w-dyn-item" role="listitem" data-fa={cs.data.audience} data-fn={cs.data.network} data-wk-alliance={cs.id}>
+        <div class="work_article-link wk_static wr_link">
+          <span class="work_num"></span>
+          <span class="wr_thumb"><WorkThumb visual={caseVisual(cs.id, cs.data)} /></span>
+          <div class="work_stack">
+            <div class="wr_head">
+              <div class="work_meta">
+                <span class="work_eyebrow" data-row="eyebrow">{eyebrow(cs.data.audience, cs.data.network)}</span>
+                <span class="work_yeararrow"><span data-row="year">{cs.data.year}</span></span>
+              </div>
+            </div>
+            <p class="wk_client"><span data-row="client">{cs.data.client}</span><span class="wk_nda" data-row="nda">Co-selling alliance</span></p>
+            <h2 class="work_article-h3" data-row="title" set:html={nobr(cs.data.workTitle || cs.data.title)} />
+            {cs.data.workLine && <p class="wk_rowline" data-row="line" set:html={nobr(cs.data.workLine)} />}
+          </div>
+        </div>
+      </div>
+    ))}
+    {articles.map((post, i) => (
+      <div class="work_item w-dyn-item" role="listitem" data-fa={post.data.audience} data-fn={post.data.network}>
+        <a class="work_article-link w-inline-block wr_link" href={`/blog/${post.id}`}>
+          <span class="work_num"></span>
+          <span class="wr_thumb"><WorkThumb visual={articleVisual(post.id, post.data)} eager={i === 0} /></span>
+          <div class="work_stack">
+            <div class="wr_head">
+              <div class="work_meta">
+                <span class="work_eyebrow" data-row="eyebrow">{eyebrow(post.data.audience, post.data.network)}</span>
+                <span class="work_yeararrow"><span data-row="date">{formatDate(post.data.date, 'long')}</span><span> ↗</span></span>
+              </div>
+            </div>
+            <h2 class="work_article-h3" data-row="title" set:html={nobr(post.data.title)} />
+            {(post.data.readMinutes || post.data.authorName) && (
+              <p class="wk_rowline">
+                {post.data.readMinutes && <span data-row="min">{post.data.readMinutes}</span>}
+                {post.data.readMinutes && <span> min · </span>}
+                {post.data.authorName && <span data-row="author">{post.data.authorName}</span>}
+              </p>
+            )}
+          </div>
+        </a>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* Number, square thumbnail, text. On phones: a smaller thumbnail next to the
+     number and eyebrow; client, title and line below it at full width. */
+  .wr_link { --wr-thumb: 152px; grid-template-columns: 32px var(--wr-thumb) minmax(0, 1fr); column-gap: 28px; align-items: start; }
+  .wr_thumb { display: block; width: 100%; aspect-ratio: 1; }
+  .wr_head { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .wr_head::before { display: none; }
+  .wr_link .work_num { padding-top: 0; line-height: 18px; }
+  .wr_link .work_meta { min-height: 18px; }
+  .work_article-h3 { transition: color .2s; }
+  a.wr_link:hover .work_article-h3 { color: var(--green-ink); }
+  @media (max-width: 991px) {
+    .wr_link { --wr-thumb: 128px; column-gap: 24px; }
+  }
+  @media (max-width: 767px) {
+    .wr_link { --wr-thumb: 88px; grid-template-columns: var(--wr-thumb) minmax(0, 1fr); column-gap: 16px; row-gap: 12px; }
+    .wr_link .work_num { display: none; }
+    .wr_thumb { grid-column: 1; grid-row: 1; }
+    .wr_link .work_stack { display: contents; }
+    .wr_head { grid-column: 2; grid-row: 1; align-self: center; }
+    .wr_link .work_stack > :not(.wr_head) { grid-column: 1 / -1; }
+    .wr_head::before { content: counter(work, decimal-leading-zero); display: block; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1.2; }
+    .wr_link .wk_client { flex-wrap: wrap; row-gap: 6px; margin-top: 4px; }
+  }
+</style>

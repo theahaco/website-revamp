@@ -1,0 +1,23 @@
+---
+// A row of team faces with a short line, on a light background (the closing
+// call-to-action band has its own dark version). Decorative portraits:
+// public/images/team/avatars/<id>-96.webp.
+interface Props {
+  note?: string;
+}
+const { note = 'Calls are with one of our engineers.' } = Astro.props;
+const faces = ['willem-wyndham', 'pamela-selle', 'fabricius-zatti', 'hugo-heer', 'chad-ostrowski', 'pamphile-roy', 'roberson-costa-dresch'];
+---
+<div class="fc_row">
+  <div aria-hidden="true" class="fc_faces">
+    {faces.map((f) => <img src={`/images/team/avatars/${f}-96.webp`} alt="" width="40" height="40" decoding="async" />)}
+  </div>
+  <p class="fc_note">{note}</p>
+</div>
+<style>
+  .fc_row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 4px; }
+  .fc_faces { display: flex; flex-shrink: 0; }
+  .fc_faces img { display: block; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--tint-tan); box-shadow: 0 0 0 3px var(--paper); }
+  .fc_faces img + img { margin-left: -9px; }
+  .fc_note { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+</style>

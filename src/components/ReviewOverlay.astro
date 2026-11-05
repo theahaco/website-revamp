@@ -1,0 +1,22 @@
+---
+// Review mode (preview builds only, see src/data/review.ts).
+import { review } from '../data/review';
+
+interface Props {
+  path: string;
+}
+const { path } = Astro.props;
+const items = review.filter((r) => r.page === path);
+const data = {
+  items,
+  total: review.length,
+  pages: new Set(review.map((r) => r.page)).size,
+  index: import.meta.env.BASE_URL.replace(/\/$/, '') + '/review/',
+};
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+---
+<script type="application/json" id="rv-data" set:html={json} />
+<script>
+  import { initReview } from '../scripts/review.js';
+  initReview();
+</script>

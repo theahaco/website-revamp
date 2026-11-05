@@ -1,0 +1,87 @@
+---
+// Who does what, for each way of working with us (home page, "Ways to work
+// with us"). Aha diagram style: 2 px Deep Blue strokes, green filled nodes,
+// rounded frames, small uppercase Space Grotesk labels. A green node is one of
+// our engineers, an outline node one of yours. Conceptual only: no figures,
+// no claims. Decorative (the card text says the same), so hidden from screen
+// readers.
+interface Props {
+  kind: 'partner' | 'lead' | 'embedded' | 'programs';
+}
+const { kind } = Astro.props;
+
+// Lead: your engineers in a row under our lead.
+const row = [40, 93, 147, 200];
+// Embedded: two rows of four, one of them ours.
+const grid = [42, 82].flatMap((y) => [42, 94, 146, 198].map((x) => ({ x, y })));
+// Programs: the teams around the hub, on an ellipse.
+const ring = Array.from({ length: 8 }, (_, i) => {
+  const a = (i * Math.PI) / 4;
+  return { x: +(120 + 98 * Math.cos(a)).toFixed(1), y: +(66 + 50 * Math.sin(a)).toFixed(1) };
+});
+---
+<svg aria-hidden="true" class="wd-svg" focusable="false" height="140" viewBox="0 0 240 140" width="240" xmlns="http://www.w3.org/2000/svg">
+  {kind === 'partner' && (
+    <g>
+      <rect class="yours" height="28" rx="14" width="56" x="1" y="50" />
+      <text class="t t-sm" x="29" y="68">SCOPE</text>
+      <path class="line" d="M57 64 H 72 M67 59 L 73 64 L 67 69" />
+      <rect class="frame-ours" height="92" rx="20" width="80" x="78" y="18" />
+      <path class="link-ours" d="M101 48 L 135 48 L 118 80 Z" />
+      <circle class="ours" cx="101" cy="48" r="10" />
+      <circle class="ours" cx="135" cy="48" r="10" />
+      <circle class="ours" cx="118" cy="80" r="10" />
+      <text class="t t-ours" x="118" y="134">OUR TEAM</text>
+      <path class="line" d="M158 64 H 171 M166 59 L 172 64 L 166 69" />
+      <rect class="pill-dark" height="28" rx="14" width="62" x="177" y="50" />
+      <text class="t t-sm t-white" x="208" y="68">MAINNET</text>
+    </g>
+  )}
+  {kind === 'lead' && (
+    <g>
+      <rect class="frame-yours" height="58" rx="20" width="228" x="6" y="58" />
+      {row.map((x) => <path class="link-ours" d={`M120 38 L ${x} 77`} />)}
+      {row.map((x) => <circle class="yours" cx={x} cy="87" r="10" />)}
+      <circle class="ours" cx="120" cy="26" r="12" />
+      <text class="t t-ours t-start" x="140" y="30">OUR LEAD</text>
+      <text class="t" x="120" y="134">YOUR ENGINEERS</text>
+    </g>
+  )}
+  {kind === 'embedded' && (
+    <g>
+      <rect class="frame-yours" height="100" rx="20" width="228" x="6" y="12" />
+      <path class="link-soft" d="M42 42 H 198 M42 82 H 198 M42 42 V 82 M94 42 V 82 M146 42 V 82 M198 42 V 82" />
+      {grid.map((p) => <circle class={p.x === 146 && p.y === 42 ? 'ours' : 'yours'} cx={p.x} cy={p.y} r="10" />)}
+      <circle class="halo" cx="146" cy="42" r="17" />
+      <text class="t" x="120" y="134">YOUR TEAM</text>
+    </g>
+  )}
+  {kind === 'programs' && (
+    <g>
+      {ring.map((p) => <path class="link-soft link-dash" d={`M120 66 L ${p.x} ${p.y}`} />)}
+      {ring.map((p) => <circle class="yours" cx={p.x} cy={p.y} r="9" />)}
+      <rect class="frame-ours frame-hub" height="30" rx="15" width="88" x="76" y="51" />
+      <text class="t" x="120" y="70.5">PROGRAM</text>
+    </g>
+  )}
+</svg>
+
+<style>
+  .wd-svg { display: block; width: 100%; max-width: 240px; height: auto; overflow: visible; }
+  .line { fill: none; stroke: var(--deep-blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .link-ours { fill: none; stroke: var(--vibrant-green); stroke-width: 2; stroke-linejoin: round; }
+  .link-soft { fill: none; stroke: var(--deep-blue); stroke-width: 1.5; opacity: .3; }
+  .link-dash { stroke-dasharray: 4 5; opacity: .55; }
+  .ours { fill: var(--vibrant-green); }
+  .yours { fill: #fff; stroke: var(--deep-blue); stroke-width: 2; }
+  .halo { fill: none; stroke: var(--vibrant-green); stroke-width: 1.5; opacity: .6; }
+  .frame-ours { fill: rgba(71, 160, 25, .08); stroke: var(--vibrant-green); stroke-width: 2; }
+  .frame-hub { fill: var(--tint-green); }
+  .frame-yours { fill: #fff; stroke: var(--deep-blue); stroke-width: 1.5; }
+  .pill-dark { fill: var(--deep-blue); }
+  .t { fill: var(--deep-blue); font-family: var(--font-ui); font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-anchor: middle; }
+  .t-sm { font-size: 10.5px; letter-spacing: .08em; }
+  .t-start { text-anchor: start; }
+  .t-ours { fill: var(--green-ink); }
+  .t-white { fill: #fff; }
+</style>

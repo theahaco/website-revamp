@@ -1,0 +1,6 @@
+---
+// Audience analytics (src/data/site.ts). Rendered in <head> by BaseLayout on
+// the production domain only.
+import { analytics } from '../data/site';
+---
+{analytics.provider && analytics.snippet && <Fragment set:html={analytics.snippet} />}

@@ -1,0 +1,231 @@
+---
+// One page per open-source tool (src/content/tools), laid out like a case
+// study: facts, dated figures with receipts, a visual, the story, builders.
+import Icon from '../../components/Icon.astro';
+import { factIcon } from '../../lib/factIcons';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Cta from '../../components/Cta.astro';
+import { tools, team, posts, networks, md, mdInline, wrapTables, unlinkPosts, networkMarks, ogImageFor, nobr } from '../../lib/content';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  return (await tools()).map((tool) => ({ params: { slug: tool.id }, props: { tool } }));
+}
+
+const { tool } = Astro.props;
+const d = tool.data;
+const all = await tools();
+const people = new Map((await team()).map((m) => [m.id, m]));
+const published = new Set((await posts()).map((p) => p.id));
+const builders = d.built.map((slug) => people.get(slug)).filter((m) => m !== undefined);
+const facts = d.facts.filter((f) => f.value);
+const headline = (t: { data: { headline?: { figure?: string; label?: string } } }) => [t.data.headline?.figure, t.data.headline?.label].filter(Boolean).join(' ');
+const metrics = d.metrics.filter((m) => m.figure);
+const sections = d.sections.filter((s) => s.body.trim());
+const receipts = md(d.receipts);
+const related = d.related.map((id) => all.find((t) => t.id === id)).filter((t) => t !== undefined);
+const more = (related.length ? related : all.filter((t) => t.id !== tool.id)).slice(0, 3);
+const title = d.metaTitle || `${d.name}: ${d.category} | The Aha Company`;
+const description = d.description || d.lede;
+const cta = d.cta || 'Building on Stellar or XRPL? Talk to the engineers who write the tooling.';
+// Zod 4 returns a default object as is, without the inner defaults.
+const v = { kind: '', image: '', alt: '', tone: 'dark', filename: '', code: '', title: '', bars: [] as { label: string; sub: string; value: number; display: string; highlight: boolean }[], caption: '', ...d.visual };
+const maxBar = Math.max(1, ...v.bars.map((b) => b.value));
+
+// Network marks for "Stellar", "XRPL and Stellar"...
+const marksFor = (value: string) => value.split(/,| and /).map((n) => networkMarks[n.trim()]).filter(Boolean);
+// ...and each network name links to its page, when it has one.
+const networkPages = new Map((await networks()).filter((n) => n.data.heading).map((n) => [n.data.name, `/networks/${n.id}`]));
+const netParts = (value: string) => value.split(/(,\s*| and )/).map((part) => ({ part, href: networkPages.get(part.trim()) }));
+
+// Code sample: escaped, with quoted strings tinted.
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const codeHtml = esc(v.code).replace(/'[^'\n]*'/g, (m) => `<span class="tl_str">${m}</span>`);
+
+// Structured data: the tool as source code, and its place in the site.
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const siteUrl = Astro.site ? new URL(import.meta.env.BASE_URL, Astro.site).href : site.productionOrigin;
+const org = { '@type': 'Organization', name: site.name, legalName: 'Dawning Inc.', url: siteUrl };
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: d.name,
+  description,
+  url: pageUrl,
+  codeRepository: d.repo || undefined,
+  programmingLanguage: d.languages.length ? d.languages : undefined,
+  license: d.license ? `https://spdx.org/licenses/${d.license}.html` : undefined,
+  author: d.maintainer ? { '@type': d.maintainerType, name: d.maintainer } : org,
+  contributor: d.maintainer ? org : undefined,
+  keywords: d.tech.join(', ') || undefined,
+};
+const crumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: 'Open source', item: new URL('open-source/', siteUrl).href },
+    { '@type': 'ListItem', position: 3, name: d.name, item: pageUrl },
+  ],
+};
+const json = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
+---
+<BaseLayout title={title} description={description} image={ogImageFor(tool.id) || (v.kind === 'image' && v.image) || undefined} imageAlt={v.kind === 'image' ? v.alt : undefined}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={json(ld)} />
+    <script type="application/ld+json" set:html={json(crumbs)} />
+  </Fragment>
+  <main data-tool={tool.id}>
+    <article>
+      <div class="cs_header">
+        <a class="art_back" href="/open-source">← All open-source tools</a>
+        <div class="cs_headgrid">
+          <div class="cs_intro" data-tl="intro">
+            <p class="cs_eyebrow">Open source · {d.category}</p>
+            <h1 class="art_h1" set:html={nobr(d.title)} />
+            {d.lede && <p class="art_lede">{d.lede}</p>}
+          </div>
+          <dl class="cs_facts" data-tl="facts">
+            {facts.map((f) => {
+              const marks = /^Networks?$/.test(f.label) ? marksFor(f.value) : [];
+              return (
+                <div class="cs_fact">
+                  <dt class="cs_dt">{factIcon(f.label) && <Icon name={factIcon(f.label)!} size={15} class="cs_dticon" />}{f.label}</dt>
+                  {marks.length > 0 || f.live ? (
+                    <dd class="cs_dd-net">
+                      {marks.map((src) => <img alt="" class="cs_netmark" src={src} />)}
+                      {f.live && <span aria-hidden="true" class="cs_dot"></span>}
+                      {marks.length > 0 ? <span>{netParts(f.value).map((p) => (p.href ? <a class="cs_netlink" href={p.href}>{p.part}</a> : p.part))}</span> : <span>{f.value}</span>}
+                    </dd>
+                  ) : (
+                    <dd class="cs_dd">{f.value}</dd>
+                  )}
+                </div>
+              );
+            })}
+          </dl>
+        </div>
+      </div>
+      {metrics.length > 0 && (
+        <section aria-label="In numbers" class="cs_outcomes" data-tl="metrics">
+          <ul class="cs_metrics" role="list">
+            {metrics.map((m) => (
+              <li class="cs_metric">
+                <span class="cs_fig">
+                  <span>{m.figure}</span>
+                  {m.receipt && <a aria-label={`Receipt: ${m.label}`} class="cs_figmark" href={m.receipt}>✓</a>}
+                </span>
+                <span class="cs_metriclabel">{m.label}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {v.kind && (
+        <figure class={`tl_visual tl_visual--${v.kind}`} data-tl="visual">
+          {v.kind === 'image' && (
+            <div class={`tl_panel tl_panel--${v.tone}`}>
+              <img alt={v.alt} class="tl_panelimg" height="1830" loading="lazy" src={v.image} width="990" />
+            </div>
+          )}
+          {v.kind === 'code' && (
+            <div class="tl_code">
+              <div aria-hidden="true" class="tl_codebar"><i></i><i></i><i></i><span class="tl_codefile">{v.filename}</span></div>
+              <pre class="tl_pre"><code set:html={codeHtml} /></pre>
+            </div>
+          )}
+          {v.kind === 'bars' && (
+            <div class="tl_chart">
+              {v.title && <p class="tl_charttitle">{v.title}</p>}
+              <ul class="tl_bars" role="list">
+                {v.bars.map((b) => (
+                  <li class={b.highlight ? 'tl_bar tl_bar--hi' : 'tl_bar'}>
+                    <span class="tl_barlabel"><span class="tl_barname">{b.label}</span>{b.sub && <span class="tl_barsub">{b.sub}</span>}</span>
+                    <span aria-hidden="true" class="tl_bartrack"><span class="tl_barfill" style={`width:${((b.value / maxBar) * 100).toFixed(1)}%`}></span></span>
+                    <span class="tl_barvalue">{b.display}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {v.caption && <figcaption class="tl_caption" set:html={mdInline(v.caption)} />}
+        </figure>
+      )}
+      <div class="cs_bodygrid">
+        <div class="cs_sections">
+          {sections.map((s) => (
+            <section class="cs_section" id={s.id}>
+              <h2 class="cs_h2">{s.title}</h2>
+              <div class="blog_richtext w-richtext" set:html={unlinkPosts(wrapTables(md(s.body)), published)} />
+            </section>
+          ))}
+        </div>
+        <aside aria-label="Tool details" class="cs_aside">
+          {d.tech.length > 0 && (
+            <div class="cs_card" data-tl="tech">
+              <p class="cs_cardlabel">Tech</p>
+              <ul class="cs_pills" role="list">{d.tech.map((t) => <li class="cs_pill">{t}</li>)}</ul>
+            </div>
+          )}
+          {receipts.includes('<li') && (
+            <div class="cs_card" data-tl="receipts">
+              <p class="cs_cardlabel">Code and receipts</p>
+              <div class="cs_receipts w-richtext" set:html={receipts} />
+            </div>
+          )}
+          {(builders.length > 0 || d.builtNote) && (
+            <div class="cs_teamcard" data-tl="built">
+              <p class="cs_cardlabel">Built by</p>
+              <div class="cs_teamlist" role="list">
+                {builders.map((m) => (
+                  <div role="listitem">
+                    <a class="cs_teamrow" href={`/team/${m.id}`}>
+                      <span class="cs_avatar32">{m.data.portrait && <img alt="" class="cs_avatarimg" loading="lazy" src={m.data.portrait} />}</span>
+                      <span class="cs_namestack">
+                        <span class="cs_teamname">{m.data.name.replace(/ \(.*\)/, '')}</span>
+                        {m.data.role && <span class="cs_teamrole">{m.data.role.split(' · ')[0]}</span>}
+                      </span>
+                    </a>
+                  </div>
+                ))}
+                {d.builtNote && <div class="tl_builtnote" role="listitem">{d.builtNote}</div>}
+              </div>
+            </div>
+          )}
+          <div class="art_related" data-tl="hire">
+            <p class="cs_cardlabel-green">For ecosystems</p>
+            <a class="art_related-link" href="/services#ecosystems">Foundations hire us to build and maintain tools like this, starting with a two-week DevX audit</a>
+          </div>
+          <div class="art_related" data-tl="count">
+            <p class="cs_cardlabel-green">How we count</p>
+            <a class="art_related-link" href="/open-source#how-we-count">Every figure is dated and traceable to a public repo, a package registry or the ledger</a>
+          </div>
+        </aside>
+      </div>
+    </article>
+    {more.length > 0 && (
+      <section class="footer_section" data-tl="more">
+        <div class="more_inner">
+          <div class="more_header">
+            <h2 class="more_h2">More open-source tools</h2>
+            <a class="more_all" href="/open-source">All tools ↗</a>
+          </div>
+          <div role="list">
+            {more.map((t) => (
+              <div class="work_item" role="listitem">
+                <a class="more_row" href={`/open-source/${t.id}`}>
+                  <div class="more_stack">
+                    <span class="work_eyebrow">{t.data.category} · {t.data.network}</span>
+                    <span class="more_title">{t.data.name}</span>
+                  </div>
+                  <div class="more_meta"><span class="inline-text">{headline(t)}</span><span class="inline-text"> ↗</span></div>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+  <Cta heading={cta} />
+</BaseLayout>

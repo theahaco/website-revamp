@@ -1,0 +1,24 @@
+{
+  "name": "theaha-website",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "The Aha Company website (theaha.co), a static Astro site. To publish content: docs/CONTENT.md.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/check-content.mjs && astro build",
+    "preview": "astro preview",
+    "check": "node scripts/check-links.mjs"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource/space-grotesk": "^5.3.0",
+    "@fontsource/spectral": "^5.3.0",
+    "astro": "^7.4.5",
+    "marked": "^18.0.2",
+    "yaml": "^2.9.1"
+  }
+}
