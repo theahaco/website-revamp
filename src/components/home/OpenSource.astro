@@ -15,8 +15,8 @@ const phone = (name: string) => ({
   src: `/images/tools/${name}-phone-450.webp`,
   srcset: widths.map((w) => `/images/tools/${name}-phone-${w}.webp ${w}w`).join(', '),
 });
-const center = phone('scaffold-stellar');
-const left = phone('nido');
+const center = phone('nido');
+const left = phone('scaffold-stellar');
 const right = phone('stellar-registry');
 // Rendered widths: 44% (center) and 37% (sides) of a stage at most 576 px wide.
 const sizesCenter = '(min-width: 1200px) 253px, (min-width: 992px) 21vw, (min-width: 600px) 229px, 41vw';
