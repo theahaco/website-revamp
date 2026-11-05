@@ -16,7 +16,7 @@ import { toolAdoption } from '../../data/site';
     <ul aria-label="Key figures" class="hero_figs" role="list">
       <li><span class="hero_figv">4</span><span class="hero_figl">Networks we build on</span></li>
       <li><span class="hero_figv">20<span class="hero_figplus">+</span></span><span class="hero_figl">Deployments on mainnet</span></li>
-      <li><span class="hero_figv">{toolAdoption.count}</span><span class="hero_figl">Projects using our open-source tools (<a class="hero_figlink" href="/open-source#how-we-count">how we count</a>)</span></li>
+      <li><span class="hero_figv">{toolAdoption.count}</span><span class="hero_figl">Projects using our open-source tools</span></li>
       <li><span class="hero_figv">12<span class="hero_figplus">+</span></span><span class="hero_figl">Engineers in the US, Europe and Brazil</span></li>
     </ul>
   </div>
@@ -53,7 +53,6 @@ import { toolAdoption } from '../../data/site';
     .hero_figv { font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -.03em; color: var(--deep-blue); }
     .hero_figplus { color: var(--green-ink); }
     .hero_figl { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
-    .hero_figlink { color: var(--deep-blue); font-weight: 600; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
   }
   @media (max-width: 991px) {
     .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'text' 'proof' 'creds'; row-gap: 48px; }

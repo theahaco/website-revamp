@@ -1,9 +1,8 @@
 ---
 // Home page section: logos. Clients and partners, as framed tiles continuing
 // the key figures' frame above. A tile links only to the public case study of
-// that same client; the other tiles stay static. Under them, the third-party
-// audits of what we shipped, each linking to the page that states it (the
-// case study or the tool page, where the audit and its date are written).
+// that same client; the other tiles stay static. Under them, the security
+// auditors we have worked with.
 import Icon from '../Icon.astro';
 
 // h: logo height in px on desktop (per file, for an even optical weight);
@@ -17,11 +16,15 @@ const logos = [
   { name: 'Banque Delubac et Cie', src: '/images/logos/logo-light-delubac.svg', h: 25, w: 111 },
 ];
 
-const audits = [
-  { firm: 'Hacken', scope: 'EURCV, before mainnet', href: '/case-studies/societe-generale-forge' },
-  { firm: 'Halborn', scope: 'LI.FI on Stellar, before production', href: '/case-studies/lifi' },
-  { firm: 'Runtime Verification', scope: 'Moonlight core contracts, no critical or high findings, July 2026', href: '/open-source/moonlight' },
-  { firm: 'Veridise', scope: 'Stellar Registry, no findings, November 2025', href: '/open-source/stellar-registry' },
+// Security auditors we have worked with, as logos (the firms' own artwork,
+// taken from their sites; shown in one tone like the client logos).
+// h: logo height in px on desktop; w: its width at that height.
+const auditors = [
+  { name: 'Hacken', src: '/images/logos/logo-hacken.svg', h: 12, w: 115 },
+  { name: 'Halborn', src: '/images/logos/logo-halborn.svg', h: 12, w: 117 },
+  { name: 'Runtime Verification', src: '/images/logos/logo-runtime-verification.png', h: 28, w: 142 },
+  { name: 'Veridise', src: '/images/logos/logo-veridise.svg', h: 25, w: 111 },
+  { name: 'Arda', src: '/images/logos/logo-arda.png', h: 25, w: 85 },
 ];
 ---
 <section aria-label="Clients and partners" class="logos_section lg" data-rv="logos">
@@ -44,15 +47,13 @@ const audits = [
         </li>
       ))}
     </ul>
-    <ul aria-label="Third-party audits" class="lg_grid lg_grid--audits" role="list">
-      <li aria-hidden="true" class="lg_label"><span class="lg_dot"></span>Third-party audits</li>
-      {audits.map((a) => (
-        <li class="lg_cell lg_cell--audit">
-          <a class="lg_tile lg_tile--link lg_audit" href={a.href}>
-            <span class="lg_audit-firm"><Icon name="shield-check" size={18} />{a.firm}</span>
-            <span class="lg_audit-scope">{a.scope}</span>
-            <span class="lg_arrow"><Icon name="arrow-up-right" size={16} /></span>
-          </a>
+    <ul aria-label="Auditors we work with" class="lg_grid lg_grid--auditors" role="list">
+      <li aria-hidden="true" class="lg_label lg_label--wide"><span class="lg_dot"></span>Auditors we work with</li>
+      {auditors.map((a) => (
+        <li class="lg_cell lg_cell--auditor">
+          <div class="lg_tile">
+            <img alt={a.name} class="lg_logo" loading="lazy" src={a.src} width={a.w} height={a.h} style={`--h:${a.h}px`} />
+          </div>
         </li>
       ))}
     </ul>
@@ -78,18 +79,18 @@ const audits = [
   .lg_tile--link:hover .lg_arrow, .lg_tile--link:focus-visible .lg_arrow { color: var(--green-ink); opacity: 1; transform: translate(2px, -2px); }
   @media (hover: hover) { .lg_arrow { opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .lg_arrow { transition: none; transform: none !important; } }
-  /* Audits: the firm in place of a logo, what it audited under it */
-  .lg_grid--audits { grid-template-columns: minmax(0, 1fr) repeat(4, minmax(0, 1.5fr)); gap: 0; background: var(--white); border-top: 1px solid var(--line); }
-  .lg_cell--audit { min-height: 92px; }
-  .lg_audit { place-items: initial; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 18px 28px 18px 24px; }
-  .lg_audit-firm { display: inline-flex; align-items: center; gap: 8px; color: var(--deep-blue); font-size: 16px; font-weight: 600; line-height: 1.25; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
-  .lg_audit-scope { padding-left: 26px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+  /* Auditors: the label spans two columns, so the five logos sit under the
+     last five client columns and the rules line up */
+  .lg_grid--auditors { border-top: 1px solid var(--line); }
+  .lg_label--wide { grid-column: span 2; }
+  .lg_cell--auditor { min-height: 96px; }
   .lg_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 
   @media (max-width: 1199px) {
     .lg_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .lg_grid--audits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lg_grid--auditors { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .lg_label--wide { grid-column: 1 / -1; }
     .lg_label { grid-column: 1 / -1; padding-top: 14px; padding-bottom: 14px; }
     .lg_cell { min-height: 100px; }
   }
@@ -100,10 +101,9 @@ const audits = [
     .lg_container { --pad: 20px; }
     .lg_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .lg_cell { min-height: 88px; }
-    .lg_grid--audits { grid-template-columns: minmax(0, 1fr); }
-    .lg_cell--audit { border-top: 1px solid var(--line); }
-    .lg_cell--audit { min-height: 0; }
-    .lg_audit { padding: 14px 40px 14px var(--pad); }
+    .lg_grid--auditors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lg_cell--auditor { min-height: 80px; }
+    .lg_cell--auditor:last-child { grid-column: 1 / -1; }
     .lg_logo { height: calc(var(--h) * .92); }
   }
 </style>

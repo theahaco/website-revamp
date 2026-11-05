@@ -22,7 +22,6 @@ import { toolAdoption } from '../../data/site';
       <li class="kpi_cell" data-rv="stat-os">
         <div class="kpi_top"><p class="kpi_value">{toolAdoption.count}</p><span class="v-iconbox v-iconbox--pink kpi_icon"><Icon name="git-branch" size={28} /></span></div>
         <p class="kpi_label">Projects using our <span class="kpi_nowrap">open-source</span> tools</p>
-        <p class="kpi_meta"><span class="kpi_date kpi_nowrap">{toolAdoption.date}</span><a class="kpi_link kpi_nowrap" href="/open-source#how-we-count">How we count<span class="kpi_linkicon"><Icon name="arrow-right" size={14} /></span></a></p>
       </li>
       <li class="kpi_cell" data-rv="stat-team">
         <div class="kpi_top"><p class="kpi_value">12<span class="kpi_plus">+</span></p><span class="v-iconbox v-iconbox--tan kpi_icon"><Icon name="users-three" size={28} /></span></div>
@@ -45,13 +44,8 @@ import { toolAdoption } from '../../data/site';
   .kpi_icon { margin-top: -2px; }
   .kpi_marks { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; }
   .kpi_label { margin: 0; max-width: 28ch; font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
-  .kpi_meta { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: auto 0 0; padding-top: 8px; font-size: 14px; line-height: 1.45; color: var(--muted); }
-  .kpi_link { font-weight: 600; color: var(--deep-blue); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; transition: color .2s, text-decoration-color .2s; }
-  .kpi_link:hover { color: var(--green-ink); text-decoration-color: currentColor; }
   .kpi_nowrap { white-space: nowrap; }
   /* 44 px touch targets on the two links, without moving anything */
-  @media (pointer: coarse) { .kpi_link { display: inline-block; padding: 12px 0; margin: -12px 0; } }
-  .kpi_linkicon { display: inline-block; margin-left: 3px; vertical-align: -2px; }
 
   @media (max-width: 991px) {
     .kpi_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -68,7 +62,6 @@ import { toolAdoption } from '../../data/site';
     .kpi_icon :global(svg) { width: 20px; height: 20px; }
     .kpi_value { font-size: 36px; }
     .kpi_label { font-size: 15px; }
-    .kpi_meta { font-size: 14px; }
   }
   /* Small phones: one figure per row */
   @media (max-width: 374px) {
