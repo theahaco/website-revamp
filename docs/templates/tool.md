@@ -43,10 +43,13 @@ metrics:
 
 visual:
   kind: ''
-  # '' (none), image, code or bars.
+  # '' (none), image, code, bars or terminal.
   # image: image: /images/tools/acme-sdk.webp, alt: '...', tone: dark or light
+  #   (a phone capture of the tool's site: see public/images/tools/README.md)
   # code: filename: example.ts, code: |- (the code, indented)
   # bars: title: '...', bars: - label, sub, value (number), display, highlight
+  # terminal: label: '...', lines: - '$ a command' then each printed line,
+  #   copied from a real run (cut whole lines only, marked '…')
   caption: ''
 
 sections:

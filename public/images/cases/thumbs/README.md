@@ -1,5 +1,9 @@
 # Case study thumbnails
 
+> **Not shown at the moment.** Since November 2026 the Work page and the home
+> page list their rows without images. These files are kept in case the lists get
+> images again; nothing needs to be uploaded here for now.
+
 The small image next to each case study on the Work page (the home page list
 has no images). One image per case study, with exactly the same name as the
 case study file: `lifi.md` uses `lifi.webp` (`.png` or `.jpg` also work).

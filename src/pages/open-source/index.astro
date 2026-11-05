@@ -1,9 +1,13 @@
 ---
-// Open-source index: the figures across our tools, one card per tool
-// (each tool has its own page, src/content/tools), the counting rules and
-// the standards and other contributions (src/data/opensource.ts).
+// Open-source index: the home band's recipe for the header (eyebrow, two-tone
+// title, one short lede and three phones showing our tools' real sites, cut
+// by the top rule of the figures), then one card per tool (each tool has its
+// own page, src/content/tools), the counting rules and the standards and
+// other contributions (src/data/opensource.ts). The phones differ from the
+// home band's: Moonlight in front.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
+import PhoneStack from '../../components/vx/PhoneStack.astro';
 import { contributions } from '../../data/opensource';
 import { tools, nobr } from '../../lib/content';
 import { site, toolAdoption } from '../../data/site';
@@ -26,24 +30,32 @@ const ld = {
 <BaseLayout title="Open-source Stellar and XRPL tools | The Aha Company" description="Open-source Stellar and XRPL tools we build and maintain, one page per tool: Stellar CLI, Stellar Scaffold, Stellar Registry, Nido, Perch, Moonlight, Tansu.">
   <Fragment slot="head"><script type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} /></Fragment>
   <main data-main="1" data-os="page">
-    <section>
-      <div class="svc_introcontainer">
-        <div class="lg_header">
-          <p class="v-eyebrow page_eyebrow">Open source</p>
-          <h1 class="intro_h1">Public code you can inspect, commit by commit.</h1>
-          <p class="art_lede" data-os="lede">The tooling behind our work is open source. On Stellar we are core contributors to the official CLI and build the tools around it; some of them already serve XRPL. Each tool has its own page: what it does, what we built, where it stands and who uses it, with every figure dated. Foundations hire us to build and maintain them: see the <a class="art_related-link" href="/case-studies/stellar-development-foundation">Stellar Development Foundation case</a>.</p>
+    <section aria-labelledby="osh-title" class="osh">
+      <div class="osh_inner">
+        <div class="osh_top">
+          <div class="osh_text">
+            <p class="v-eyebrow">Open source</p>
+            <h1 class="osh_h1" id="osh-title">Public code you can inspect, <span class="v-soft">commit by commit.</span></h1>
+            <p class="osh_lede" data-os="lede">The tooling behind our work is open source. On Stellar we are core contributors to the official CLI and build the tools around it; some of them already serve XRPL. Each tool has its own page, with every figure dated.</p>
+            <p class="osh_case">Foundations hire us to build and maintain them. <a class="osh_caselink" href="/case-studies/stellar-development-foundation">The Stellar Development Foundation case <span aria-hidden="true">→</span></a></p>
+          </div>
+          <div class="osh_visual">
+            <div class="osh_stage">
+              <PhoneStack center="moonlight" lazy={false} left="nido" right="stellar-registry" sizes="(min-width: 1200px) 217px, (min-width: 992px) 19vw, (min-width: 600px) 210px, 33vw" />
+            </div>
+          </div>
         </div>
+        <section aria-label="In numbers" class="osh_figures" data-os="metrics">
+          <ul class="cs_metrics osh_metrics" role="list">
+            {metrics.map((m) => (
+              <li class="cs_metric">
+                <span class="cs_fig"><span>{m.figure}</span>{m.receipt && <a aria-label={`Receipt: ${m.label}`} class="cs_figmark" href={m.receipt}>✓</a>}</span>
+                <span class="cs_metriclabel">{m.label}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
-    </section>
-    <section aria-label="In numbers" class="cs_outcomes" data-os="metrics">
-      <ul class="cs_metrics" role="list">
-        {metrics.map((m) => (
-          <li class="cs_metric">
-            <span class="cs_fig"><span>{m.figure}</span>{m.receipt && <a aria-label={`Receipt: ${m.label}`} class="cs_figmark" href={m.receipt}>✓</a>}</span>
-            <span class="cs_metriclabel">{m.label}</span>
-          </li>
-        ))}
-      </ul>
     </section>
     <section class="ab_white">
       <div class="ab_container">
@@ -112,6 +124,50 @@ const ld = {
   <Cta heading="Building on Stellar or XRPL? Talk to the engineers who write the tooling." />
 </BaseLayout>
 <style>
+  /* Header: text and phones side by side, the deep-blue panel of the phones
+     standing on the top rule of the figures (as the team photo stands on the
+     row of models in "Ways to work with us") */
+  .osh_inner { width: 100%; max-width: 1200px; margin: 0 auto; padding: clamp(56px, 7vw, 96px) clamp(24px, 4vw, 48px) 0; }
+  .osh_top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 64px; align-items: end; }
+  .osh_text { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; padding-bottom: 48px; }
+  .osh_h1 { margin: 0; max-width: 11em; color: var(--deep-blue); font-family: var(--font-display); font-size: 58px; font-style: italic; font-weight: 400; line-height: 1.07; letter-spacing: -.015em; text-wrap: balance; }
+  .osh_h1 .v-soft { display: block; }
+  .osh_lede { margin: 0; max-width: 33em; color: var(--ink-2); font-size: 18px; line-height: 1.55; text-wrap: pretty; }
+  .osh_case { margin: 0; max-width: 33em; color: var(--muted); font-size: 15px; line-height: 1.5; }
+  .osh_caselink { color: var(--deep-blue); font-weight: 600; text-decoration: none; transition: color .2s; }
+  .osh_caselink:hover { color: var(--green-ink); }
+  /* The stage is sized by the panel's height, so the phones keep their place
+     whatever the panel's proportions; the panel cuts them at the bottom */
+  .osh_visual { position: relative; overflow: hidden; margin-bottom: -1px; aspect-ratio: 1.18; border-radius: 20px 20px 0 0; background: var(--deep-blue); }
+  .osh_stage { position: absolute; bottom: 0; left: 50%; height: 88%; aspect-ratio: 1.22; transform: translateX(-50%); }
+  .osh_metrics { border-bottom: 0; }
+
+  @media (max-width: 1199px) {
+    .osh_top { column-gap: 48px; }
+    .osh_h1 { font-size: 48px; }
+  }
+  @media (max-width: 991px) {
+    .osh_top { grid-template-columns: minmax(0, 1fr); }
+    .osh_metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .osh_text { padding-bottom: 40px; }
+    .osh_h1 { max-width: 13em; }
+    .osh_visual { aspect-ratio: 1.55; }
+  }
+  @media (max-width: 767px) {
+    .osh_h1 { font-size: 40px; }
+    .osh_lede { font-size: 17px; }
+    .osh_metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 28px; }
+  }
+  @media (max-width: 599px) {
+    .osh_visual { aspect-ratio: 1.2; border-radius: 16px 16px 0 0; }
+  }
+  @media (max-width: 379px) {
+    .osh_h1 { font-size: 34px; }
+  }
+  @media (pointer: coarse) {
+    .osh_caselink { display: inline-flex; align-items: center; min-height: 44px; }
+  }
+
   .os_grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
   .os_card { display: flex; scroll-margin-top: 120px; }
   .os_cardlink { display: flex; flex-direction: column; gap: 14px; width: 100%; padding: 28px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md); color: inherit; text-decoration: none; transition: border-color .2s; }

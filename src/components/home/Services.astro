@@ -1,88 +1,173 @@
 ---
-// Home page section "What we do": the six services in framed cells. Each cell
-// links to the service's card on /services (where its bullets are) and shows
-// its precedents: client logos, anonymous clients behind a lock, our tools.
-// Copy lives in ./services-data.ts, shared with src/pages/services.astro.
+// Home page section "What we do": one row per audience (the three doors of
+// /services), each with its services, their precedents and one visual drawn
+// as product UI: the top US commercial bank's settlement stablecoin and LI.FI
+// on Stellar (facts from nda-settlement-stablecoin.md and lifi.md, worded as
+// there), and a real Stellar CLI session (recorded on Stellar CLI 30.0.1,
+// unedited apart from cut lines, marked "…"). Copy lives in
+// ./services-data.ts, shared with /services. Architecture and embedded
+// engineering is the "Ways to work with us" section.
 import Icon from '../Icon.astro';
-import { services, tint, doors } from './services-data';
-const cardHref = (a: keyof typeof doors) => (a === 'any' ? '#ways' : `/services${doors[a].href}`);
+import Flow from '../vx/Flow.astro';
+import Terminal from '../vx/Terminal.astro';
+import { services, doors, type Precedent, type Service } from './services-data';
+
+const of = (a: Service['audience']) => services.filter((s) => s.audience === a);
+// One chip per precedent, in order of first appearance (the bank backs two
+// services). The institutions row shows clients only, not our tools.
+const precedentsOf = (list: readonly Service[], clientsOnly = false) => {
+  const seen = new Set<string>();
+  const out: Precedent[] = [];
+  for (const s of list) for (const p of s.precedents) if (!seen.has(p.text) && !(clientsOnly && p.kind === 'tool')) { seen.add(p.text); out.push(p); }
+  return out;
+};
+
+const rows = [
+  {
+    id: 'institutions',
+    label: doors.institutions.label,
+    title: 'Regulated assets onchain.',
+    soft: 'You keep the keys and the controls.',
+    services: of('institutions'),
+  },
+  {
+    id: 'protocols',
+    label: doors.protocols.label,
+    title: 'Your protocol on a new network.',
+    soft: 'Written for it, not ported to it.',
+    services: of('protocols'),
+  },
+  {
+    id: 'ecosystems',
+    label: doors.ecosystems.label,
+    title: 'Your developer path, audited in two weeks.',
+    soft: 'Then the tools, maintained as public goods.',
+    services: of('ecosystems'),
+  },
+] as const;
+
+const LOGOS = '/images/logos';
+const cli = [
+  '$ stellar contract init hello-world',
+  'ℹ️ Initializing workspace at "hello-world"',
+  '➕ Writing "hello-world/.gitignore"',
+  '➕ Writing "hello-world/AGENTS.md"',
+  '➕ Writing "hello-world/Cargo.toml"',
+  '…',
+  '$ stellar plugin ls',
+  'Installed Plugins:',
+  '    registry',
+  '    scaffold',
+];
 ---
 <section class="services_section" id="what-we-do">
   <div class="section-inner">
     <header class="wd-head">
       <div class="wd-titles">
         <p class="v-eyebrow">Services</p>
-        <h2 class="section_h2">What we do</h2>
+        <h2 class="section_h2 wd-h2">What we do. <span class="v-soft">Three doors, one engineering team.</span></h2>
       </div>
       <a class="wd-all" href="/services">Services in detail <span aria-hidden="true">→</span></a>
     </header>
 
-    <ul class="wd-grid" role="list">
-      {services.map((s) => (
-        <li class="wd-cell">
-          <div class="wd-top">
-            <span class:list={['v-iconbox', tint[s.audience] && `v-iconbox--${tint[s.audience]}`]}><Icon name={s.icon} size={28} /></span>
-            <span class="wd-arrow"><Icon name="arrow-up-right" size={20} /></span>
-          </div>
-          <h3 class="wd-h3"><a class="wd-link" href={cardHref(s.audience)}>{s.title}</a></h3>
-          <p class="wd-desc">{s.desc}</p>
-          <div class="wd-precedent" data-rv={s.rv}>
-            <p class="wd-label">Precedent</p>
-            <ul class="wd-chips" role="list">
-              {s.precedents.map((p) => (
-                <li>
-                  {p.kind === 'client' && (
-                    <a class="wd-chip" href={p.href}><img class="wd-logo" src={p.logo} alt={p.alt} width={p.w} height={p.h} loading="lazy" />{p.text}</a>
-                  )}
-                  {p.kind === 'mark' && (
-                    <a class="wd-chip" href={p.href}><img class="wd-mark" src={p.logo} alt="" width="16" height="16" loading="lazy" />{p.text}</a>
-                  )}
-                  {p.kind === 'nda' && (
-                    <a class="wd-chip wd-chip--nda" href={p.href}><Icon name="lock-simple" size={16} />{p.text}</a>
-                  )}
-                  {p.kind === 'tool' && (
-                    <a class="wd-chip wd-chip--tool" href={p.href}><Icon name={p.icon} size={16} />{p.text}</a>
-                  )}
+    <div class="wd-rows">
+      {rows.map((r) => (
+        <article class:list={['wd-row', `wd-row--${r.id}`]} aria-labelledby={`wd-${r.id}`}>
+          <div class="wd-text">
+            <p class="wd-door">{r.label}</p>
+            <h3 class="wd-h3" id={`wd-${r.id}`}>{r.title} <span class="v-soft">{r.soft}</span></h3>
+            <ul class="wd-list" role="list">
+              {r.services.map((s) => (
+                <li class="wd-item">
+                  <p class="wd-item-title">{s.title}</p>
+                  <p class="wd-item-desc">{s.desc}</p>
                 </li>
               ))}
             </ul>
-            {s.note && <p class="wd-note">{s.note}</p>}
+            <div class="wd-precedent" data-rv={r.services.find((s) => s.rv)?.rv}>
+              <p class="wd-label">Precedents</p>
+              <ul class="wd-chips" role="list">
+                {precedentsOf(r.services, r.id === 'institutions').map((p) => (
+                  <li>
+                    {p.kind === 'client' && <a class="wd-chip" href={p.href}><img class="wd-logo" src={p.logo} alt={p.alt} width={p.w} height={p.h} loading="lazy" />{p.text}</a>}
+                    {p.kind === 'mark' && <a class="wd-chip" href={p.href}><img class="wd-mark" src={p.logo} alt="" width="16" height="16" loading="lazy" />{p.text}</a>}
+                    {p.kind === 'nda' && <a class="wd-chip wd-chip--nda" href={p.href}><Icon name="lock-simple" size={16} />{p.text}</a>}
+                    {p.kind === 'tool' && <a class="wd-chip wd-chip--tool" href={p.href}><Icon name={p.icon} size={16} />{p.text}</a>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <a class="wd-more" href={`/services${doors[r.id].href}`}>{r.label} <span aria-hidden="true">→</span></a>
           </div>
-        </li>
+          <div class="wd-visual">
+            {r.id === 'institutions' && (
+              <Flow
+                label="A top US commercial bank’s settlement stablecoin, from its case study (client under NDA)"
+                panel="blue"
+                steps={[
+                  { kind: 'anchor', icon: 'bank', title: 'Top US commercial bank', sub: 'Internal settlement stablecoin, under NDA' },
+                  { kind: 'check', title: 'Minting and redemption tied to the bank’s systems' },
+                  { kind: 'check', title: 'Freeze and clawback held by the bank' },
+                  { kind: 'check', title: 'Keys in the bank’s own custody setup' },
+                  { kind: 'anchor', net: 'stellar', title: 'Live on Stellar mainnet', sub: 'Since Q3 2026 · operated by the bank', status: 'Live' },
+                ]}
+              />
+            )}
+            {r.id === 'protocols' && (
+              <Flow
+                label="LI.FI on Stellar, from its case study"
+                panel="green"
+                steps={[
+                  { kind: 'anchor', logo: { src: `${LOGOS}/logo-light-lifi.svg`, w: 44, h: 16 }, title: 'LI.FI', sub: 'Routing built for EVM chains', tone: 'green' },
+                  { kind: 'check', title: 'Soroban contracts written for Stellar' },
+                  { kind: 'check', title: 'Signed authorization or a token allowance' },
+                  { kind: 'check', title: 'Tokens through their Stellar Asset Contracts' },
+                  { kind: 'anchor', net: 'stellar', title: 'Live on Stellar', sub: 'Cross-chain transfers', status: 'Live' },
+                ]}
+                floats={[{ text: 'Audited by Halborn before production', at: 'bottom' }]}
+              />
+            )}
+            {r.id === 'ecosystems' && (
+              <figure class="wd-term">
+                <Terminal label="A Stellar CLI session: a new contract project, then the installed plugins" lines={cli} />
+                <figcaption class="wd-caption">A real session on Stellar CLI 30.0.1: a new contract project, then our Registry and Scaffold plugins.</figcaption>
+              </figure>
+            )}
+          </div>
+        </article>
       ))}
-    </ul>
+    </div>
   </div>
 </section>
 
 <style>
   .wd-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; }
   .wd-titles { display: flex; flex-direction: column; gap: 20px; }
+  .wd-h2 { max-width: 15em; text-wrap: balance; }
   .wd-all { display: inline-flex; align-items: center; gap: 6px; color: var(--deep-blue); font-size: 15px; font-weight: 600; text-decoration: none; transition: color .2s; }
   .wd-all:hover { color: var(--green-ink); }
 
-  /* Framed cells sharing 1 px rules; titles, texts and precedents line up
-     across a row (subgrid) */
-  .wd-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
-  .wd-cell { position: relative; display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; padding: 32px 32px 30px; background: var(--white); transition: background-color .2s; }
-  .wd-cell:hover { background: var(--paper); }
-  .wd-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
-  .wd-arrow { display: inline-flex; color: var(--muted-2); transition: color .2s, transform .2s; }
-  .wd-cell:hover .wd-arrow { color: var(--deep-blue); }
-  @media (prefers-reduced-motion: no-preference) { .wd-cell:hover .wd-arrow { transform: translate(2px, -2px); } }
+  /* One row per door: text and visual side by side, the visual switching sides */
+  .wd-rows { display: flex; flex-direction: column; }
+  .wd-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 72px; align-items: center; padding: 56px 0; border-top: 1px solid var(--line); }
+  .wd-row:last-child { padding-bottom: 0; }
+  .wd-row:nth-child(even) { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  .wd-row:nth-child(even) .wd-text { order: 2; }
+  .wd-text { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+  .wd-door { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; color: var(--green-ink); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
+  .wd-door::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
+  .wd-h3 { margin: 0 0 28px; color: var(--deep-blue); font-family: var(--font-display); font-size: 36px; font-style: italic; font-weight: 400; line-height: 1.15; letter-spacing: -.01em; text-wrap: balance; }
+  .wd-h3 .v-soft { display: block; }
 
-  .wd-h3 { margin: 0 0 12px; font-family: var(--font-display); font-size: 26px; font-style: italic; font-weight: 400; line-height: 1.2; color: var(--deep-blue); text-wrap: balance; }
-  .wd-link { color: inherit; text-decoration: none; }
-  /* The whole cell is the link to /services; the chips sit above it */
-  .wd-link::after { content: ''; position: absolute; inset: 0; }
-  .wd-link:focus-visible { outline: none; }
-  .wd-link:focus-visible::after { outline: 2px solid var(--green-ink); outline-offset: -3px; border-radius: 2px; }
-  .wd-desc { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+  .wd-list { display: flex; flex-direction: column; gap: 16px; width: 100%; margin: 0 0 28px; padding: 0; list-style: none; }
+  .wd-item { padding-left: 16px; border-left: 2px solid var(--line-strong); }
+  .wd-item-title { margin: 0 0 4px; color: var(--deep-blue); font-size: 17px; font-weight: 600; line-height: 1.3; }
+  .wd-item-desc { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.5; }
 
-  .wd-precedent { display: flex; flex-direction: column; gap: 10px; padding-top: 24px; }
+  .wd-precedent { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
   .wd-label { margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
   .wd-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-  /* A chip that has to wrap becomes a rounded rectangle, not a squeezed pill */
-  .wd-chip { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 6px 12px 6px 11px; border: 1px solid var(--line-strong); border-radius: 17px; background: var(--white); color: var(--deep-blue); font-size: 14px; font-weight: 500; line-height: 1.25; text-decoration: none; text-wrap: balance; transition: border-color .2s, color .2s; }
+  .wd-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 6px 12px 6px 11px; border: 1px solid var(--line-strong); border-radius: 17px; background: var(--white); color: var(--deep-blue); font-size: 14px; font-weight: 500; line-height: 1.25; text-decoration: none; text-wrap: balance; transition: border-color .2s, color .2s; }
   .wd-chip:hover { border-color: var(--deep-blue); }
   .wd-chip--nda { border-color: transparent; background: var(--tint-paper); color: var(--ink-2); }
   .wd-chip--nda:hover { border-color: var(--line-strong); }
@@ -90,16 +175,26 @@ const cardHref = (a: keyof typeof doors) => (a === 'any' ? '#ways' : `/services$
   .wd-chip--tool :global(.icon) { --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
   .wd-logo { display: block; width: auto; }
   .wd-mark { display: block; width: 16px; height: 16px; object-fit: cover; object-position: left center; }
-  .wd-note { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+  .wd-more { display: inline-flex; align-items: center; gap: 6px; color: var(--deep-blue); font-size: 15px; font-weight: 600; text-decoration: none; transition: color .2s; }
+  .wd-more:hover { color: var(--green-ink); }
 
-  @media (pointer: coarse) { .wd-chip { min-height: 44px; border-radius: 22px; } .wd-all { min-height: 44px; } }
+  .wd-visual { min-width: 0; }
+  .wd-term { margin: 0; }
+  .wd-caption { margin: 14px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+
+  @media (pointer: coarse) { .wd-chip { min-height: 44px; border-radius: 22px; } .wd-all, .wd-more { min-height: 44px; } }
   @media (max-width: 1199px) {
-    .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .wd-cell { padding: 30px 28px 28px; }
+    .wd-row { column-gap: 48px; }
+    .wd-h3 { font-size: 32px; }
   }
-  @media (max-width: 599px) {
-    .wd-grid { grid-template-columns: minmax(0, 1fr); }
-    .wd-cell { padding: 28px 24px 26px; }
-    .wd-h3 { font-size: 24px; }
+  @media (max-width: 991px) {
+    .wd-row, .wd-row:nth-child(even) { grid-template-columns: minmax(0, 1fr); row-gap: 40px; padding: 56px 0; }
+    .wd-row:nth-child(even) .wd-text { order: 0; }
+    .wd-visual { width: 100%; max-width: 600px; }
+  }
+  @media (max-width: 767px) {
+    .wd-row { padding: 48px 0; row-gap: 32px; }
+    .wd-h3 { font-size: 28px; margin-bottom: 24px; }
   }
 </style>

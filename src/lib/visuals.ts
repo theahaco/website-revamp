@@ -1,4 +1,5 @@
-// Thumbnails of the Work page rows, and the NDA icons of the home page.
+// The NDA icons of the home page (caseVisual). The thumbnails below are not
+// shown at the moment: the Work page and home page rows have no images.
 //
 // A case study, article or open-source tool shows its thumbnail when the file
 // exists: public/images/cases/thumbs/<id>.webp, covers/thumbs/<id>.webp or

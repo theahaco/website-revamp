@@ -1,0 +1,90 @@
+---
+// The visual of a tool page (src/pages/open-source/[slug].astro), for real
+// things only:
+// - phone: the tool's own site on a phone, rising from the bottom of a panel.
+//   The cut-out phone (public/images/tools/<name>-phone-<300|450|600>.webp)
+//   is used when it exists next to the panel image named in the tool's file
+//   (<name>.webp); otherwise that panel image is shown as it is.
+// - duo: the phone and a recorded session of the tool's CLI plugin.
+// - session: a recorded session alone, on a tinted panel (Stellar CLI).
+// Sessions are copied from the captures (vx/Terminal.astro), never retyped.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Terminal from '../vx/Terminal.astro';
+
+interface Props {
+  /** Panel image from the tool's file, e.g. /images/tools/nido.webp. */
+  image?: string;
+  alt?: string;
+  tone?: 'dark' | 'light';
+  /** A recorded session: "$ " starts a command. */
+  lines?: string[];
+  /** What the session shows, for screen readers. */
+  label?: string;
+}
+const { image = '', alt = '', tone = 'dark', lines = [], label = '' } = Astro.props;
+const base = image.replace(/\.webp$/, '');
+const cut = Boolean(image) && existsSync(join(process.cwd(), 'public', `${base}-phone-600.webp`));
+const mode = image && lines.length ? 'duo' : image ? 'phone' : 'session';
+const srcset = [300, 450, 600].map((w) => `${base}-phone-${w}.webp ${w}w`).join(', ');
+// Rendered width of the phone (see .tst_phone below)
+const sizes = mode === 'duo' ? '(min-width: 1200px) 224px, 200px' : '(min-width: 1200px) 290px, (min-width: 768px) 24vw, 210px';
+---
+<div class:list={['tst', `tst--${mode}`, `tst--${tone}`]}>
+  {mode !== 'session' && (
+    <div class="tst_phonebox">
+      {tone === 'dark' && <span aria-hidden="true" class="tst_glow"></span>}
+      {cut
+        ? <img alt={alt} class="tst_phone" decoding="async" height="1158" loading="lazy" sizes={sizes} src={`${base}-phone-450.webp`} srcset={srcset} width="600" />
+        : <img alt={alt} class="tst_panelimg" decoding="async" height="1830" loading="lazy" src={image} width="990" />}
+    </div>
+  )}
+  {lines.length > 0 && (
+    <div class="tst_session">
+      <Terminal compact={mode === 'duo'} label={label} lines={lines} />
+    </div>
+  )}
+</div>
+
+<style>
+  /* One panel per tool page: rounded, the phone cut by its bottom edge */
+  .tst { position: relative; overflow: hidden; border-radius: 20px; isolation: isolate; }
+  .tst--dark { background: var(--deep-blue); }
+  .tst--light { background: #fbf3ff; box-shadow: inset 0 0 0 1px var(--line); }
+  .tst--session { display: grid; place-items: center; padding: clamp(24px, 4.5vw, 56px) clamp(16px, 5vw, 64px); background: var(--tint-blue); box-shadow: inset 0 0 0 1px var(--line); }
+  /* A faint blueprint grid in the middle of a session panel, as on the flows */
+  .tst--session::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(rgba(26, 59, 96, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(26, 59, 96, .07) 1px, transparent 1px); background-size: 32px 32px; background-position: center; -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent); mask-image: radial-gradient(closest-side, #000 35%, transparent); }
+  .tst--session .tst_session { width: 100%; min-width: 0; max-width: 760px; }
+
+  .tst_phonebox { position: relative; display: flex; justify-content: center; }
+  .tst_glow { position: absolute; z-index: -1; left: 50%; top: 2%; width: min(760px, 120%); aspect-ratio: 1.15; border-radius: 50%; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(246, 226, 255, .17), rgba(246, 226, 255, 0)); pointer-events: none; }
+  .tst_phone { display: block; height: auto; max-width: none; }
+  .tst--dark .tst_phone { filter: drop-shadow(0 24px 40px rgba(6, 16, 32, .5)); }
+  .tst--light .tst_phone { filter: drop-shadow(0 20px 36px rgba(26, 59, 96, .2)); }
+  .tst_panelimg { display: block; width: auto; height: 100%; max-width: 100%; }
+
+  /* Phone alone: centred, its top in view, its bottom cut by the panel */
+  .tst--phone { height: clamp(380px, 38vw, 540px); }
+  .tst--phone .tst_phonebox { height: 100%; padding-top: clamp(36px, 4vw, 56px); }
+  .tst--phone .tst_phone { width: clamp(210px, 24vw, 290px); }
+
+  /* Phone and session side by side */
+  /* The session gets the room for its widest lines (up to 97 characters) */
+  .tst--duo { display: grid; grid-template-columns: 296px minmax(0, 1fr); align-items: center; height: clamp(460px, 40vw, 540px); }
+  .tst--duo .tst_phonebox { align-self: stretch; padding-top: 52px; }
+  .tst--duo .tst_phone { width: 224px; }
+  .tst--duo .tst_session { min-width: 0; padding: 32px 44px 32px 0; }
+
+  @media (max-width: 1199px) {
+    .tst--duo { grid-template-columns: 256px minmax(0, 1fr); }
+    .tst--duo .tst_phone { width: 200px; }
+    .tst--duo .tst_session { padding-right: 28px; }
+  }
+  /* Phones: the session first, the phone under it, cut by the panel */
+  @media (max-width: 767px) {
+    .tst--duo { display: flex; flex-direction: column; height: auto; }
+    .tst--duo .tst_session { order: -1; width: 100%; padding: 16px 16px 0; }
+    .tst--duo .tst_phonebox { height: 300px; padding-top: 32px; }
+    .tst--duo .tst_phone { width: 200px; }
+  }
+</style>

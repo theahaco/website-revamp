@@ -70,3 +70,8 @@
 /* Contact form placeholders at AA contrast; fact values (emails, URLs) wrap on small phones */
 .form_textarea::placeholder, .form_input::placeholder { color: var(--muted); }
 .cs_dd, .cs_dd-net { overflow-wrap: anywhere; }
+
+/* Two-tone headlines: the second sentence in a softer tone (AA on white,
+   paper and the tints; on dark bands, white at 60%) */
+.v-soft { color: #66798f; }
+.v-dark .v-soft, .osb .v-soft { color: rgba(255, 255, 255, .6); }

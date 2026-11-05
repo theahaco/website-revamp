@@ -4,23 +4,13 @@
 // is shown when it is not Stellar alone; the project count is in the key
 // figures under the hero). The phones
 // are the tool pages' own mockups, cut out of their backgrounds
-// (public/images/tools/<tool>-phone-<width>.webp, from 864 x 1668 crops).
+// (public/images/tools/<tool>-phone-<width>.webp, drawn by vx/PhoneStack).
 import Icon from '../Icon.astro';
 import { tools } from '../../lib/content';
 import { toolIcons } from '../../lib/toolIcons';
+import PhoneStack from '../vx/PhoneStack.astro';
 
 const list = await tools();
-const widths = [300, 450, 600];
-const phone = (name: string) => ({
-  src: `/images/tools/${name}-phone-450.webp`,
-  srcset: widths.map((w) => `/images/tools/${name}-phone-${w}.webp ${w}w`).join(', '),
-});
-const center = phone('nido');
-const left = phone('scaffold-stellar');
-const right = phone('stellar-registry');
-// Rendered widths: 44% (center) and 37% (sides) of a stage at most 576 px wide.
-const sizesCenter = '(min-width: 1200px) 253px, (min-width: 992px) 21vw, (min-width: 600px) 229px, 41vw';
-const sizesSide = '(min-width: 1200px) 213px, (min-width: 992px) 18vw, (min-width: 600px) 192px, 35vw';
 ---
 <section class="osb" data-rv="home-tools" aria-labelledby="osb-title">
   <div class="osb_inner">
@@ -30,11 +20,8 @@ const sizesSide = '(min-width: 1200px) 213px, (min-width: 992px) 18vw, (min-widt
         <h2 class="osb_h2" id="osb-title">The tooling the Stellar ecosystem runs on. <span class="osb_h2-soft">Some of it already serves XRPL.</span></h2>
         <p class="osb_lede">We are core contributors to the official Stellar CLI and build the tools around it. Each tool has its own page, with every figure dated.</p>
       </div>
-      <div class="osb_visual" aria-hidden="true">
-        <span class="osb_glow"></span>
-        <img class="osb_phone osb_phone--l" src={left.src} srcset={left.srcset} sizes={sizesSide} width="450" height="869" alt="" loading="lazy" decoding="async" />
-        <img class="osb_phone osb_phone--r" src={right.src} srcset={right.srcset} sizes={sizesSide} width="450" height="869" alt="" loading="lazy" decoding="async" />
-        <img class="osb_phone osb_phone--c" src={center.src} srcset={center.srcset} sizes={sizesCenter} width="450" height="869" alt="" loading="lazy" decoding="async" />
+      <div class="osb_visual">
+        <PhoneStack left="scaffold-stellar" center="nido" right="stellar-registry" />
       </div>
     </div>
     <ul class="osb_tools" role="list">
@@ -69,11 +56,6 @@ const sizesSide = '(min-width: 1200px) 213px, (min-width: 992px) 18vw, (min-widt
      Sizes are in % of the stage, so the composition scales as one piece;
      every phone runs past the bottom edge, where the stage cuts it. */
   .osb_visual { position: relative; width: 100%; aspect-ratio: 1.2; clip-path: inset(-120px -120px 0 -120px); }
-  .osb_glow { position: absolute; left: 8%; right: 8%; top: 4%; height: 96%; border-radius: 50%; background: radial-gradient(closest-side, rgba(246, 226, 255, .2), rgba(246, 226, 255, 0)); }
-  .osb_phone { position: absolute; display: block; height: auto; max-width: none; filter: drop-shadow(0 24px 40px rgba(6, 16, 32, .5)); }
-  .osb_phone--c { z-index: 2; left: 28%; top: 0; width: 44%; }
-  .osb_phone--l { z-index: 1; left: 0; top: 16%; width: 37%; }
-  .osb_phone--r { z-index: 1; right: 0; top: 16%; width: 37%; }
 
   /* Tools: framed cells sharing their rules */
   .osb_tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; width: 100%; margin: 0; padding: 0; list-style: none; background: var(--osb-rule); border: 1px solid var(--osb-rule); border-radius: var(--radius-lg); overflow: hidden; }

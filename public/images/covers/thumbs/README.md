@@ -1,5 +1,9 @@
 # Article thumbnails
 
+> **Not shown at the moment.** Since November 2026 the Work page and the home
+> page list their rows without images. These files are kept in case the lists get
+> images again; nothing needs to be uploaded here for now.
+
 The small image next to each article in the Articles list of the Work page
 (the home page list has no images). One image per article, with exactly the
 same name as the article file: `what-a-bank-should-ask.md` uses

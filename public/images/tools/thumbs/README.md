@@ -1,5 +1,9 @@
 # Open-source tool thumbnails
 
+> **Not shown at the moment.** Since November 2026 the Work page and the home
+> page list their rows without images. These files are kept in case the lists get
+> images again; nothing needs to be uploaded here for now.
+
 The small image next to each tool on the Work page. One image per tool, with
 exactly the same name as the tool file in `src/content/tools/`: `nido.md`
 uses `nido.webp` (`.png` or `.jpg` also work).

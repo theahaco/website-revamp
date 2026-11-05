@@ -2,6 +2,7 @@
 // One page per open-source tool (src/content/tools), laid out like a case
 // study: facts, dated figures with receipts, a visual, the story, builders.
 import Icon from '../../components/Icon.astro';
+import ToolStage from '../../components/tools/ToolStage.astro';
 import { factIcon } from '../../lib/factIcons';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
@@ -29,7 +30,7 @@ const title = d.metaTitle || `${d.name}: ${d.category} | The Aha Company`;
 const description = d.description || d.lede;
 const cta = d.cta || 'Building on Stellar or XRPL? Talk to the engineers who write the tooling.';
 // Zod 4 returns a default object as is, without the inner defaults.
-const v = { kind: '', image: '', alt: '', tone: 'dark', filename: '', code: '', title: '', bars: [] as { label: string; sub: string; value: number; display: string; highlight: boolean }[], caption: '', ...d.visual };
+const v = { kind: '', image: '', alt: '', tone: 'dark' as 'dark' | 'light', filename: '', code: '', title: '', bars: [] as { label: string; sub: string; value: number; display: string; highlight: boolean }[], lines: [] as string[], label: '', caption: '', ...d.visual };
 const maxBar = Math.max(1, ...v.bars.map((b) => b.value));
 
 // Network marks for "Stellar", "XRPL and Stellar"...
@@ -108,7 +109,7 @@ const json = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
       </div>
       {metrics.length > 0 && (
         <section aria-label="In numbers" class="cs_outcomes" data-tl="metrics">
-          <ul class="cs_metrics" role="list">
+          <ul class={`cs_metrics tl_metrics tl_metrics--${metrics.length}`} role="list">
             {metrics.map((m) => (
               <li class="cs_metric">
                 <span class="cs_fig">
@@ -123,11 +124,8 @@ const json = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
       )}
       {v.kind && (
         <figure class={`tl_visual tl_visual--${v.kind}`} data-tl="visual">
-          {v.kind === 'image' && (
-            <div class={`tl_panel tl_panel--${v.tone}`}>
-              <img alt={v.alt} class="tl_panelimg" height="1830" loading="lazy" src={v.image} width="990" />
-            </div>
-          )}
+          {v.kind === 'image' && <ToolStage alt={v.alt} image={v.image} label={v.label} lines={v.lines} tone={v.tone} />}
+          {v.kind === 'terminal' && v.lines.length > 0 && <ToolStage label={v.label} lines={v.lines} tone={v.tone} />}
           {v.kind === 'code' && (
             <div class="tl_code">
               <div aria-hidden="true" class="tl_codebar"><i></i><i></i><i></i><span class="tl_codefile">{v.filename}</span></div>
@@ -229,3 +227,16 @@ const json = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
   </main>
   <Cta heading={cta} />
 </BaseLayout>
+
+<style>
+  /* Figures in even rows, never three and an orphan */
+  @media (max-width: 991px) {
+    .tl_metrics--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .tl_metrics--3 { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 479px) {
+    .tl_metrics--4 { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

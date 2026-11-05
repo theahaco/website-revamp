@@ -1,7 +1,7 @@
 ---
 title: Stellar Development Foundation
 metaTitle: 'Stellar Development Foundation: ecosystem tooling'
-order: 1
+order: 3
 eyebrow: Ecosystem · Stellar
 lede: 'We build and maintain tooling the Stellar ecosystem runs on: Stellar Scaffold, the Stellar CLI plugin system, Stellar Registry and Nido, our open-source passkey wallet. Our principal engineer Fabricius Zatti is a core contributor to the Stellar Architect Program.'
 cta: Building developer tooling for an ecosystem? Talk to the team that maintains Stellar’s.

@@ -84,4 +84,9 @@ const size = (id: string) => {
     .nwc_body { gap: 6px; padding: 16px 18px 18px; }
     .nwc_name { font-size: 22px; }
   }
+  /* Small phones: the logo tile above the text again, so the text keeps its width */
+  @media (max-width: 374px) {
+    .nwc_card { flex-direction: column; }
+    .nwc_tile { flex: none; min-height: 72px; border-right: 0; border-bottom: 1px solid var(--line); }
+  }
 </style>

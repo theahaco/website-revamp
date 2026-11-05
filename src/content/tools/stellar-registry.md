@@ -43,7 +43,25 @@ visual:
   image: /images/tools/stellar-registry.webp
   alt: 'The Stellar Registry interface on a phone: browse and discover deployed smart contracts on the Stellar network, searching by name or Wasm.'
   tone: dark
-  caption: rgstry.xyz, where anyone can search published contracts by name or by Wasm hash.
+  label: 'A real session of the Stellar Registry CLI plugin: its help and its first commands, from naming accounts to publishing Wasm'
+  lines:
+  - '$ stellar registry --help'
+  - 'Add, manage, and use Wasm packages & named contracts in the Stellar Registry'
+  - ''
+  - 'Usage: stellar-registry <COMMAND>'
+  - ''
+  - 'Commands:'
+  - '  account                  Name and manage accounts (G-addresses and smart accounts)'
+  - '  create-alias             Create a local `stellar contract alias` from a named registry contract'
+  - '  current-version          Get the current (latest) version of a published Wasm'
+  - '  deploy                   Deploy a named contract from a published Wasm'
+  - '  deploy-unnamed           Deploy a contract from a published Wasm without registering a name'
+  - '  download                 Download a Wasm binary, optionally creating a local file'
+  - '  fetch-contract-id        Look up the contract ID of a deployed contract by name'
+  - '  fetch-hash               Fetch the hash of a published Wasm binary'
+  - '  publish                  Publish Wasm to registry with package name and semantic version'
+  - '…'
+  caption: 'rgstry.xyz, where anyone can search published contracts by name or by Wasm hash. The plugin runs as `stellar registry`, here in a real session (version 0.3.0, recorded on November 5, 2026).'
 sections:
 - id: what-it-does
   title: What it does

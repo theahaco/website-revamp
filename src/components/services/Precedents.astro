@@ -1,0 +1,78 @@
+---
+// /services: a door's precedents, one row per case study (or the tools
+// page). A public client shows its logo; a client under NDA shows the lock
+// and its anonymous name, never a logo. Each line and status is a fact of the
+// case study's file in src/content/case-studies.
+import Icon from '../Icon.astro';
+import { nobr } from '../../lib/content';
+
+export interface PrecedentRow {
+  href: string;
+  name: string;
+  line: string;
+  /** Network, status, year or audit, as the case study states them. */
+  meta: string;
+  /** Green live dot before the meta. */
+  live?: boolean;
+  logo?: { src: string; w: number; h: number };
+  /** NDA client (the lock) or our tools (an icon), when there is no logo. */
+  icon?: string;
+  rv?: string;
+}
+interface Props {
+  rows: PrecedentRow[];
+  tint?: 'blue' | 'green' | 'pink';
+}
+const { rows, tint = 'blue' } = Astro.props;
+---
+<div class="pc">
+  <p class="pc_label">Precedents</p>
+  <ul class="pc_list" role="list">
+    {rows.map((r) => (
+      <li class="pc_item">
+        <a class="pc_row" data-rv={r.rv} href={r.href}>
+          <span class:list={['pc_tile', `pc_tile--${r.icon === 'lock-simple' ? 'nda' : tint}`]}>
+            {r.logo ? <img alt="" height={r.logo.h} loading="lazy" src={r.logo.src} width={r.logo.w} /> : <Icon name={r.icon ?? 'cube'} size={22} />}
+          </span>
+          <span class="pc_text">
+            <span class="pc_name"><Fragment set:html={nobr(r.name)} /><span aria-hidden="true" class="pc_arrow">&nbsp;→</span></span>
+            <span class="pc_line" set:html={nobr(r.line)} />
+            <span class="pc_meta">{r.live && <span aria-hidden="true" class="v-live pc_live"></span>}{r.meta}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .pc { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+  .pc_label { margin: 0 0 8px; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
+  .pc_list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .pc_item { border-bottom: 1px solid var(--line); }
+  .pc_row { display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 16px; align-items: center; padding: 16px 0; color: inherit; text-decoration: none; }
+  .pc_row:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 2px; border-radius: 8px; }
+
+  .pc_tile { display: grid; place-items: center; width: 72px; height: 52px; border-radius: 12px; background: var(--tint-blue); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+  .pc_tile--green { background: var(--tint-green); }
+  .pc_tile--pink { background: var(--tint-pink); }
+  .pc_tile--nda { background: var(--tint-tan); color: var(--ink-2); --icon-tint: var(--ink-2); --icon-tint-opacity: .2; }
+  .pc_tile img { display: block; max-width: 56px; height: auto; }
+
+  .pc_text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .pc_name { color: var(--deep-blue); font-size: 16px; font-weight: 600; line-height: 1.3; transition: color .2s; }
+  .pc_arrow { position: relative; left: 0; color: var(--muted); font-weight: 500; transition: left .2s, color .2s; }
+  .pc_line { color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+  .pc_meta { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1.4; }
+  .pc_live { width: 7px; height: 7px; margin: 0 8px 1px 0; vertical-align: middle; }
+  .pc_row:hover .pc_name { color: var(--green-ink); }
+  .pc_row:hover .pc_arrow { left: 3px; color: var(--green-ink); }
+  @media (prefers-reduced-motion: reduce) { .pc_name, .pc_arrow { transition: none; } .pc_row:hover .pc_arrow { left: 0; } }
+
+  @media (max-width: 479px) {
+    .pc_row { grid-template-columns: 56px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 14px 0; }
+    .pc_tile { width: 56px; height: 44px; border-radius: 10px; }
+    .pc_tile img { max-width: 44px; }
+    .pc_tile :global(svg) { width: 20px; height: 20px; }
+  }
+</style>

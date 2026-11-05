@@ -1,0 +1,36 @@
+---
+// /services: the tinted panel under each door's visual. Same field as the
+// vx/Flow panel (a rounded tint, a faint blueprint grid fading out from its
+// middle), copied here so the door visuals can lay out their own cards.
+// The panel is a size container: the visuals switch layout on its width.
+interface Props {
+  /** What the visual shows, for screen readers (omit when `decorative`). */
+  label?: string;
+  tint?: 'blue' | 'green' | 'pink' | 'paper';
+  /** Decorative content: hidden from screen readers. */
+  decorative?: boolean;
+  /** Narrower side padding, for diagrams that need the width. */
+  snug?: boolean;
+  class?: string;
+}
+const { label, tint = 'paper', decorative = false, snug = false, class: cls } = Astro.props;
+---
+<figure aria-hidden={decorative ? 'true' : undefined} aria-label={decorative ? undefined : label} class:list={['sp', `sp--${tint}`, snug && 'sp--snug', cls]}>
+  <div aria-hidden="true" class="sp_grid"></div>
+  <slot />
+</figure>
+
+<style>
+  .sp { position: relative; display: grid; place-items: center; margin: 0; padding: 48px 40px; border: 1px solid var(--line); border-radius: 20px; background: var(--tint-paper); container-type: inline-size; }
+  .sp--blue { background: var(--tint-blue); }
+  .sp--green { background: var(--tint-green); }
+  .sp--pink { background: var(--tint-pink); }
+  .sp--snug { padding-inline: 32px; }
+  .sp_grid { position: absolute; inset: 0; border-radius: inherit; background-image: linear-gradient(rgba(26, 59, 96, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(26, 59, 96, .07) 1px, transparent 1px); background-size: 32px 32px; background-position: center; -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent); mask-image: radial-gradient(closest-side, #000 30%, transparent); pointer-events: none; }
+  @media (max-width: 767px) {
+    .sp { padding: 36px 20px; }
+  }
+  @media (max-width: 379px) {
+    .sp { padding: 28px 14px; border-radius: 16px; }
+  }
+</style>

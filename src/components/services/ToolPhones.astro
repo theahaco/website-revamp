@@ -1,0 +1,49 @@
+---
+// /services, ecosystems and foundations: three of the public goods we built,
+// on their own sites (vx/PhoneStack: real mobile captures, see
+// public/images/tools/README.md), Stellar Scaffold in front as the tool most
+// projects build on. Over them, the adoption figure with its date and how it
+// is counted (src/data/site.ts, /open-source#how-we-count).
+import PhoneStack from '../vx/PhoneStack.astro';
+import Panel from './Panel.astro';
+import { toolAdoption } from '../../data/site';
+---
+<div class="tp">
+  <Panel class="tp_panel" label="Stellar Registry, Stellar Scaffold and Nido, three of our tools, on their own sites" tint="pink">
+    <div class="tp_fig">
+      <p class="tp_value">{toolAdoption.count}</p>
+      <p class="tp_label">Projects using our <span class="tp_nowrap">open-source</span> tools</p>
+      <p class="tp_meta"><span class="tp_nowrap">{toolAdoption.date}</span><a class="tp_link tp_nowrap" href="/open-source#how-we-count">How we count</a></p>
+    </div>
+    <div class="tp_stage">
+      <PhoneStack center="scaffold-stellar" glow={false} left="stellar-registry" right="nido" sizes="(min-width: 1200px) 260px, (min-width: 992px) 22vw, (min-width: 768px) 280px, 40vw" />
+    </div>
+  </Panel>
+  <p class="tp_caption">Stellar Registry, Stellar Scaffold and Nido, on their own sites.</p>
+</div>
+
+<style>
+  .tp { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  /* The figure at the top; the phones rise from the bottom of the panel,
+     which cuts them */
+  .tp :global(.tp_panel) { display: flex; flex: 1 1 auto; flex-direction: column; align-items: stretch; justify-content: space-between; gap: 28px; padding: 36px 0 0; overflow: hidden; }
+  .tp_fig { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 0 36px; }
+  .tp_value { margin: 0; color: var(--deep-blue); font-size: clamp(40px, 4vw, 52px); font-weight: 500; line-height: 1; letter-spacing: -.035em; }
+  .tp_label { margin: 4px 0 0; color: var(--ink); font-size: 16px; font-weight: 500; line-height: 1.4; }
+  .tp_meta { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 4px 0 0; color: var(--ink-2); font-size: 14px; line-height: 1.5; }
+  .tp_link { color: var(--deep-blue); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(26, 59, 96, .35); text-underline-offset: 3px; transition: color .2s; }
+  .tp_link:hover { color: var(--green-ink); }
+  .tp_nowrap { white-space: nowrap; }
+  @media (pointer: coarse) { .tp_link { display: inline-block; padding: 12px 0; margin: -12px 0; } }
+
+  .tp_stage { position: relative; z-index: 1; width: calc(100% - 40px); max-width: 560px; margin: 0 auto; aspect-ratio: 1.2; }
+  /* A light shadow on the tint (the stack's own shadow is drawn for dark bands) */
+  .tp_stage :global(.vps_phone) { filter: drop-shadow(0 18px 30px rgba(20, 36, 58, .2)) drop-shadow(0 2px 6px rgba(20, 36, 58, .08)); }
+  .tp_caption { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  @media (max-width: 767px) {
+    .tp :global(.tp_panel) { gap: 24px; padding-top: 28px; }
+    .tp_fig { padding: 0 22px; }
+    .tp_stage { width: calc(100% - 16px); }
+  }
+</style>

@@ -158,7 +158,8 @@ const tools = defineCollection({
     metrics: z.array(z.object({ figure: str, label: str, receipt: str })).default([]),
     visual: z
       .object({
-        kind: z.enum(['image', 'code', 'bars', '']).default(''),
+        // terminal: a recorded session alone; an image can also carry one (lines)
+        kind: z.enum(['image', 'code', 'bars', 'terminal', '']).default(''),
         image: str,
         alt: str,
         tone: z.enum(['dark', 'light']).default('dark'), // panel behind an image
@@ -166,6 +167,11 @@ const tools = defineCollection({
         code: str,
         title: str, // bars
         bars: z.array(z.object({ label: z.string(), sub: str, value: z.number(), display: str, highlight: z.boolean().default(false) })).default([]),
+        // terminal, or an image with a session beside it: the session exactly as
+        // printed ("$ " starts a command, "…" marks lines cut at the end of an
+        // output), and what it shows, for screen readers
+        lines: z.array(str).default([]),
+        label: str,
         caption: str,
       })
       .default({}),

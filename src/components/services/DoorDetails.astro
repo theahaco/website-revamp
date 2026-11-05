@@ -1,0 +1,87 @@
+---
+// /services: under each door's feature row, the offer (two columns), how it
+// runs (four steps on one line) and the tech (one quiet line), as rows of a
+// spec sheet on hairline rules, then the two calls to action.
+export interface Item { title: string; desc: string }
+interface Props {
+  id: string;
+  offer: Item[];
+  steps: Item[];
+  tech: string[];
+  work: string;
+}
+const { id, offer, steps, tech, work } = Astro.props;
+---
+<div class="dd">
+  <div class="dd_row">
+    <h3 class="dd_label">The offer</h3>
+    <ul class="dd_offer" data-rv={`svc-${id}-offer`} role="list">
+      {offer.map((o) => (
+        <li class="dd_item"><p class="dd_title">{o.title}</p><p class="dd_desc">{o.desc}</p></li>
+      ))}
+    </ul>
+  </div>
+  <div class="dd_row">
+    <h3 class="dd_label">How it runs</h3>
+    <ol class="dd_steps" data-rv={`svc-${id}-steps`} role="list">
+      {steps.map((s, i) => (
+        <li class="dd_step"><span aria-hidden="true" class="dd_num">{i + 1}</span><p class="dd_title">{s.title}</p><p class="dd_desc">{s.desc}</p></li>
+      ))}
+    </ol>
+  </div>
+  <div class="dd_row dd_row--tech">
+    <h3 class="dd_label">Relevant tech</h3>
+    <ul class="dd_tech" data-rv={`svc-${id}-tech`} role="list">
+      {tech.map((t) => <li class="dd_tag">{t}</li>)}
+    </ul>
+  </div>
+  <div class="nf_actions dd_actions"><a class="btn-primary" href="/contact">Schedule a call</a><a class="btn-secondary" href={work}>See our work</a></div>
+</div>
+
+<style>
+  .dd { display: flex; flex-direction: column; }
+  .dd_row { display: grid; grid-template-columns: 200px minmax(0, 1fr); column-gap: 40px; padding: 32px 0; border-top: 1px solid var(--line); }
+  .dd_label { margin: 0; padding-top: 3px; color: var(--deep-blue); font-size: 13px; font-weight: 600; line-height: 1.3; letter-spacing: .08em; text-transform: uppercase; }
+  .dd_title { margin: 0 0 4px; color: var(--deep-blue); font-size: 16px; font-weight: 600; line-height: 1.35; }
+  .dd_desc { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.5; text-wrap: pretty; }
+
+  /* The offer: two columns, each item on a short rule */
+  .dd_offer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; margin: 0; padding: 0; list-style: none; }
+  .dd_item { padding-left: 16px; border-left: 2px solid var(--vibrant-green); }
+
+  /* How it runs: four numbered steps on one line */
+  .dd_steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+  .dd_step { position: relative; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+  .dd_num { position: relative; z-index: 1; display: grid; place-items: center; width: 28px; height: 28px; margin-bottom: 16px; border: 1.5px solid var(--deep-blue); border-radius: 50%; background: var(--white); color: var(--deep-blue); font-size: 13px; font-weight: 700; line-height: 1; }
+  .dd_step:last-child .dd_num { border-color: var(--green-ink); background: var(--green-ink); color: var(--white); }
+  /* The line joining the numbers, to the next step */
+  .dd_step:not(:last-child)::after { content: ''; position: absolute; top: 13.25px; left: 36px; right: -16px; border-top: 1.5px solid var(--line-strong); }
+
+  /* The tech: one quiet line */
+  .dd_row--tech { padding: 24px 0; }
+  .dd_tech { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0; padding: 0; list-style: none; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+  .dd_tag:not(:last-child)::after { content: '·'; margin: 0 10px; color: var(--muted); }
+
+  .dd_actions { padding-top: 32px; border-top: 1px solid var(--line); }
+
+  @media (max-width: 1199px) {
+    .dd_row { grid-template-columns: 168px minmax(0, 1fr); column-gap: 32px; }
+    .dd_steps { gap: 20px; }
+  }
+  /* Tablets: the label above its row, the steps two by two */
+  @media (max-width: 991px) {
+    .dd_row { grid-template-columns: minmax(0, 1fr); row-gap: 20px; padding: 28px 0; }
+    .dd_steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; }
+    .dd_step:nth-child(2)::after { display: none; }
+  }
+  /* Phones: one column, the steps down a vertical line */
+  @media (max-width: 599px) {
+    .dd_offer { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .dd_steps { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .dd_step { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 16px; }
+    .dd_num { grid-row: 1 / span 2; margin: 0; }
+    .dd_step .dd_title { padding-top: 3px; }
+    .dd_step:nth-child(2)::after { display: block; }
+    .dd_step:not(:last-child)::after { top: 28px; bottom: -20px; left: 13.25px; right: auto; border-top: 0; border-left: 1.5px solid var(--line-strong); }
+  }
+</style>

@@ -1,6 +1,6 @@
 // The six services: shown on the home page ("What we do", with their
 // precedents) and on /services (with their bullets). Edit the copy here; both
-// pages read it. Each `id` is the anchor of the service's card on /services.
+// pages read it. Each `id` is the service's stable key.
 //
 // Precedents are real engagements only. A public client shows its logo; a
 // client under NDA shows a lock and its anonymous name, never a logo; our own

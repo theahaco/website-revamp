@@ -36,24 +36,29 @@ metrics:
   label: Downloads of sep5, our key-derivation crate inside the CLI (November 2026)
   receipt: https://crates.io/crates/sep5
 visual:
-  kind: code
-  filename: terminal
-  code: |-
-    # Keys kept in the operating system’s keychain
-    stellar keys generate alice --secure-store \
-      --fund --network testnet
-
-    # Deploy, and save the contract id under an alias
-    stellar contract deploy --wasm hello.wasm \
-      --source alice --network testnet --alias hello
-
-    # Each contract function becomes a typed command
-    stellar contract invoke --id hello --source alice \
-      --network testnet -- hello --to world
-
-    # Plugins run as stellar subcommands
-    stellar scaffold init my-project
-  caption: 'A first contract call with the Stellar CLI. Secure key storage, the typed contract commands and the plugin system are among the parts our engineers built.'
+  kind: terminal
+  label: 'A Stellar CLI 30.0.1 session: the version, a new key and its address, the default network, a new contract project and the installed plugins'
+  lines:
+  - '$ stellar --version'
+  - 'stellar 30.0.1 (f2a7b74175c34585f3b30a1abf42a2d41cbcc390)'
+  - '…'
+  - '$ stellar keys generate alice'
+  - '✅ Key saved with alias alice in "/home/dev/.config/stellar/identity/alice.toml"'
+  - '$ stellar keys address alice'
+  - 'GAYQDVYRICEBBA62MCJ34Y5TU2SKI2BHPL6D5AMYKUK3TCNV5GJYWGLE'
+  - '$ stellar network use testnet'
+  - 'ℹ️ The default network is set to `testnet`'
+  - '$ stellar contract init hello-world'
+  - 'ℹ️ Initializing workspace at "hello-world"'
+  - '➕ Writing "hello-world/.gitignore"'
+  - '➕ Writing "hello-world/AGENTS.md"'
+  - '➕ Writing "hello-world/Cargo.toml"'
+  - '…'
+  - '$ stellar plugin ls'
+  - 'Installed Plugins:'
+  - '    registry'
+  - '    scaffold'
+  caption: 'A real session, recorded on November 5, 2026 with Stellar CLI 30.0.1 (lines cut at the end of an output are marked “…”). Key management and the plugin system, which runs our Scaffold and Registry as `stellar` subcommands, are among the parts our engineers built.'
 sections:
 - id: what-it-does
   title: What it does

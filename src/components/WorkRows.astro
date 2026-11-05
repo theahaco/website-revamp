@@ -1,10 +1,8 @@
 ---
 // Rows of the Work page (case studies or articles). Eyebrow, filter data and
 // links are computed here; src/scripts/work.js only filters and switches views.
-// Each row has a thumbnail (src/lib/visuals.ts, WorkThumb).
+// Rows are the number and the text, without images (as on the home page).
 import { caseStudies, posts, tools, formatDate, nobr } from '../lib/content';
-import { caseVisual, articleVisual, toolVisual } from '../lib/visuals';
-import WorkThumb from './WorkThumb.astro';
 
 interface Props {
   kind: 'cases' | 'articles';
@@ -31,11 +29,10 @@ const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim
 ---
 <div class="w-dyn-list">
   <div class="work_list w-dyn-items" role="list">
-    {cases.map((cs, i) => (
+    {cases.map((cs) => (
       <div class="work_item w-dyn-item" role="listitem" data-fa={cs.data.audience} data-fn={cs.data.network}>
         <a class="work_article-link w-inline-block wr_link" href={`/case-studies/${cs.id}`}>
           <span class="work_num"></span>
-          <span class="wr_thumb"><WorkThumb visual={caseVisual(cs.id, cs.data)} eager={i === 0} /></span>
           <div class="work_stack">
             <div class="wr_head">
               <div class="work_meta">
@@ -54,7 +51,6 @@ const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim
       <div class="work_item w-dyn-item" role="listitem" data-fa={toolAudience} data-fn={toolNets(tool.data.network)} data-wk-tool={tool.id}>
         <a class="work_article-link w-inline-block wr_link" href={`/open-source/${tool.id}`}>
           <span class="work_num"></span>
-          <span class="wr_thumb"><WorkThumb visual={toolVisual(tool.id)} /></span>
           <div class="work_stack">
             <div class="wr_head">
               <div class="work_meta">
@@ -73,7 +69,6 @@ const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim
       <div class="work_item w-dyn-item" role="listitem" data-fa={cs.data.audience} data-fn={cs.data.network} data-wk-alliance={cs.id}>
         <div class="work_article-link wk_static wr_link">
           <span class="work_num"></span>
-          <span class="wr_thumb"><WorkThumb visual={caseVisual(cs.id, cs.data)} /></span>
           <div class="work_stack">
             <div class="wr_head">
               <div class="work_meta">
@@ -88,11 +83,10 @@ const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim
         </div>
       </div>
     ))}
-    {articles.map((post, i) => (
+    {articles.map((post) => (
       <div class="work_item w-dyn-item" role="listitem" data-fa={post.data.audience} data-fn={post.data.network}>
         <a class="work_article-link w-inline-block wr_link" href={`/blog/${post.id}`}>
           <span class="work_num"></span>
-          <span class="wr_thumb"><WorkThumb visual={articleVisual(post.id, post.data)} eager={i === 0} /></span>
           <div class="work_stack">
             <div class="wr_head">
               <div class="work_meta">
@@ -116,27 +110,12 @@ const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim
 </div>
 
 <style>
-  /* Number, square thumbnail, text. On phones: a smaller thumbnail next to the
-     number and eyebrow; client, title and line below it at full width. */
-  .wr_link { --wr-thumb: 152px; grid-template-columns: 32px var(--wr-thumb) minmax(0, 1fr); column-gap: 28px; align-items: start; }
-  .wr_thumb { display: block; width: 100%; aspect-ratio: 1; }
+  /* Number and text; on phones the number sits above the text (site.css) */
   .wr_head { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  .wr_head::before { display: none; }
-  .wr_link .work_num { padding-top: 0; line-height: 18px; }
   .wr_link .work_meta { min-height: 18px; }
   .work_article-h3 { transition: color .2s; }
   a.wr_link:hover .work_article-h3 { color: var(--green-ink); }
-  @media (max-width: 991px) {
-    .wr_link { --wr-thumb: 128px; column-gap: 24px; }
-  }
   @media (max-width: 767px) {
-    .wr_link { --wr-thumb: 88px; grid-template-columns: var(--wr-thumb) minmax(0, 1fr); column-gap: 16px; row-gap: 12px; }
-    .wr_link .work_num { display: none; }
-    .wr_thumb { grid-column: 1; grid-row: 1; }
-    .wr_link .work_stack { display: contents; }
-    .wr_head { grid-column: 2; grid-row: 1; align-self: center; }
-    .wr_link .work_stack > :not(.wr_head) { grid-column: 1 / -1; }
-    .wr_head::before { content: counter(work, decimal-leading-zero); display: block; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1.2; }
     .wr_link .wk_client { flex-wrap: wrap; row-gap: 6px; margin-top: 4px; }
   }
 </style>

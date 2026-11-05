@@ -1,58 +1,66 @@
 ---
 // /services: the three doors (financial institutions, protocols and products,
 // ecosystems and foundations), each with its anchor (#institutions,
-// #protocols, #ecosystems), where the home page's service cards link.
+// #protocols, #ecosystems), where the home page's service rows link. Each
+// door opens with a feature row (label, two-tone headline, lede, precedents
+// and one visual), then the offer, how it runs and the tech
+// (../components/services/). The visuals differ from the home page rows
+// (the bank's settlement stablecoin, LI.FI, a Stellar CLI session): EURCV's
+// compliance from launch to now, an integration mapped to the network, and
+// three of our tools on their own sites.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Cta from '../components/Cta.astro';
-import Icon from '../components/Icon.astro';
+import DoorDetails, { type Item } from '../components/services/DoorDetails.astro';
+import EurcvControls from '../components/services/EurcvControls.astro';
+import IntegrationMap from '../components/services/IntegrationMap.astro';
+import Precedents, { type PrecedentRow } from '../components/services/Precedents.astro';
+import ToolPhones from '../components/services/ToolPhones.astro';
 
-type Tint = '' | 'green' | 'pink';
-interface CaseCard { href: string; label: string; title: string; cta: string; rv?: string; logo?: { src: string; w: number; h: number }; icon?: string }
+type DoorId = 'institutions' | 'protocols' | 'ecosystems';
 interface Door {
-  id: string;
-  tint: Tint;
-  icon: string;
+  id: DoorId;
+  tint: 'blue' | 'green' | 'pink';
   band: 'ab_white' | 'footer_section';
-  eyebrow: string;
-  h2: string;
+  label: string;
+  title: string;
+  soft: string;
   lede: string;
-  cases: CaseCard[];
-  offer: string[];
-  steps: string[];
+  /** Short name for the jump links in the header. */
+  index: string;
+  cases: PrecedentRow[];
+  offer: Item[];
+  steps: Item[];
   tech: string[];
   work: string;
 }
 
-const jump: { href: string; label: string; icon: string; tint: Tint }[] = [
-  { href: '#institutions', label: 'Financial institutions', icon: 'bank', tint: '' },
-  { href: '#protocols', label: 'Protocols and products', icon: 'plugs-connected', tint: 'green' },
-  { href: '#ecosystems', label: 'Ecosystems and foundations', icon: 'graph', tint: 'pink' },
-];
-
+const LOGOS = '/images/logos';
 const doors: Door[] = [
   {
     id: 'institutions',
-    tint: '',
-    icon: 'bank',
+    tint: 'blue',
     band: 'ab_white',
-    eyebrow: 'For financial institutions',
-    h2: 'Regulated assets onchain',
-    lede: 'Stablecoins, tokenized funds and deposits, payment and settlement rails, with compliance controls on the asset or in contracts, and an operating model your risk committee signs off on.',
+    label: 'For financial institutions',
+    title: 'Regulated assets onchain.',
+    soft: 'With an operating model your risk committee signs off on.',
+    lede: 'Stablecoins, tokenized funds and deposits, payment and settlement rails, with compliance controls on the asset or in contracts.',
+    index: 'Regulated assets onchain',
     cases: [
-      { href: '/case-studies/societe-generale-forge', label: 'Financial institution · Stellar', title: 'Société Générale-FORGE: EURCV, a regulated euro stablecoin on Stellar mainnet', cta: 'See case study →', logo: { src: '/images/logos/logo-light-sgforge.svg', w: 77, h: 22 } },
-      { href: '/case-studies/nda-settlement-stablecoin', rv: 'svc-bank', label: 'Financial institution · Stellar', title: 'Top US commercial bank: an internal settlement stablecoin, live on Stellar mainnet', cta: 'See case study →', icon: 'lock-simple' },
+      { href: '/case-studies/societe-generale-forge', name: 'Société Générale-FORGE', line: 'EURCV, a regulated euro stablecoin on Stellar', meta: 'Live since Q1 2026 · Issuance and governance', live: true, logo: { src: `${LOGOS}/logo-light-sgforge.svg`, w: 77, h: 22 } },
+      { href: '/case-studies/nda-settlement-stablecoin', rv: 'svc-bank', name: 'Top US commercial bank', line: 'An internal settlement stablecoin on Stellar', meta: 'Live since Q3 2026 · Architecture and delivery lead', live: true, icon: 'lock-simple' },
+      { href: '/case-studies/nda-money-market-fund', name: 'Regulated European asset manager', line: 'A tokenized share class of a money market fund', meta: 'In build on Stellar', icon: 'lock-simple' },
     ],
     offer: [
-      'Stablecoin issuance and governance: role separation, freeze and clawback, allow and deny lists',
-      'Tokenized funds and deposits, mapped to the legal structure',
-      'Payment and settlement rails, with mint and burn bridges to core banking',
-      'Custody and keys: custodian and MPC integrations, KYT through the custodian',
+      { title: 'Stablecoin issuance and governance', desc: 'Role separation, freeze and clawback, allow and deny lists.' },
+      { title: 'Tokenized funds and deposits', desc: 'Mapped to the legal structure.' },
+      { title: 'Payment and settlement rails', desc: 'With mint and burn bridges to core banking.' },
+      { title: 'Custody and keys', desc: 'Custodian and MPC integrations, KYT through the custodian.' },
     ],
     steps: [
-      'Scoping: one technical session on authorities, custody and compliance controls',
-      'Structure: NDA, then an MOU with milestones your team can verify',
-      'Build: a first release on testnet with your operations team, milestone by milestone',
-      'Mainnet and after: deployment, runbooks and handover; we stay on the account',
+      { title: 'Scoping', desc: 'One technical session on authorities, custody and compliance controls.' },
+      { title: 'Structure', desc: 'NDA, then an MOU with milestones your team can verify.' },
+      { title: 'Build', desc: 'A first release on testnet with your operations team, milestone by milestone.' },
+      { title: 'Mainnet and after', desc: 'Deployment, runbooks and handover; we stay on the account.' },
     ],
     tech: ['Soroban', 'Stellar Asset Contract', 'SEP-41', 'XRPL MPT', 'Freeze and clawback', 'Custody and MPC', 'KYT', 'Core banking integration'],
     work: '/work?for=institutions',
@@ -60,25 +68,26 @@ const doors: Door[] = [
   {
     id: 'protocols',
     tint: 'green',
-    icon: 'plugs-connected',
     band: 'footer_section',
-    eyebrow: 'For protocols and products',
-    h2: 'Protocol and product integration',
+    label: 'For protocols and products',
+    title: 'Protocol and product integration.',
+    soft: 'Written for the network, not ported to it.',
     lede: 'Your protocol or product on Stellar, XRPL or Canton, live elsewhere or launching for the first time: native contracts, adapters and SDKs, routing and liquidity, matched to the guarantees you already give users.',
+    index: 'Protocol and product integration',
     cases: [
-      { href: '/case-studies/lifi', label: 'Protocol · Stellar', title: 'LI.FI: Soroban contracts behind the Stellar integration', cta: 'See case study →', logo: { src: '/images/logos/logo-light-lifi.svg', w: 55, h: 20 } },
+      { href: '/case-studies/lifi', name: 'LI.FI', line: 'Soroban contracts behind the Stellar integration', meta: 'Live on Stellar · Audited by Halborn', live: true, logo: { src: `${LOGOS}/logo-light-lifi.svg`, w: 55, h: 20 } },
     ],
     offer: [
-      'Integration roadmap: your integration surface mapped to the target network',
-      'Native contracts, written for the network rather than ported',
-      'Adapters and SDKs: a typed client for your existing stack',
-      'Routing and liquidity: bridges, exchanges and liquidity plans',
+      { title: 'Integration roadmap', desc: 'Your integration surface mapped to the target network.' },
+      { title: 'Native contracts', desc: 'Written for the network rather than ported.' },
+      { title: 'Adapters and SDKs', desc: 'A typed client for your existing stack.' },
+      { title: 'Routing and liquidity', desc: 'Bridges, exchanges and liquidity plans.' },
     ],
     steps: [
-      'Roadmap: map the integration surface and size the work',
-      'Proposal: milestone-based scope, with or without an ecosystem program',
-      'Build: contracts, adapters and SDKs tested against your suite',
-      'Mainnet: launch, docs and a maintenance plan your engineers can run',
+      { title: 'Roadmap', desc: 'Map the integration surface and size the work.' },
+      { title: 'Proposal', desc: 'Milestone-based scope, with or without an ecosystem program.' },
+      { title: 'Build', desc: 'Contracts, adapters and SDKs tested against your suite.' },
+      { title: 'Mainnet', desc: 'Launch, docs and a maintenance plan your engineers can run.' },
     ],
     tech: ['Soroban', 'Rust', 'TypeScript', 'Stellar Asset Contract', 'Circle CCTP', 'Cross-chain routing', 'Wallet kits', 'Third-party audits'],
     work: '/work?for=protocols',
@@ -86,107 +95,77 @@ const doors: Door[] = [
   {
     id: 'ecosystems',
     tint: 'pink',
-    icon: 'graph',
     band: 'ab_white',
-    eyebrow: 'For ecosystems and foundations',
-    h2: 'Developer tooling and DevX',
-    lede: 'The tooling an ecosystem runs on, built and maintained as public goods, and the programs that take teams from prototype to go live.',
+    label: 'For ecosystems and foundations',
+    title: 'Developer tooling and DevX.',
+    soft: 'Built and maintained as public goods.',
+    lede: 'The tooling an ecosystem runs on, and the programs that take teams from prototype to go live.',
+    index: 'Developer tooling and DevX',
     cases: [
-      { href: '/case-studies/stellar-development-foundation', label: 'Ecosystem · Stellar', title: 'Stellar Development Foundation: Stellar Scaffold, Stellar CLI plugin system, Stellar Registry, Nido', cta: 'See case study →', logo: { src: '/images/logos/logo-light-stellar.svg', w: 77, h: 19 } },
-      { href: '/case-studies/ripple', label: 'Ecosystem · XRPL', title: 'Ripple: accelerator cohorts, hackathons and a two-week DevX audit of XRPL’s developer path', cta: 'See case study →', logo: { src: '/images/logos/logo-light-ripple.svg', w: 70, h: 18 } },
-      { href: '/open-source', rv: 'svc-tools', label: 'Open source · Stellar and XRPL', title: 'Each tool has its own page: Stellar CLI, Stellar Scaffold, Stellar Registry, Nido, Perch, Moonlight, Tansu and GhostSig', cta: 'See the tools →', icon: 'terminal-window' },
+      { href: '/case-studies/stellar-development-foundation', name: 'Stellar Development Foundation', line: 'Stellar Scaffold, Stellar CLI plugin system, Stellar Registry, Nido', meta: 'Stellar · 2021-today', logo: { src: `${LOGOS}/logo-light-stellar.svg`, w: 77, h: 19 } },
+      { href: '/case-studies/ripple', name: 'Ripple', line: 'Accelerator cohorts, hackathons and a two-week DevX audit of XRPL’s developer path', meta: 'XRPL · Since Q4 2025', logo: { src: `${LOGOS}/logo-light-ripple.svg`, w: 70, h: 18 } },
+      { href: '/open-source', rv: 'svc-tools', name: 'Open source', line: 'Each tool has its own page: Stellar CLI, Stellar Scaffold, Stellar Registry, Nido, Perch, Moonlight, Tansu and GhostSig', meta: 'Stellar and XRPL', icon: 'terminal-window' },
     ],
     offer: [
-      'DevX audit: two engineers, two weeks, on your real onboarding path',
-      "Tooling roadmap agreed with the ecosystem's engineering team",
-      'CLIs, scaffolding, registries, sandboxes and wallets, built as public goods',
-      'Accelerator and hackathon mentoring',
+      { title: 'DevX audit', desc: 'Two engineers, two weeks, on your real onboarding path.' },
+      { title: 'Tooling roadmap', desc: 'Agreed with the ecosystem’s engineering team.' },
+      { title: 'Open-source tooling', desc: 'CLIs, scaffolding, registries, sandboxes and wallets, built as public goods.' },
+      { title: 'Accelerator and hackathon mentoring', desc: 'Architecture reviews, token and issuer design, hands-on help on the path to go live.' },
     ],
     steps: [
-      'DevX audit: ranked friction points on the onboarding path',
-      'Roadmap: a prioritized tooling plan',
-      'Build: open-source tooling, with docs',
-      'Maintain: a quarterly public-goods proposal and review',
+      { title: 'DevX audit', desc: 'Ranked friction points on the onboarding path.' },
+      { title: 'Roadmap', desc: 'A prioritized tooling plan.' },
+      { title: 'Build', desc: 'Open-source tooling, with docs.' },
+      { title: 'Maintain', desc: 'A quarterly public-goods proposal and review.' },
     ],
     tech: ['Rust', 'TypeScript', 'CLI plugins', 'Code generation', 'Passkeys', 'Open source', 'SBOMs', 'Release automation'],
     work: '/work?for=ecosystems',
   },
 ];
-
-// "Scoping: one technical session ..." -> the step name and the rest.
-const split = (step: string) => {
-  const i = step.indexOf(': ');
-  return i === -1 ? { name: '', rest: step } : { name: step.slice(0, i), rest: step.slice(i + 2) };
-};
 ---
 <BaseLayout title={'Stablecoin and tokenization services | The Aha Company'} description={'Stablecoin issuance, tokenized funds and deposits for banks, integrations for protocols moving to a new network, and developer tooling for ecosystems.'}>
 <main data-main="1">
-  <section>
-    <div class="svc_introcontainer">
-      <div class="lg_header">
-        <p class="v-eyebrow">Services</p>
-        <h1 class="intro_h1">Three doors, one engineering team.</h1>
+  <section class="sv-hero">
+    <div class="svc_introcontainer sv-herobox">
+      <div class="lg_header sv-herotext">
+        <p class="v-eyebrow page_eyebrow">Services</p>
+        <h1 class="intro_h1 sv-h1">Three doors, <span class="v-soft">one engineering team.</span></h1>
         <p class="art_lede">Regulated assets onchain for financial institutions. Integrations for protocols and products expanding to a new network. Developer tooling for the ecosystems themselves. The engineers who build the networks’ tooling do the integrations.</p>
       </div>
-      <nav aria-label="Sections" class="svc_jumpnav">
-        {jump.map((j) => (
-          <a class="svc_pill sv-pill" href={j.href}><span class:list={['sv-pilldot', j.tint && `sv-pilldot--${j.tint}`]}><Icon name={j.icon} size={16} /></span>{j.label}</a>
-        ))}
+      <nav aria-label="Sections" class="sv-index">
+        <ol class="sv-indexlist" role="list">
+          {doors.map((d, i) => (
+            <li class="sv-indexitem">
+              <a class="sv-indexlink" href={`#${d.id}`}>
+                <span aria-hidden="true" class="sv-indexnum">{String(i + 1).padStart(2, '0')}</span>
+                <span class="sv-indexlabel">{d.label}</span>
+                <span class="sv-indexdesc">{d.index}</span>
+                <span aria-hidden="true" class="sv-indexarrow">↓</span>
+              </a>
+            </li>
+          ))}
+        </ol>
       </nav>
     </div>
   </section>
 
-  {doors.map((d) => (
-    <section class:list={[d.band, 'sv-doorband']} id={d.id}>
-      <div class="ab_container">
-        <div class="ab_howgrid">
-          <div class="ab_howhead">
-            <div class="sv-doorhead">
-              <span class:list={['v-iconbox', d.tint && `v-iconbox--${d.tint}`]}><Icon name={d.icon} size={28} /></span>
-              <p class="v-eyebrow">{d.eyebrow}</p>
-            </div>
-            <h2 class="ab_h2">{d.h2}</h2>
-            <p class="art_lede">{d.lede}</p>
+  {doors.map((d, i) => (
+    <section aria-labelledby={`${d.id}-title`} class:list={[d.band, 'sv-door', `sv-door--${d.id}`]} id={d.id}>
+      <div class="sv-doorbox">
+        <div class:list={['sv-feature', i % 2 === 1 && 'sv-feature--flip']}>
+          <div class="sv-text">
+            <p class="v-eyebrow">{d.label}</p>
+            <h2 class="sv-h2" id={`${d.id}-title`}>{d.title} <span class="v-soft">{d.soft}</span></h2>
+            <p class="sv-lede">{d.lede}</p>
+            <Precedents rows={d.cases} tint={d.tint} />
           </div>
-          <div class="svc_casestack">
-            {d.cases.map((c) => (
-              <a class="svc_casecard w-inline-block sv-case" data-rv={c.rv} href={c.href}>
-                <span class="sv-casetop">
-                  <span class="cs_cardlabel-green">{c.label}</span>
-                  {c.logo && <img alt="" class="sv-caselogo" height={c.logo.h} loading="lazy" src={c.logo.src} width={c.logo.w} />}
-                  {c.icon && <span class:list={['v-iconbox v-iconbox--sm', c.icon === 'lock-simple' ? 'v-iconbox--tan' : d.tint && `v-iconbox--${d.tint}`]}><Icon name={c.icon} size={20} /></span>}
-                </span>
-                <span class="nf_cardtitle">{c.title}</span>
-                <span class="svc_casecta">{c.cta}</span>
-              </a>
-            ))}
+          <div class="sv-visual">
+            {d.id === 'institutions' && <EurcvControls />}
+            {d.id === 'protocols' && <IntegrationMap />}
+            {d.id === 'ecosystems' && <ToolPhones />}
           </div>
         </div>
-
-        <div class="svc_cardgrid sv-roles">
-          <div class="ab_rolecard sv-role">
-            <h3 class="svc_cardlabel sv-rolelabel"><span class:list={['v-iconbox v-iconbox--sm', d.tint && `v-iconbox--${d.tint}`]}><Icon name="list-checks" size={20} /></span>The offer</h3>
-            <ul class="svc_list" data-svc="arrows" data-rv={`svc-${d.id}-offer`} role="list">
-              {d.offer.map((o) => <li class="svc_li">{o}</li>)}
-            </ul>
-          </div>
-          <div class="ab_rolecard sv-role">
-            <h3 class="svc_cardlabel sv-rolelabel"><span class:list={['v-iconbox v-iconbox--sm', d.tint && `v-iconbox--${d.tint}`]}><Icon name="path" size={20} /></span>How it runs</h3>
-            <ol class="svc_list sv-steps" data-rv={`svc-${d.id}-steps`} role="list">
-              {d.steps.map((s, i) => { const p = split(s); return (
-                <li class="svc_li sv-step"><span aria-hidden="true" class="sv-stepnum">{i + 1}</span><span>{p.name && <strong class="sv-stepname">{p.name}:</strong>} {p.rest}</span></li>
-              ); })}
-            </ol>
-          </div>
-          <div class="ab_rolecard sv-role">
-            <h3 class="svc_cardlabel sv-rolelabel"><span class:list={['v-iconbox v-iconbox--sm', d.tint && `v-iconbox--${d.tint}`]}><Icon name="cube" size={20} /></span>Relevant tech</h3>
-            <ul class:list={['cs_pills sv-pills', d.tint && `sv-pills--${d.tint}`]} data-rv={`svc-${d.id}-tech`} role="list">
-              {d.tech.map((t) => <li class="cs_pill">{t}</li>)}
-            </ul>
-          </div>
-        </div>
-
-        <div class="nf_actions"><a class="btn-primary" href="/contact">Schedule a call</a><a class="btn-secondary" href={d.work}>See our work</a></div>
+        <DoorDetails id={d.id} offer={d.offer} steps={d.steps} tech={d.tech} work={d.work} />
       </div>
     </section>
   ))}
@@ -195,40 +174,67 @@ const split = (step: string) => {
 </BaseLayout>
 
 <style>
-  /* Jump links: each door with its icon */
-  .sv-pill { gap: 8px; padding-left: 6px; }
-  .sv-pilldot { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--tint-blue); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
-  .sv-pilldot--green { background: var(--tint-green); }
-  .sv-pilldot--pink { background: var(--tint-pink); }
+  /* Header: the title in two tones; the three doors as numbered links,
+     beside it on wide screens, under it below 992 px */
+  .sv-herobox { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 64px; align-items: end; }
+  .sv-herotext { max-width: 700px; }
+  .sv-h1 { font-size: clamp(44px, 4.6vw, 64px); }
+  .sv-h1 .v-soft { display: block; }
+  .sv-index { width: 100%; }
+  .sv-indexlist { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .sv-indexitem { display: flex; min-width: 0; border-bottom: 1px solid var(--line); }
+  .sv-indexlink { position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; grid-template-areas: 'num label arrow' 'num desc arrow'; column-gap: 12px; row-gap: 3px; align-items: start; width: 100%; padding: 18px 4px 18px 0; color: inherit; text-decoration: none; }
+  .sv-indexlink:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 2px; border-radius: 6px; }
+  .sv-indexnum { grid-area: num; padding-top: 5px; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1; }
+  .sv-indexlabel { grid-area: label; color: var(--deep-blue); font-size: 18px; font-weight: 600; line-height: 1.3; transition: color .2s; }
+  .sv-indexdesc { grid-area: desc; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+  .sv-indexarrow { grid-area: arrow; align-self: center; color: var(--muted); font-size: 18px; line-height: 1; transition: color .2s, transform .2s; }
+  .sv-indexlink:hover .sv-indexlabel { color: var(--green-ink); }
+  .sv-indexlink:hover .sv-indexarrow { color: var(--green-ink); transform: translateY(3px); }
+  @media (prefers-reduced-motion: reduce) { .sv-indexlabel, .sv-indexarrow { transition: none; } .sv-indexlink:hover .sv-indexarrow { transform: none; } }
 
-  /* The doors */
-  .sv-doorhead { display: flex; align-items: center; gap: 14px; }
-  .sv-case { gap: 12px; border-radius: var(--radius-lg); transition: border-color .2s, box-shadow .2s; }
-  .sv-case:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
-  /* Label left, logo right; on a narrow card the logo goes above the label */
-  .sv-casetop { display: flex; flex-wrap: wrap-reverse; align-items: center; justify-content: space-between; gap: 10px 16px; min-height: 36px; }
-  .sv-caselogo { display: block; flex-shrink: 0; width: auto; }
-  .sv-case .nf_cardtitle { line-height: 1.35; }
+  /* Each door: a feature row (text and one visual, switching sides), then
+     the details on hairline rules */
+  .sv-doorbox { display: flex; flex-direction: column; gap: 72px; max-width: var(--container); margin: 0 auto; padding: clamp(72px, 8.5vw, 120px) clamp(24px, 4vw, 48px); }
+  /* On wide screens the visual's panel takes the height of the text beside
+     it, the product UI centred in it */
+  .sv-feature { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 64px; align-items: stretch; }
+  .sv-feature--flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .sv-feature--flip .sv-text { order: 2; }
+  .sv-text { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+  .sv-h2 { margin: 20px 0 20px; color: var(--deep-blue); font-family: var(--font-display); font-size: clamp(30px, 2.9vw, 38px); font-style: italic; font-weight: 400; line-height: 1.14; letter-spacing: -.01em; text-wrap: balance; }
+  .sv-h2 .v-soft { display: block; }
+  .sv-lede { margin: 0 0 32px; max-width: 34em; color: var(--ink-2); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
+  .sv-visual { display: flex; flex-direction: column; min-width: 0; }
+  .sv-visual > :global(*) { flex: 1 1 auto; }
 
-  .sv-role { background: var(--white); border-radius: var(--radius-lg); gap: 20px; }
-  .sv-rolelabel { display: flex; align-items: center; gap: 12px; color: var(--deep-blue); }
-  .sv-steps { position: relative; gap: 16px; }
-  .sv-step { position: relative; align-items: flex-start; gap: 14px; }
-  .sv-stepnum { position: relative; z-index: 1; display: grid; place-items: center; flex-shrink: 0; width: 28px; height: 28px; border: 1.5px solid var(--deep-blue); border-radius: 50%; background: var(--white); color: var(--deep-blue); font-size: 13px; font-weight: 700; line-height: 1; }
-  .sv-step:last-child .sv-stepnum { border-color: var(--green-ink); background: var(--green-ink); color: #fff; }
-  /* The line joining the numbers */
-  .sv-step:not(:last-child)::after { content: ''; position: absolute; left: 13.25px; top: 28px; bottom: -16px; width: 1.5px; background: var(--line-strong); }
-  .sv-step > span:last-child { padding-top: 2px; }
-  .sv-stepname { color: var(--deep-blue); font-weight: 600; }
-  .sv-pills .cs_pill { border-color: transparent; background: var(--tint-blue); color: var(--deep-blue); font-size: 14px; }
-  .sv-pills--green .cs_pill { background: var(--tint-green); }
-  .sv-pills--pink .cs_pill { background: var(--tint-pink); }
-
-  @media (max-width: 991px) {
-    .sv-roles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .sv-roles > :last-child { grid-column: 1 / -1; }
+  @media (pointer: coarse) { .sv-indexlink { min-height: 44px; } }
+  @media (max-width: 1199px) {
+    .sv-herobox { column-gap: 48px; }
+    .sv-feature { column-gap: 48px; }
+    /* The phones keep their own height when the text beside them runs long */
+    .sv-door--ecosystems .sv-visual { align-self: center; }
   }
-  @media (max-width: 599px) {
-    .sv-roles { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 991px) {
+    .sv-herobox { grid-template-columns: minmax(0, 1fr); row-gap: 44px; }
+    .sv-h1 { font-size: 50px; }
+    .sv-index { max-width: 640px; }
+    .sv-feature, .sv-feature--flip { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
+    .sv-feature--flip .sv-text { order: 0; }
+    .sv-visual { width: 100%; max-width: 640px; }
+    .sv-doorbox { gap: 56px; }
+  }
+  @media (max-width: 767px) {
+    .sv-h1 { font-size: 40px; }
+    .sv-indexlink { grid-template-columns: 28px minmax(0, 1fr) auto; padding: 16px 0; }
+    .sv-indexnum { padding-top: 4px; }
+    .sv-indexlabel { font-size: 17px; }
+    .sv-h2 { margin: 18px 0 16px; }
+    .sv-lede { margin-bottom: 28px; font-size: 16px; }
+    .sv-doorbox { gap: 48px; }
+  }
+  /* Small phones: the soft half of the title on one line */
+  @media (max-width: 479px) {
+    .sv-h1 { font-size: 35px; }
   }
 </style>

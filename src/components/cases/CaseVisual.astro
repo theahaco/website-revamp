@@ -1,0 +1,78 @@
+---
+// The one visual of a case study page, in its header beside the title: a
+// vx/Flow of what the engagement did, or the tools' own sites as phones
+// (vx/PhoneStack) on a tinted panel like a Flow's. The data, and the lines of
+// each case file it comes from: src/lib/caseVisuals.ts. The panel fills the
+// height its parent gives it: a flow stays centered in it, the phones grow
+// with it and rise from its bottom edge, which cuts them. Its caption, when
+// there is one, is rendered by the page (pass its id as `describedby`).
+import Flow from '../vx/Flow.astro';
+import PhoneStack from '../vx/PhoneStack.astro';
+import type { CaseVisual } from '../../lib/caseVisuals';
+
+interface Props {
+  visual: CaseVisual;
+  /** Id of the caption that describes the visual. */
+  describedby?: string;
+  class?: string;
+}
+const { visual: v, describedby, class: cls } = Astro.props;
+// Hyphenated words ("built-in", "SG-FORGE") stay on one line: a word joiner
+// (U+2060, invisible) after the hyphen forbids the break.
+const whole = (t: string) => t.replace(/(\S)-(?=\S)/g, '$1-\u2060');
+const steps = v.kind === 'flow' ? v.steps.map((s) => ({ ...s, title: whole(s.title), sub: s.sub && whole(s.sub) })) : [];
+const floats = v.kind === 'flow' ? (v.floats ?? []).map((f) => ({ ...f, text: whole(f.text) })) : [];
+// The Flow is a figure named by its label; it is wrapped in a second figure
+// only to tie it to a caption.
+const Wrap = describedby ? 'figure' : 'div';
+---
+{v.kind === 'flow' ? (
+  <Wrap aria-describedby={describedby} class:list={['cv', cls]} data-cs="visual">
+    <Flow class="cv_flow" floats={floats} label={v.label} panel={v.panel} steps={steps} />
+  </Wrap>
+) : (
+  /* Decorative: the tools are named in the lede and in the caption */
+  <div class:list={['cv', cls]} data-cs="visual">
+    <div class:list={['cv_phones', `cv_phones--${v.panel}`]}>
+      <div aria-hidden="true" class="cv_grid"></div>
+      <div class="cv_stage">
+        <PhoneStack center={v.center} glow={false} lazy={false} left={v.left} right={v.right} sizes="(min-width: 1200px) 266px, (min-width: 992px) 23vw, (min-width: 768px) 270px, 41vw" />
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .cv { display: flex; flex-direction: column; min-width: 0; margin: 0; }
+  .cv :global(.cv_flow) { flex: 1 1 auto; }
+  /* Flow lines that wrap break evenly, without a lone word on the last line */
+  .cv :global(.vf_title) { text-wrap: balance; }
+  .cv :global(.vf_sub) { text-wrap: pretty; }
+
+  /* Phones panel: the same tinted field as a Flow. Its size does not depend on
+     the phones (size container): beside the title it takes the column's
+     height, stacked it takes an aspect ratio. The stage keeps the stack's
+     1.2 ratio and grows with the panel's height, up to a little wider than
+     the panel (the side phones are then cut by its edges). */
+  .cv_phones { position: relative; flex: 1 1 auto; min-height: 320px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--tint-paper); container-type: size; }
+  .cv_phones--blue { background: var(--tint-blue); }
+  .cv_phones--pink { background: var(--tint-pink); }
+  .cv_phones--tan { background: var(--tint-tan); }
+  .cv_phones--green { background: var(--tint-green); }
+  .cv_grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(26, 59, 96, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(26, 59, 96, .07) 1px, transparent 1px); background-size: 32px 32px; background-position: center; -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent); mask-image: radial-gradient(closest-side, #000 30%, transparent); pointer-events: none; }
+  .cv_stage { position: absolute; left: 50%; bottom: 0; width: min(calc((100cqh - 64px) * 1.2), 110cqw); aspect-ratio: 1.2; transform: translateX(-50%); }
+  /* A tall, narrow panel (a tablet beside a long lede): larger phones, so the
+     panel does not stand half empty */
+  @container (max-aspect-ratio: 7 / 10) {
+    .cv_stage { width: min(calc((100cqh - 64px) * 1.2), 128cqw); }
+  }
+  .cv_stage :global(.vps_phone) { filter: drop-shadow(0 18px 32px rgba(20, 36, 58, .22)); }
+
+  @media (max-width: 991px) {
+    .cv_phones { flex: none; min-height: 0; aspect-ratio: 1.3; }
+  }
+  @media (max-width: 479px) {
+    .cv_phones { aspect-ratio: 1; }
+    .cv_stage { width: min(calc((100cqh - 40px) * 1.2), 112cqw); }
+  }
+</style>

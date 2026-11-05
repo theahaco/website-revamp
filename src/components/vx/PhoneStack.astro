@@ -1,0 +1,45 @@
+---
+// Three phones showing real tool sites (public/images/tools/<name>-phone-
+// <300|450|600>.webp: mobile captures of each tool's own site, framed by
+// scratch tooling as described in public/images/tools/README.md). The middle
+// phone is in front. The stack fills its parent: give the parent a size (an
+// aspect ratio works) and, to cut the phones at the bottom, `overflow: hidden`
+// or a clip-path. Decorative: the tools are named next to it.
+interface Props {
+  left: string;
+  center: string;
+  right: string;
+  /** Rendered width of the middle phone, for `sizes` (the sides are 84% of it). */
+  sizes?: string;
+  /** Soft pink glow behind the phones (on dark bands). */
+  glow?: boolean;
+  lazy?: boolean;
+}
+const { left, center, right, sizes = '(min-width: 1200px) 253px, (min-width: 992px) 21vw, (min-width: 600px) 229px, 41vw', glow = true, lazy = true } = Astro.props;
+const widths = [300, 450, 600];
+const phone = (name: string) => ({
+  src: `/images/tools/${name}-phone-450.webp`,
+  srcset: widths.map((w) => `/images/tools/${name}-phone-${w}.webp ${w}w`).join(', '),
+});
+// The side phones are 84% of the middle one: scale the width at the end of each `sizes` entry
+const sideSizes = sizes.split(',').map((e) => e.replace(/(\d+(?:\.\d+)?)(px|vw)\s*$/, (_, n, u) => `${Math.round(Number(n) * 0.84)}${u}`)).join(',');
+const [l, c, r] = [phone(left), phone(center), phone(right)];
+const loading = lazy ? 'lazy' : 'eager';
+---
+<div aria-hidden="true" class="vps">
+  {glow && <span class="vps_glow"></span>}
+  <img class="vps_phone vps_phone--l" src={l.src} srcset={l.srcset} sizes={sideSizes} width="450" height="869" alt="" loading={loading} decoding="async" />
+  <img class="vps_phone vps_phone--r" src={r.src} srcset={r.srcset} sizes={sideSizes} width="450" height="869" alt="" loading={loading} decoding="async" />
+  <img class="vps_phone vps_phone--c" src={c.src} srcset={c.srcset} sizes={sizes} width="450" height="869" alt="" loading={loading} decoding="async" />
+</div>
+
+<style>
+  /* Sizes are in % of the stack, so the composition scales as one piece;
+     every phone runs past the bottom edge */
+  .vps { position: absolute; inset: 0; }
+  .vps_glow { position: absolute; left: 8%; right: 8%; top: 4%; height: 96%; border-radius: 50%; background: radial-gradient(closest-side, rgba(246, 226, 255, .2), rgba(246, 226, 255, 0)); }
+  .vps_phone { position: absolute; display: block; height: auto; max-width: none; filter: drop-shadow(0 24px 40px rgba(6, 16, 32, .5)); }
+  .vps_phone--c { z-index: 2; left: 28%; top: 0; width: 44%; }
+  .vps_phone--l { z-index: 1; left: 0; top: 16%; width: 37%; }
+  .vps_phone--r { z-index: 1; right: 0; top: 16%; width: 37%; }
+</style>

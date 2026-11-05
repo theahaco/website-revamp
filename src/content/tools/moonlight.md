@@ -35,6 +35,12 @@ metrics:
 - figure: '18'
   label: 'Public repositories (November 2026): contracts, SDK, provider and council platforms, wallet'
   receipt: https://github.com/Moonlight-Protocol
+visual:
+  kind: image
+  image: /images/tools/moonlight.webp
+  alt: 'Moonlight’s site on a phone: private web3 transactions, built for compliance; confidential onchain, auditable when required.'
+  tone: dark
+  caption: 'moonlightprotocol.io. Limited mainnet release since July 2026, for invite-only pilots.'
 sections:
 - id: what-it-does
   title: What it does

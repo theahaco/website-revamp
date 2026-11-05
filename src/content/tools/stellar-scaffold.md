@@ -43,7 +43,24 @@ visual:
   image: /images/tools/scaffold-stellar.webp
   alt: 'The Stellar Scaffold site on a phone: go from an empty directory to a deployed Stellar dApp, installed with cargo binstall stellar-scaffold-cli.'
   tone: light
-  caption: Install it with `cargo binstall stellar-scaffold-cli`, start a project, and it runs against a local network in a few minutes.
+  label: 'A real session of the Stellar Scaffold CLI plugin: its help and its first commands, from init to watch'
+  lines:
+  - '$ stellar scaffold --help'
+  - 'Build smart contracts with frontend support'
+  - ''
+  - 'Usage: stellar-scaffold [OPTIONS] <COMMAND>'
+  - ''
+  - 'Commands:'
+  - '  init        Initialize the project'
+  - '  version     Version of the stellar-scaffold-cli'
+  - '  build       Build contracts, resolving dependencies in the correct order; build clients (JS packages) as specified in `scaffold.yml`'
+  - '  generate    generate contracts'
+  - '  ext         Inspect and manage extensions'
+  - '  upgrade     Upgrade an existing Soroban workspace to a scaffold project'
+  - '  update-env  Update an environment variable in a .env file'
+  - '  watch       Monitor contracts and environments.toml for changes and rebuild as needed'
+  - '…'
+  caption: 'Install it with `cargo binstall stellar-scaffold-cli`, start a project, and it runs against a local network in a few minutes. It runs as `stellar scaffold`, here in a real session (version 0.0.34, recorded on November 5, 2026).'
 sections:
 - id: what-it-does
   title: What it does

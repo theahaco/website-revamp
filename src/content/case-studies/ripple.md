@@ -1,7 +1,7 @@
 ---
 title: Ripple
 metaTitle: 'Ripple: XRPL accelerator and hackathon mentoring'
-order: 3
+order: 4
 eyebrow: Ecosystem · XRPL
 lede: In Ripple's accelerator cohorts and hackathons, our architects mentor teams from prototype to go live, and shorten the time it takes. Alongside, we work continuously on improving Ripple's developer experience.
 cta: Running an ecosystem program? Talk to the architects who mentor its teams.

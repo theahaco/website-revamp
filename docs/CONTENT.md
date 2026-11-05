@@ -127,8 +127,10 @@ person then appears on About and on every team page.
 ## Add a case study
 
 Same steps with [the case study template](templates/case-study.md): the
-file in `src/content/case-studies/`, the header image in
-`public/images/cases/` (2520 x 1080 px). Keep the spaces at the start of
+file in `src/content/case-studies/`, the share image in
+`public/images/cases/` (2520 x 1080 px: shown when the link is shared on
+LinkedIn or X; the page itself shows the case's visual, drawn from its facts
+in `src/lib/caseVisuals.ts`, which the web team adds). Keep the spaces at the start of
 each line exactly as in the template. A case study always waits for Enzo's
 review (NDA). It appears on the Work page; Enzo decides whether it goes on
 the home page.

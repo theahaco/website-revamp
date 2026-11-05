@@ -1,8 +1,14 @@
 ---
 // Case study template (Webflow collection "Case Studies").
 // Empty fields are skipped, as the Webflow site's script did after load.
+// Each engagement has one visual in its header, beside the title (data and
+// sources: src/lib/caseVisuals.ts); the facts card then sits under the lede.
+// A page without one (the PwC US alliance) keeps the facts card on the right
+// and its header image.
 import Icon from '../../components/Icon.astro';
+import CaseVisual from '../../components/cases/CaseVisual.astro';
 import { factIcon } from '../../lib/factIcons';
+import { caseVisuals } from '../../lib/caseVisuals';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import { caseStudies, team, tools, networks, orderBy, md, serviceAnchor, networkMarks, publicQuote, ogImageFor, nobr } from '../../lib/content';
@@ -46,17 +52,20 @@ const more: MoreItem[] = moreWorkFor[cs.id]
 const networkPages = new Map((await networks()).filter((n) => n.data.heading).map((n) => [n.data.name, `/networks/${n.id}`]));
 const cta = d.cta || 'Bringing a fund or deposit onchain? Talk to the engineers who did it.';
 const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData.productionOrigin);
+// Alliances never get an engagement visual.
+const visual = d.alliance ? undefined : caseVisuals[cs.id];
+const visualCaption = visual ? (visual.caption || d.hero.caption) : '';
 ---
 <BaseLayout title={d.metaTitle || `${d.title} | Case study | The Aha Company`} description={d.description || d.lede || d.ndaSummary || undefined} image={ogImageFor(cs.id) || d.hero.image || undefined} imageAlt={d.hero.alt || undefined} noindex={d.alliance}>
   <main>
     <article>
       <div class="cs_header">
         <a class="art_back" href="/work">← All work</a>
-        <div class="cs_headgrid">
+        <div class:list={['cs_headgrid', visual && 'cs_headgrid--visual', visualCaption && 'cs_headgrid--caption']}>
           <div class="cs_intro">
             {d.eyebrow && <p class="cs_eyebrow">{d.eyebrow}</p>}
             <h1 class="art_h1" set:html={nobr(d.title)} />
-            {d.lede && <p class="art_lede">{d.lede}</p>}
+            {d.lede && <p class="art_lede" set:html={nobr(d.lede)} />}
           </div>
           <dl class="cs_facts">
             {facts.map((f) => (
@@ -64,7 +73,7 @@ const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData
                 <dt class="cs_dt">{factIcon(f.label) && <Icon name={factIcon(f.label)!} size={15} class="cs_dticon" />}{f.label}</dt>
                 {f.style === 'net' ? (
                   <dd class="cs_dd-net">
-                    {f.label === 'Network' && networkMarks[f.value] && <img alt="" class="cs_netmark" data-cs="netmark" src={networkMarks[f.value]} />}
+                    {f.label === 'Network' && networkMarks[f.value] && <img alt="" class="cs_netmark" data-cs="netmark" height="16" src={networkMarks[f.value]} width="16" />}
                     {f.live && <span aria-hidden="true" class="cs_dot" data-cs="dot"></span>}
                     {f.label === 'Network' && networkPages.has(f.value) ? <a class="cs_netlink" href={networkPages.get(f.value)}>{f.value}</a> : <span>{f.value}</span>}
                   </dd>
@@ -75,6 +84,8 @@ const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData
               </div>
             ))}
           </dl>
+          {visual && <CaseVisual class="cs_visual" describedby={visualCaption ? 'cs-visualcap' : undefined} visual={visual} />}
+          {visualCaption && <p class="cs_visualcap" id="cs-visualcap">{visualCaption}</p>}
         </div>
       </div>
       {quote.text ? (
@@ -85,9 +96,9 @@ const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData
             <p class="cs_quoteattrib">{quote.portrait && <img alt="" class="cs_quoteavatar" height="40" loading="lazy" src={quote.portrait} width="40" />}<span><span data-cs="q-author">{quote.author}</span>, <span data-cs="q-role">{quote.role}</span></span></p>
           </div>
         </section>
-      ) : d.hero.image && (
+      ) : !visual && d.hero.image && (
         <figure class="cs_hero" data-cs="hero">
-          <img alt={d.hero.alt} class="cs_heroimg" src={d.hero.image} />
+          <img alt={d.hero.alt} class="cs_heroimg" height="1080" src={d.hero.image} width="2520" />
           {d.hero.caption && <figcaption class="cs_herocaption">{d.hero.caption}</figcaption>}
         </figure>
       )}
@@ -142,7 +153,7 @@ const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData
                   {members.map((m) => (
                     <div class="w-dyn-item" role="listitem">
                       <a class="cs_teamrow w-inline-block" href={`/team/${m.id}`}>
-                        <span class="cs_avatar32">{m.data.portrait && <img alt="" class="cs_avatarimg" src={m.data.portrait} />}</span>
+                        <span class="cs_avatar32">{m.data.portrait && <img alt="" class="cs_avatarimg" height="32" loading="lazy" src={m.data.portrait} width="32" />}</span>
                         <span class="cs_namestack">
                           <span class="cs_teamname">{m.data.name}</span>
                           {m.data.role && <span class="cs_teamrole">{m.data.role}</span>}
@@ -185,3 +196,30 @@ const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData
   </main>
   <Cta heading={cta} />
 </BaseLayout>
+
+<style>
+  /* Header with a visual: title, lede and facts on the left, the visual on
+     the right at the height of that column (its top on the eyebrow, its
+     bottom on the facts card's), its caption under it; one column, the
+     visual last, under 992 px. */
+  .cs_headgrid--visual { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr; grid-template-areas: 'intro visual' 'facts visual'; align-items: start; row-gap: 36px; }
+  .cs_headgrid--caption { grid-template-rows: auto 1fr auto; grid-template-areas: 'intro visual' 'facts visual' '. cap'; }
+  .cs_headgrid--visual > .cs_intro { grid-area: intro; }
+  .cs_headgrid--visual > .cs_facts { grid-area: facts; align-self: end; }
+  .cs_headgrid--visual > :global(.cs_visual) { grid-area: visual; align-self: stretch; }
+  .cs_visualcap { grid-area: cap; margin: -22px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; text-align: left; text-wrap: pretty; }
+  @media (max-width: 1199px) {
+    .cs_headgrid--visual { column-gap: 48px; }
+    .cs_headgrid--visual .art_h1 { font-size: 48px; }
+  }
+  @media (max-width: 991px) {
+    .cs_headgrid--visual { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: 'intro' 'facts' 'visual'; row-gap: 32px; }
+    .cs_headgrid--caption { grid-template-areas: 'intro' 'facts' 'visual' 'cap'; }
+    .cs_headgrid--visual .art_h1 { font-size: 46px; }
+    .cs_headgrid--visual > :global(.cs_visual) { margin-top: 8px; }
+    .cs_visualcap { margin-top: -18px; }
+  }
+  @media (max-width: 767px) {
+    .cs_headgrid--visual .art_h1 { font-size: 36px; }
+  }
+</style>

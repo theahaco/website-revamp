@@ -2,8 +2,9 @@
 // Each list holds content slugs (file names without .md), in display order.
 
 /** Home page, "Selected work" > Case studies. */
-// Case studies with a testimonial first, then the others.
-export const homeFeaturedCases = ["stellar-development-foundation", "lifi", "ripple", "societe-generale-forge"];
+// Société Générale-FORGE first (a regulated issuer, for the banks reading the
+// page), then the three with a testimonial.
+export const homeFeaturedCases = ["societe-generale-forge", "lifi", "stellar-development-foundation", "ripple"];
 
 /** Home page, "Client under NDA" block under the case studies. */
 export const homeNdaCases = ["nda-settlement-stablecoin", "nda-money-market-fund", "nda-real-estate-debt-fund"];

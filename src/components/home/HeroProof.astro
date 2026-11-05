@@ -1,10 +1,13 @@
 ---
 // Home hero: the proof panel. Three engagements live on mainnet, each row
 // linking to its case study, with the facts of src/content/case-studies
-// (status, network, the EURCV figure and its receipt, the two audits).
-// The bank is under NDA: no logo, a bank icon. Tile tints follow the
-// audience colors (financial institutions blue, protocols green).
-import Icon from '../Icon.astro';
+// (status, network, the EURCV figure and its receipt, the bank's five months
+// from kickoff to handover). The audits are in the row under the logos.
+// Each row leads with what is live, the client under it. The round glyph is
+// the kind of asset, drawn like a token icon (not the asset's own logo):
+// a euro coin, a settlement coin, a cross-chain route; deep blue for
+// financial institutions, green for protocols. The client logos are in the
+// band under the hero.
 
 const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G';
 ---
@@ -18,34 +21,33 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
     </div>
     <ul class="hp_rows" role="list">
       <li class="hp_row">
-        <span class="hp_tile hp_tile--blue"><img alt="" class="hp_logo-forge" src="/images/logos/logo-light-sgforge.svg" width="73" height="21" /></span>
-        <p class="hp_name"><a class="hp_link" href="/case-studies/societe-generale-forge">Société Générale-FORGE<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
-        <p class="hp_desc">EURCV regulated euro stablecoin · Stellar</p>
+        <span aria-hidden="true" class="hp_av"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="#1A3B60" /><circle cx="23" cy="23" r="19" fill="none" stroke="#fff" stroke-opacity=".22" /><text x="23" y="30.5" fill="#fff" font-family="Space Grotesk, system-ui, sans-serif" font-size="21" font-weight="600" text-anchor="middle">€</text></svg></span>
+        <p class="hp_name"><a class="hp_link" href="/case-studies/societe-generale-forge">EURCV, regulated euro stablecoin<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
+        <p class="hp_desc">Société Générale-FORGE · Stellar</p>
         <div class="hp_meta">
           <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span data-rv="card-eurcv">Live since Q1 2026</span></span>
         </div>
         <div class="hp_fig"><span class="hp_figv">€20M+</span><span class="hp_figl">issued<a aria-label="Receipt: EURCV on the Stellar explorer" class="receipt-badge hp_receipt" href={receipt} title="Receipt">✓</a></span></div>
       </li>
       <li class="hp_row">
-        <span class="hp_tile hp_tile--blue"><Icon name="bank" size={28} /></span>
-        <p class="hp_name"><a class="hp_link" href="/case-studies/nda-settlement-stablecoin">Top US commercial bank<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
-        <p class="hp_desc">Settlement stablecoin · Stellar</p>
+        <span aria-hidden="true" class="hp_av"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="#1A3B60" /><circle cx="23" cy="23" r="19" fill="none" stroke="#fff" stroke-opacity=".22" /><path d="M15.5 19.5h15m-3.6-3.6 3.6 3.6-3.6 3.6M30.5 26.5h-15m3.6-3.6-3.6 3.6 3.6 3.6" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" /></svg></span>
+        <p class="hp_name"><a class="hp_link" href="/case-studies/nda-settlement-stablecoin">Settlement stablecoin<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
+        <p class="hp_desc">Top US commercial bank · Stellar</p>
         <div class="hp_meta">
           <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span data-rv="card-bank">Live since Q3 2026</span></span>
         </div>
+        <div class="hp_fig"><span class="hp_figv">5 months</span><span class="hp_figl">to handover</span></div>
       </li>
       <li class="hp_row">
-        <span class="hp_tile hp_tile--green"><img alt="" class="hp_logo-lifi" src="/images/logos/logo-light-lifi.svg" width="55" height="20" /></span>
-        <p class="hp_name"><a class="hp_link" href="/case-studies/lifi">LI.FI<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
-        <p class="hp_desc">Cross-chain asset transfers · Stellar</p>
+        <span aria-hidden="true" class="hp_av"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="#367A12" /><circle cx="23" cy="23" r="19" fill="none" stroke="#fff" stroke-opacity=".22" /><path d="M16.5 28.5c0-6.5 13-3.5 13-11" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.1" /><circle cx="16.5" cy="29.5" r="3" fill="#367A12" stroke="#fff" stroke-width="2.1" /><circle cx="29.5" cy="16.5" r="3.2" fill="#fff" /></svg></span>
+        <p class="hp_name"><a class="hp_link" href="/case-studies/lifi">Cross-chain asset transfers<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
+        <p class="hp_desc">LI.FI · Stellar</p>
         <div class="hp_meta">
           <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span>Live</span></span>
         </div>
       </li>
     </ul>
   </div>
-  <p class="hp_float hp_float--hacken"><span class="hp_floaticon"><Icon name="shield-check" size={18} /></span><span>EURCV audited by Hacken before mainnet</span></p>
-  <p class="hp_float hp_float--halborn"><span class="hp_floaticon"><Icon name="shield-check" size={18} /></span><span>LI.FI audited by Halborn before production</span></p>
 </figure>
 
 <style>
@@ -61,16 +63,13 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
   .hp_title { margin: 0; font-family: var(--font-display); font-size: 22px; font-style: italic; line-height: 1.2; }
 
   .hp_rows { margin: 0; padding: 0; list-style: none; }
-  .hp_row { position: relative; display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; grid-template-areas: 'tile name fig' 'tile desc fig' 'tile meta fig'; column-gap: 16px; align-items: center; padding: 18px 20px; border-top: 1px solid var(--line); transition: background-color .2s; }
+  .hp_row { position: relative; display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; grid-template-areas: 'tile name fig' 'tile desc fig' 'tile meta fig'; column-gap: 16px; align-items: center; padding: 18px 20px; border-top: 1px solid var(--line); transition: background-color .2s; }
   .hp_row:first-child { border-top: 0; }
   .hp_row:last-child { border-radius: 0 0 15px 15px; }
   .hp_row:hover { background: var(--paper); }
 
-  .hp_tile { grid-area: tile; align-self: center; display: grid; place-items: center; width: 76px; height: 56px; border-radius: 12px; color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
-  .hp_tile--blue { background: var(--tint-blue); }
-  .hp_tile--green { background: var(--tint-green); }
-  .hp_logo-forge { width: 62px; height: auto; }
-  .hp_logo-lifi { width: auto; height: 18px; }
+  .hp_av { grid-area: tile; align-self: center; display: block; width: 46px; height: 46px; }
+  .hp_av svg { display: block; width: 100%; height: 100%; }
 
   .hp_name { grid-area: name; margin: 0; min-width: 0; font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--deep-blue); }
   .hp_link { color: inherit; text-decoration: none; }
@@ -95,33 +94,20 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
   .hp_figl { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1; color: var(--muted); }
   .hp_receipt { z-index: 2; }
 
-  /* Floating facts, over the card edges */
-  .hp_float { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 8px 14px 8px 9px; background: var(--white); border: 1px solid var(--line-strong); border-radius: 999px; box-shadow: var(--shadow-2); font-size: 13px; font-weight: 600; line-height: 1.2; color: var(--deep-blue); white-space: nowrap; pointer-events: none; }
-  .hp_floaticon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--tint-green); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .6; }
-  .hp_float--hacken { top: 2px; right: 4px; }
-  .hp_float--halborn { bottom: 0; left: -22px; }
   @media (prefers-reduced-motion: reduce) { .hp_row, .hp_arrow { transition: none; } .hp_row:hover .hp_arrow { left: 0; } }
   .hp_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-  /* Narrow panel (1024 px): the figure under the facts, and the card lower
-     so the floating fact clears the title */
+  /* Narrow panel (1024 px): the figure under the facts */
   @container (max-width: 460px) {
-    .hp_card { margin-top: 12px; }
-    .hp_float--hacken { top: 0; }
-    .hp_row { grid-template-columns: 64px minmax(0, 1fr); grid-template-areas: 'tile name' 'tile desc' 'tile meta' 'tile fig'; column-gap: 14px; padding: 16px 18px 16px 16px; }
-    .hp_tile { width: 64px; height: 48px; border-radius: 10px; }
-    .hp_logo-forge { width: 52px; }
-    .hp_logo-lifi { height: 15px; }
+    .hp_row { grid-template-columns: 42px minmax(0, 1fr); grid-template-areas: 'tile name' 'tile desc' 'tile meta' 'tile fig'; column-gap: 14px; padding: 16px 18px 16px 16px; }
+    .hp_av { align-self: start; width: 42px; height: 42px; margin-top: 2px; }
     .hp_fig { flex-direction: row; align-items: center; gap: 8px; justify-self: start; margin-top: 12px; }
     .hp_head { padding: 14px 18px; }
   }
   /* Phones: the tile next to the name, the facts at full width under it */
   @container (max-width: 380px) {
-    .hp_row { grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: 'tile name' 'desc desc' 'meta meta' 'fig fig'; column-gap: 12px; padding: 16px; }
-    .hp_tile { width: 56px; height: 40px; border-radius: 9px; }
-    .hp_tile :global(svg) { width: 24px; height: 24px; }
-    .hp_logo-forge { width: 46px; }
-    .hp_logo-lifi { height: 14px; }
+    .hp_row { grid-template-columns: 40px minmax(0, 1fr); grid-template-areas: 'tile name' 'desc desc' 'meta meta' 'fig fig'; column-gap: 12px; padding: 16px; }
+    .hp_av { align-self: center; width: 40px; height: 40px; margin-top: 0; }
     .hp_desc { margin-top: 12px; }
     .hp_head { padding: 13px 16px; }
     .hp_title { font-size: 20px; }
@@ -130,17 +116,11 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
   @media (max-width: 991px) {
     .hp { max-width: 640px; padding: 22px 22px 36px 0; }
     .hp_grid { inset: -40px -12px -48px -12px; }
-    .hp_float--halborn { left: 14px; }
-    .hp_float--hacken { right: 0; }
   }
   @media (max-width: 479px) {
     .hp { padding: 20px 14px 30px 0; }
     .hp_sheet--back { inset: 44px 0 6px 26px; }
     .hp_sheet--mid { inset: 32px 7px 18px 13px; }
     .hp_grid { inset: -24px -24px -32px -24px; }
-    .hp_float { font-size: 12px; padding: 6px 12px 6px 7px; }
-    .hp_floaticon { width: 22px; height: 22px; }
-    .hp_float--hacken { top: 0; right: 0; }
-    .hp_float--halborn { position: static; margin: 12px 0 0 14px; }
   }
 </style>

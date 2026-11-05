@@ -1,0 +1,50 @@
+---
+// A terminal window with a real session. `lines` is the transcript as it was
+// printed: a line starting with "$ " is a command (shown after the prompt),
+// any other line is output, an empty string an empty line. Only paste real
+// output (run the commands, copy what they print); you may cut whole lines
+// and mark the cut with "…". Long lines wrap inside the window; `clip`
+// keeps them on one line and lets the window cut them (for --help columns).
+interface Props {
+  /** Window title, e.g. "~/projects". */
+  title?: string;
+  /** The prompt printed before each command. */
+  prompt?: string;
+  lines: string[];
+  /** What the session shows, for screen readers. */
+  label: string;
+  /** Smaller type, for a window that shares its panel with a phone. */
+  compact?: boolean;
+  /** One line per printed line, cut by the window edge instead of wrapping. */
+  clip?: boolean;
+  class?: string;
+}
+const { title = 'Terminal', prompt = '~/projects $', lines, label, compact = false, clip = false, class: cls } = Astro.props;
+const rows = lines.map((l) => (l.startsWith('$ ') ? { cmd: l.slice(2) } : { out: l }));
+---
+<figure aria-label={label} class:list={['vt', compact && 'vt--compact', clip && 'vt--clip', cls]}>
+  <div aria-hidden="true" class="vt_bar"><i></i><i></i><i></i><span class="vt_title">{title}</span></div>
+  <pre class="vt_pre"><code>{rows.map((r) => r.cmd !== undefined ? <span class="vt_line"><span class="vt_prompt">{prompt}</span> <span class="vt_cmd">{r.cmd}</span></span> : <span class:list={['vt_line', 'vt_out', r.out === '…' && 'vt_cut', r.out === '' && 'vt_blank']}>{r.out}</span>)}</code></pre>
+</figure>
+
+<style>
+  .vt { margin: 0; overflow: hidden; border: 1px solid rgba(255, 255, 255, .1); border-radius: 16px; background: #0e1b2c; box-shadow: var(--shadow-2); color: #fff; }
+  .vt_bar { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); background: #13243a; }
+  .vt_bar i { width: 11px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, .18); }
+  .vt_title { flex: 1; margin-right: 49px; color: rgba(255, 255, 255, .55); font-family: var(--font-ui); font-size: 12px; font-weight: 500; text-align: center; }
+  .vt_pre { margin: 0; padding: 20px 22px 22px; overflow: hidden; background: none; border-radius: 0; color: inherit; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .vt_pre code { font: inherit; }
+  .vt_line { display: block; }
+  /* An empty line keeps the height of a line, as it does on screen */
+  .vt_blank { height: 1.7em; }
+  .vt_prompt { color: #8fd16a; }
+  .vt_cmd { color: #fff; }
+  .vt_out { color: rgba(255, 255, 255, .72); }
+  .vt_cut { color: rgba(255, 255, 255, .42); }
+  .vt--clip .vt_pre { white-space: pre; overflow-wrap: normal; }
+  .vt--clip .vt_line { overflow: hidden; text-overflow: clip; }
+  .vt--compact .vt_pre { padding: 18px 20px 20px; font-size: 12.5px; }
+  @media (max-width: 479px) {
+    .vt_pre, .vt--compact .vt_pre { padding: 16px 16px 18px; font-size: 12px; }
+  }
+</style>
