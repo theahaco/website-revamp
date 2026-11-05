@@ -1,8 +1,8 @@
 # Case study thumbnails
 
-The small image next to each case study in "Selected work" on the home page
-and on the Work page. One image per case study, with exactly the same name as
-the case study file: `lifi.md` uses `lifi.webp` (`.png` or `.jpg` also work).
+The small image next to each case study on the Work page (the home page list
+has no images). One image per case study, with exactly the same name as the
+case study file: `lifi.md` uses `lifi.webp` (`.png` or `.jpg` also work).
 There is nothing to write in the case study: the rows find the image by its
 name.
 

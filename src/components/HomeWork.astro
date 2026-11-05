@@ -1,11 +1,10 @@
 ---
-// Home page "Selected work": case studies tab (thumbnails, quotes and the NDA
-// block) and articles tab. Webflow tabs markup, driven by src/scripts/tabs.js.
-// Thumbnails come from src/lib/visuals.ts (WorkThumb).
+// Home page "Selected work": the numbered case studies (with their quotes and
+// the NDA block) and the articles tab. Webflow tabs markup, driven by
+// src/scripts/tabs.js. The NDA icons come from src/lib/visuals.ts.
 import { caseStudies, posts, pick, publicQuote, nobr, formatDate } from '../lib/content';
 import { homeFeaturedCases, homeNdaCases, homeArticles } from '../data/curation';
-import { caseVisual, articleVisual } from '../lib/visuals';
-import WorkThumb from './WorkThumb.astro';
+import { caseVisual } from '../lib/visuals';
 import Icon from './Icon.astro';
 import { site as siteData } from '../data/site';
 
@@ -28,12 +27,10 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
       <div class="w-dyn-list">
         <div class="work_list w-dyn-items" role="list">
           {featured.map((cs) => {
-            const visual = caseVisual(cs.id, cs.data);
             const q = publicQuote(cs.data.quote, production);
             const inner = (
               <Fragment>
                 <div class="work_num hw_num"></div>
-                <span class="hw_thumb" data-kind={visual.kind}><WorkThumb visual={visual} /></span>
                 <div class="work_stack">
                   <div class="work_meta">
                     {cs.data.eyebrow && <p class="work_eyebrow">{cs.data.eyebrow}</p>}
@@ -97,13 +94,10 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
     <div class="w-tab-pane" data-w-tab="Tab 2" id="work-articles">
       <div class="w-dyn-list">
         <div class="work_list w-dyn-items" role="list">
-          {articles.map((post) => {
-            const visual = articleVisual(post.id, post.data);
-            return (
+          {articles.map((post) => (
             <div class="work_item w-dyn-item" role="listitem">
               <a class="work_article-link w-inline-block hw_link hw_link--article" href={`/blog/${post.id}`}>
                 <div class="work_num hw_num"></div>
-                <span class="hw_thumb" data-kind={visual.kind}><WorkThumb visual={visual} /></span>
                 <div class="work_stack">
                   <div class="work_meta">
                     {post.data.category && <p class="work_eyebrow">{post.data.category}</p>}
@@ -117,7 +111,7 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
                 </div>
               </a>
             </div>
-          ); })}
+          ))}
         </div>
       </div>
     </div>
@@ -126,34 +120,19 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
 </div>
 
 <style>
-  /* Rows: number, thumbnail, text, and the quote in its own column from 1200 px.
-     Below, the quote sits under the text; on phones the thumbnail goes on top
-     and carries the number. */
-  .hw_row { --hw-num: 32px; --hw-thumb: 184px; --hw-gap: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 300px; column-gap: 48px; align-items: stretch; }
-  .hw_link { display: grid; grid-template-columns: var(--hw-num) var(--hw-thumb) minmax(0, 1fr); column-gap: var(--hw-gap); align-items: start; }
-  .hw_link--article { --hw-num: 32px; --hw-thumb: 184px; --hw-gap: 28px; }
-  .hw_num { padding-top: 2px; }
-  .hw_thumb { display: block; width: 100%; aspect-ratio: 1; }
-  .hw_link .work_stack { padding-top: 0; }
+  /* Rows: number and text, and the quote in its own column from 1200 px;
+     below, the quote sits under the text. */
+  .hw_row { display: grid; grid-template-columns: minmax(0, 1fr) 300px; column-gap: 48px; align-items: stretch; }
   .hw_link .work_meta { min-height: 18px; }
   a.hw_link:hover .work_article-h3 { color: var(--green-ink); }
   .work_article-h3 { transition: color .2s; }
   .hw_quote { align-self: stretch; }
 
   @media (max-width: 1199px) {
-    .hw_row { display: block; --hw-thumb: 168px; }
-    .hw_link--article { --hw-thumb: 168px; }
-    .hw_quote { margin-left: calc(var(--hw-num) + var(--hw-thumb) + 2 * var(--hw-gap)); margin-top: 20px; }
+    .hw_row { display: block; }
+    .hw_quote { margin-left: 72px; margin-top: 20px; }
   }
-  @media (max-width: 991px) {
-    .hw_row, .hw_link--article { --hw-thumb: 148px; --hw-gap: 24px; }
-  }
-  /* Phones: a 72 px square beside the number, the text below */
   @media (max-width: 767px) {
-    .hw_link { grid-template-columns: 72px minmax(0, 1fr); column-gap: 16px; row-gap: 16px; }
-    .hw_thumb, .hw_thumb[data-kind="crop"] { grid-column: 1; grid-row: 1; aspect-ratio: 1; }
-    .hw_num { grid-column: 2; grid-row: 1; align-self: center; justify-self: start; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--deep-blue); font-size: 12px; line-height: 1.2; }
-    .hw_link .work_stack { grid-column: 1 / -1; }
     .hw_quote { margin-left: 0; }
   }
 

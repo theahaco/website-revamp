@@ -1,9 +1,9 @@
 # Article thumbnails
 
-The small image next to each article in the Articles lists (home page and
-Work page). One image per article, with exactly the same name as the article
-file: `what-a-bank-should-ask.md` uses `what-a-bank-should-ask.webp` (`.png`
-or `.jpg` also work).
+The small image next to each article in the Articles list of the Work page
+(the home page list has no images). One image per article, with exactly the
+same name as the article file: `what-a-bank-should-ask.md` uses
+`what-a-bank-should-ask.webp` (`.png` or `.jpg` also work).
 
 What it shows: the diagram of the article's cover, alone on its background
 color, without title, logo or text. Size: 400 x 400 px (square), under 30 KB, the

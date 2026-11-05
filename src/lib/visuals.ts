@@ -1,4 +1,4 @@
-// Thumbnails of the Work rows (home page "Selected work" and the Work page).
+// Thumbnails of the Work page rows, and the NDA icons of the home page.
 //
 // A case study, article or open-source tool shows its thumbnail when the file
 // exists: public/images/cases/thumbs/<id>.webp, covers/thumbs/<id>.webp or
