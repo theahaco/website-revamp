@@ -1,8 +1,9 @@
 ---
-// Home page section: logos, in the open (no tiles, no grid rules), under the
-// key figures: clients and partners, then the security auditors we have
-// worked with, each row under its label. A logo links only to the public case
-// study of that same client; the others stay static.
+// Home page section: logos, under the key figures and on the same paper band:
+// clients and partners, then the security auditors we have worked with, each
+// row under its label, each logo in its own white tile with space around it.
+// A tile links only to the public case study of that same client; the others
+// stay static.
 
 // h: logo height in px on desktop (per file, for an even optical weight);
 // w: its width at that height (from the file's proportions).
@@ -22,7 +23,6 @@ const auditors = [
   { name: 'Hacken', src: '/images/logos/logo-hacken.svg', h: 12, w: 115 },
   { name: 'Halborn', src: '/images/logos/logo-halborn.svg', h: 12, w: 117 },
   { name: 'Runtime Verification', src: '/images/logos/logo-runtime-verification.png', h: 28, w: 142 },
-  { name: 'Veridise', src: '/images/logos/logo-veridise.svg', h: 25, w: 111 },
   { name: 'Arda', src: '/images/logos/logo-arda.png', h: 25, w: 85 },
 ];
 ---
@@ -65,32 +65,44 @@ const auditors = [
 </section>
 
 <style>
-  /* One hairline under the key figures, at the width of the content; each
-     label above its row, the logos spread across it */
+  /* The paper band continues from the key figures (no rule between them on
+     tablets and desktops; on phones the figures are in the hero) */
+  .lg { background: var(--tint-paper); }
+  @media (min-width: 768px) { .lg { border-top: 0; } }
   .lg_container { padding-top: 0; padding-bottom: 0; row-gap: 0; }
-  .lg_inner { display: flex; flex-direction: column; gap: 48px; padding: 48px 0 88px; border-top: 1px solid var(--line); }
+  .lg_inner { display: flex; flex-direction: column; gap: 40px; padding: 60px 0 88px; }
   .lg_group { display: flex; flex-direction: column; gap: 22px; }
   .lg_label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; }
   .lg_dot { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
 
-  .lg_row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 32px; margin: 0; padding: 0; list-style: none; }
+  /* One white tile per logo, with space between the tiles */
+  .lg_row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+  .lg_group--auditors .lg_row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .lg_cell { display: flex; min-width: 0; }
-  .lg_tile { display: grid; place-items: center; padding: 6px 0; color: var(--muted); text-decoration: none; }
+  .lg_tile { display: grid; place-items: center; flex: 1; min-width: 0; height: 92px; padding: 0 20px; border-radius: 16px; background: var(--white); box-shadow: var(--shadow-1); color: var(--muted); text-decoration: none; transition: box-shadow .2s; }
   .lg_logo { display: block; width: auto; max-width: 100%; height: var(--h); }
-  .lg_tile--link { border-radius: 6px; }
-  .lg_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 6px; }
+  .lg_tile--link:hover { box-shadow: var(--shadow-2); }
+  .lg_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
   .lg_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .lg_tile { transition: none; } }
 
-  /* Tablets and phones: three, then two logos a row, from the left */
+  @media (max-width: 1199px) {
+    .lg_tile { padding: 0 12px; }
+  }
+  /* Tablets: three clients and two auditors a row */
   @media (max-width: 991px) {
-    .lg_inner { gap: 40px; padding: 40px 0 72px; }
-    .lg_row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; justify-items: start; }
+    .lg_inner { gap: 36px; padding: 48px 0 72px; }
+    .lg_row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .lg_group--auditors .lg_row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lg_tile { height: 84px; }
   }
   @media (max-width: 767px) {
-    .lg_inner { padding: 36px 0 56px; border-top: 0; }
+    .lg_inner { padding: 40px 0 56px; }
     .lg_logo { height: calc(var(--h) * .92); }
   }
+  /* Phones: two a row */
   @media (max-width: 479px) {
-    .lg_row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lg_row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .lg_tile { height: 76px; border-radius: 14px; }
   }
 </style>
