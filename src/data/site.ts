@@ -42,6 +42,17 @@ export const contact = {
 // (/open-source#how-we-count). Shown on the home page and the Open source page.
 export const toolAdoption = { count: 137, date: 'November 2, 2026' };
 
+// Home key figures (hero on phones, the band under it elsewhere), as the CEO
+// approved them in November 2026.
+// - deployments: smart contract deployments on mainnet, stated by the CEO
+//   (add the source and a date here when there is one).
+// - audits: third-party security audits of our code and our clients'
+//   contracts: Hacken (EURCV launch contracts), Halborn (LI.FI on Stellar),
+//   Veridise (Stellar Registry), Runtime Verification (Moonlight core
+//   contracts) and two by Arda.
+// - founded: the year The Aha Company was founded (About).
+export const keyFigures = { deployments: '20+', audits: 6, founded: 2021 };
+
 export const calendly = {
   url: 'https://calendly.com/d/cs4b-dy3-9py/introduction-to-the-aha-company?background_color=fbfaf8&text_color=14243a&primary_color=1a3b60',
 };

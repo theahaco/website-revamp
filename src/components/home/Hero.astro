@@ -8,7 +8,7 @@
 import Icon from '../Icon.astro';
 import HeroProof from './HeroProof.astro';
 import KpiBand from './KpiBand.astro';
-import { toolAdoption } from '../../data/site';
+import { keyFigures, toolAdoption } from '../../data/site';
 ---
 <section class="hero_section hero">
   <div class="hero_text">
@@ -17,10 +17,10 @@ import { toolAdoption } from '../../data/site';
     <div class="hero_actions"><a class="btn-primary" href="/contact">Schedule a call</a><a class="btn-secondary" href="/work">See our work</a></div>
     <p class="hero_call"><Icon name="phone-call" size={18} /><span>First call: 30 minutes with an engineer, not a sales&nbsp;team.</span></p>
     <ul aria-label="Key figures" class="hero_figs" role="list">
-      <li><span class="hero_figv">4</span><span class="hero_figl">Networks we build on</span></li>
-      <li><span class="hero_figv">20<span class="hero_figplus">+</span></span><span class="hero_figl">Deployments on mainnet</span></li>
+      <li><span class="hero_figv">{keyFigures.deployments.replace('+', '')}<span class="hero_figplus">+</span></span><span class="hero_figl">Deployments on mainnet</span></li>
+      <li><span class="hero_figv">{keyFigures.audits}</span><span class="hero_figl">Third-party security audits</span></li>
       <li><span class="hero_figv">{toolAdoption.count}</span><span class="hero_figl">Projects using our open-source tools</span></li>
-      <li><span class="hero_figv">12<span class="hero_figplus">+</span></span><span class="hero_figl">Engineers in the US, Europe and Brazil</span></li>
+      <li><span class="hero_figv"><span class="hero_figsince">Since</span>{keyFigures.founded}</span><span class="hero_figl">Building blockchain infrastructure</span></li>
     </ul>
   </div>
   <HeroProof />
@@ -59,6 +59,7 @@ import { toolAdoption } from '../../data/site';
     .hero_figs li { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .hero_figv { font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -.03em; color: var(--deep-blue); }
     .hero_figplus { color: var(--green-ink); }
+    .hero_figsince { margin-right: .3em; color: var(--muted); font-size: .45em; letter-spacing: 0; }
     .hero_figl { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
   }
   @media (max-width: 991px) {

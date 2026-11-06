@@ -1,56 +1,56 @@
 ---
 // Home: the key figures, full width under the hero, in the open (tablets and
-// desktops; phones show them inside the hero). Figures as the site states them: the
-// four networks (/networks), 137 on the Open source page (dated, with how it
-// is counted), the team on About. EURCV's figure is in the proof panel. Icon tints follow the audience colors:
-// financial institutions blue, ecosystems pink, neutral tan.
-import Icon from '../Icon.astro';
-import NetMark from './NetMark.astro';
-import { toolAdoption } from '../../data/site';
+// desktops; phones show them inside the hero). Numbers only, no icons, a
+// hairline between them: deployments on mainnet, third-party audits, projects
+// using our open-source tools (counted on the Open source page) and the year
+// we were founded. The values live in src/data/site.ts (keyFigures,
+// toolAdoption).
+import { keyFigures, toolAdoption } from '../../data/site';
 ---
 <section aria-label="Key figures" class="kpi">
   <div class="kpi_inner">
     <ul class="kpi_grid" role="list">
-      <li class="kpi_cell">
-        <div class="kpi_top"><p class="kpi_value">4</p><span aria-hidden="true" class="kpi_marks"><NetMark net="stellar" size={17} /><NetMark net="xrpl" size={15} /><NetMark net="canton" size={17} /><NetMark net="ethereum" size={19} /></span></div>
-        <p class="kpi_label">Networks we build on: Stellar, XRPL, Canton and Ethereum</p>
-      </li>
       <li class="kpi_cell" data-rv="stat-deploy">
-        <div class="kpi_top"><p class="kpi_value">20<span class="kpi_plus">+</span></p><span class="v-iconbox v-iconbox--tan kpi_icon"><Icon name="rocket-launch" size={28} /></span></div>
+        <p class="kpi_value">{keyFigures.deployments.replace('+', '')}<span class="kpi_plus">+</span></p>
         <p class="kpi_label">Deployments on mainnet</p>
       </li>
+      <li class="kpi_cell" data-rv="stat-audits">
+        <p class="kpi_value">{keyFigures.audits}</p>
+        <p class="kpi_label">Third-party security audits</p>
+      </li>
       <li class="kpi_cell" data-rv="stat-os">
-        <div class="kpi_top"><p class="kpi_value">{toolAdoption.count}</p><span class="v-iconbox v-iconbox--pink kpi_icon"><Icon name="git-branch" size={28} /></span></div>
+        <p class="kpi_value">{toolAdoption.count}</p>
         <p class="kpi_label">Projects using our <span class="kpi_nowrap">open-source</span> tools</p>
       </li>
-      <li class="kpi_cell" data-rv="stat-team">
-        <div class="kpi_top"><p class="kpi_value">12<span class="kpi_plus">+</span></p><span class="v-iconbox v-iconbox--tan kpi_icon"><Icon name="users-three" size={28} /></span></div>
-        <p class="kpi_label">Engineers across the United States, Europe and Brazil</p>
+      <li class="kpi_cell" data-rv="stat-founded">
+        <p class="kpi_value"><span class="kpi_since">Since</span>{keyFigures.founded}</p>
+        <p class="kpi_label">Building blockchain infrastructure</p>
       </li>
     </ul>
   </div>
 </section>
 
 <style>
-  /* In the open: four figures on white, no frame; the logo tiles follow under
-     one hairline (Logos.astro) */
+  /* In the open: four numbers on white, a hairline between them; the logo
+     tiles follow under one hairline (Logos.astro) */
   .kpi { background: var(--white); border-top: 1px solid var(--line); }
   .kpi_inner { max-width: var(--container); margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px); }
-  .kpi_grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 56px; margin: 0; padding: 64px 0 48px; list-style: none; }
-  .kpi_cell { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-  .kpi_top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
-  .kpi_value { margin: 0; font-size: clamp(38px, 4vw, 52px); font-weight: 500; line-height: 1; letter-spacing: -.035em; color: var(--deep-blue); white-space: nowrap; }
+  .kpi_grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 64px 0 48px; list-style: none; }
+  .kpi_cell { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding: 0 32px; border-left: 1px solid var(--line); }
+  .kpi_cell:first-child { padding-left: 0; border-left: 0; }
+  .kpi_value { display: flex; align-items: baseline; margin: 0; font-size: clamp(42px, 4.2vw, 56px); font-weight: 500; line-height: 1; letter-spacing: -.035em; color: var(--deep-blue); white-space: nowrap; }
   .kpi_plus { color: var(--green-ink); }
-  .kpi_icon { margin-top: -2px; }
-  .kpi_marks { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; }
-  .kpi_label { margin: 0; max-width: 28ch; font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
+  .kpi_since { margin-right: .3em; color: var(--muted); font-size: .42em; font-weight: 500; letter-spacing: 0; }
+  .kpi_label { margin: 0; max-width: 24ch; font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
   .kpi_nowrap { white-space: nowrap; }
 
   @media (max-width: 1199px) {
-    .kpi_grid { column-gap: 40px; }
+    .kpi_cell { padding: 0 24px; }
   }
+  /* Tablets: two by two, the hairline only between the two columns */
   @media (max-width: 991px) {
-    .kpi_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 48px 0 40px; }
+    .kpi_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; padding: 48px 0 40px; }
+    .kpi_cell:nth-child(odd) { padding-left: 0; border-left: 0; }
   }
   /* Phones show the figures inside the hero instead */
   @media (max-width: 767px) {
