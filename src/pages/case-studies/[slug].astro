@@ -18,6 +18,9 @@ import Cta from '../../components/Cta.astro';
 import { caseStudies, team, tools, networks, orderBy, md, serviceAnchor, networkMarks, publicQuote, ogImageFor, nobr } from '../../lib/content';
 import { site as siteData } from '../../data/site';
 import { moreWork, moreWorkFor } from '../../data/curation';
+import WorkTile from '../../components/WorkTile.astro';
+import Precedents, { type PrecedentRow } from '../../components/services/Precedents.astro';
+import { toolIcons } from '../../lib/toolIcons';
 
 export async function getStaticPaths() {
   return (await caseStudies()).map((cs) => ({ params: { slug: cs.id }, props: { cs } }));
@@ -35,23 +38,25 @@ const sections = d.sections.filter((s) => s.body.trim());
 const receipts = md(d.receipts);
 // "More work": chosen by hand for some pages (curation.ts), otherwise two other
 // case studies, those for the same audience first. Alliances are never listed.
-type MoreItem = { href: string; eyebrow: string; title: string; meta: string };
+// Case studies show as the Work page's tiles (src/components/WorkTile.astro);
+// a tool page chosen by hand shows as a tool row, as on the Work page.
 const toolList = await tools();
-const asCase = (c: (typeof all)[number]): MoreItem => ({ href: `/case-studies/${c.id}`, eyebrow: c.data.eyebrow, title: c.data.shortTitle || c.data.title, meta: c.data.year });
-const fromRef = (ref: string): MoreItem | undefined => {
-  if (ref.startsWith('/open-source/')) {
-    const t = toolList.find((x) => x.id === ref.slice('/open-source/'.length));
-    if (!t) return undefined;
-    const sub = t.data.title.startsWith(t.data.name + ':') ? t.data.title.slice(t.data.name.length + 1).trim() : t.data.title;
-    return { href: ref, eyebrow: `Open source · ${t.data.network}`, title: `${t.data.name}: ${sub}`, meta: t.data.category };
-  }
-  const c = all.find((x) => x.id === ref);
-  return c ? asCase(c) : undefined;
-};
 const candidates = orderBy(all, moreWork).filter((c) => c.id !== cs.id && !c.data.alliance);
-const more: MoreItem[] = moreWorkFor[cs.id]
-  ? moreWorkFor[cs.id].map(fromRef).filter((x): x is MoreItem => Boolean(x)).slice(0, 2)
-  : [...candidates.filter((c) => c.data.audience === d.audience), ...candidates.filter((c) => c.data.audience !== d.audience)].slice(0, 2).map(asCase);
+const moreRefs: string[] = moreWorkFor[cs.id]
+  ? moreWorkFor[cs.id].slice(0, 2)
+  : [...candidates.filter((c) => c.data.audience === d.audience), ...candidates.filter((c) => c.data.audience !== d.audience)].slice(0, 2).map((c) => c.id);
+const moreCases = moreRefs.filter((r) => !r.startsWith('/open-source/') && all.some((c) => c.id === r && !c.data.alliance));
+const moreTools: PrecedentRow[] = moreRefs
+  .filter((r) => r.startsWith('/open-source/'))
+  .map((r) => toolList.find((t) => t.id === r.slice('/open-source/'.length)))
+  .filter((t): t is (typeof toolList)[number] => Boolean(t))
+  .map((t) => ({
+    href: `/open-source/${t.id}`,
+    name: t.data.name,
+    line: t.data.summary,
+    meta: [t.data.category, t.data.network].filter(Boolean).join(' · '),
+    icon: toolIcons[t.id] ?? 'code',
+  }));
 // The network fact links to the network's page, when it has one.
 const networkPages = new Map((await networks()).filter((n) => n.data.heading).map((n) => [n.data.name, `/networks/${n.id}`]));
 const cta = d.cta || 'Bringing a fund or deposit onchain? Talk to the engineers who did it.';
@@ -183,28 +188,15 @@ const bodyWork = bodyVisual?.kind === 'work' ? workVisuals[bodyVisual.work] : un
         </aside>
       </div>
     </article>
-    {more.length > 0 && (
+    {(moreCases.length > 0 || moreTools.length > 0) && (
       <section class="footer_section" data-cs="morework">
         <div class="more_inner">
           <div class="more_header">
             <h2 class="more_h2">More work</h2>
             <a class="more_all" href="/work">All work ↗</a>
           </div>
-          <div class="w-dyn-list">
-            <div class="w-dyn-items" role="list">
-              {more.map((c) => (
-                <div class="work_item w-dyn-item" role="listitem">
-                  <a class="more_row w-inline-block" href={c.href}>
-                    <div class="more_stack">
-                      <span class="work_eyebrow">{c.eyebrow}</span>
-                      <span class="more_title">{c.title}</span>
-                    </div>
-                    <div class="more_meta"><span class="inline-text">{c.meta}</span><span class="inline-text"> ↗</span></div>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
+          {moreCases.length > 0 && <WorkTile ids={moreCases} />}
+          {moreTools.length > 0 && <Precedents label="Open-source tools" rows={moreTools} tint="pink" />}
         </div>
       </section>
     )}

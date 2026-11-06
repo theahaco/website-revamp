@@ -1,20 +1,18 @@
 ---
 // Network page template (Webflow collection "Networks"). A network without a
 // heading has no page yet: its URL redirects to /networks, as on Webflow
-// (Canton and Ethereum today: their files say only "Integrations in
-// progress" and "The EVM side of cross-chain integrations", so nothing is
-// drawn for them).
-// Each page has one real visual where something real exists:
-// - Stellar, in "What the integration involves": a Stellar CLI session
-//   (recorded on Stellar CLI 30.0.1 on November 5, 2026, unedited apart from
-//   whole lines cut at the end of an output, marked "…").
+// (Canton and Ethereum today).
+// The visuals restate the network file and the case studies only:
+// - "What the integration involves": the integration map of /services
+//   (services/IntegrationMap.astro, wide), one card per item of `involves`
+//   with its icon and description, the network's mark at the bottom.
 // - XRPL, in the precedent: Ripple's programs as a flow, with only the facts
 //   of src/content/case-studies/ripple.md.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Redirect from '../../layouts/Redirect.astro';
 import Cta from '../../components/Cta.astro';
 import Flow, { type FlowStep, type FlowFloat } from '../../components/vx/Flow.astro';
-import Terminal from '../../components/vx/Terminal.astro';
+import IntegrationMap from '../../components/services/IntegrationMap.astro';
 import { site as siteData } from '../../data/site';
 import { networks, orderBy, publicQuote, nobr } from '../../lib/content';
 import { otherNetworksOrder } from '../../data/curation';
@@ -33,26 +31,11 @@ const involvesSoft: Record<string, string> = {
   stellar: 'Written for Stellar, not ported to it.',
   xrpl: 'The ledger’s built-in functions, wired to your systems.',
 };
-// Stellar: the contract commands of the CLI we contribute to, copied from the captures in run order.
-const session: Record<string, { lines: string[]; label: string; caption: string }> = {
-  stellar: {
-    label: 'A Stellar CLI session: the contract commands, client bindings included',
-    caption: 'A real session, recorded on November 5, 2026 with Stellar CLI 30.0.1, which our engineers contribute to: the contract commands, client bindings included.',
-    lines: [
-      '$ stellar contract --help',
-      'Tools for smart contract developers',
-      '',
-      'Usage: stellar contract [OPTIONS] <COMMAND>',
-      '',
-      'Commands:',
-      '  asset     Utilities to deploy a Stellar Asset Contract or get its id',
-      '  alias     Utilities to manage contract aliases',
-      '  bindings  Generate code client bindings for a contract',
-      '  build     Build a contract from source',
-      '…',
-    ],
-  },
-};
+// The integration map: what the client brings on top (the same words for every
+// network, from /services), one card per `involves` item (three columns when
+// they make full rows of three, else two), the page's network at the bottom.
+const mapNets = (['stellar', 'xrpl', 'canton', 'ethereum'] as const).filter((n) => n === net.id).map((n) => ({ net: n }));
+const mapCols = Math.min(d.involves.length % 3 === 0 ? 3 : 2, d.involves.length);
 // XRPL: how our architects work in Ripple's programs, from the Ripple case study.
 const proofFlow: Record<string, { label: string; steps: FlowStep[]; floats: FlowFloat[] }> = {
   xrpl: {
@@ -67,7 +50,6 @@ const proofFlow: Record<string, { label: string; steps: FlowStep[]; floats: Flow
     floats: [{ text: 'DevX audit of XRPL’s developer path, September 2026', icon: 'list-magnifying-glass', at: 'top' }],
   },
 };
-const sess = session[net.id];
 const flow = proofFlow[net.id];
 ---
 {!d.heading ? (
@@ -81,10 +63,10 @@ const flow = proofFlow[net.id];
             <div class="nx_heroleft">
               <a class="art_back" data-back="1" href="/networks">← All networks</a>
               <div class="nx_eyebrowrow">
-                <p class="cs_eyebrow">Integrate with</p>
+                <p class="v-eyebrow">Integrate with</p>
                 {d.mark && <img alt={d.markAlt} class="nx_mark" src={d.mark} />}
               </div>
-              <h1 class="intro_h1">{d.heading}</h1>
+              <h1 class="intro_h1">{d.heading}{d.headingSoft && <> <span class="v-soft">{d.headingSoft}</span></>}</h1>
               {d.lede && <p class="art_lede" data-nx="lede">{d.lede}</p>}
               <div class="nf_actions">
                 <a class="btn-primary" href="/contact">Schedule a call</a>
@@ -93,7 +75,7 @@ const flow = proofFlow[net.id];
               {d.stats.length > 0 && (
                 <ul aria-label="Key figures" class={`nx_stats nx_stats--${d.stats.length}`} data-nx="stats" role="list">
                   {d.stats.map((s) => (
-                    <li class="nxjs_stat"><span class="nxjs_statv">{s.value}</span><span class="nxjs_statl">{s.label}</span></li>
+                    <li class="nxjs_stat"><span class:list={['nxjs_statv', !/\d/.test(s.value) && 'nxjs_statv--word']}>{s.value}</span><span class="nxjs_statl">{s.label}</span></li>
                   ))}
                 </ul>
               )}
@@ -107,8 +89,12 @@ const flow = proofFlow[net.id];
                 <div data-nx="shiprows">
                   {d.ship.rows.map((r) => (
                     <div class="nxjs_shiprow">
-                      <div>{r.href ? <a class="nxjs_shipname nxjs_shiplink" href={r.href}>{r.name} <span aria-hidden="true">→</span></a> : <span class="nxjs_shipname">{r.name}</span>}<span class="nxjs_shipdesc">{r.description}</span></div>
-                      <span class="nxjs_shipbadge"><span class="nxjs_shipdot" aria-hidden="true"></span>{r.badge}</span>
+                      <div>{r.href ? <a class="nxjs_shipname nxjs_shiplink" href={r.href}>{r.name}&nbsp;<span aria-hidden="true">→</span></a> : <span class="nxjs_shipname">{r.name}</span>}<span class="nxjs_shipdesc">{r.description}</span></div>
+                      {r.live ? (
+                        <span class="nxjs_shipbadge"><span class="nxjs_shipdot" aria-hidden="true"></span>{r.badge}</span>
+                      ) : (
+                        <span class="nxjs_shipbadge nx_chip">{r.badge}</span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -120,19 +106,18 @@ const flow = proofFlow[net.id];
       {d.involves.length > 0 && (
         <section aria-labelledby="nx-involves" class="ab_white" data-nx="involves-sec">
           <div class="ab_container">
-            <div class:list={['nxi', sess && 'nxi--visual']}>
+            <div class="nxi" data-nx="involves">
               <h2 class="ab_h2 nxi_h2" id="nx-involves">What the integration involves.{involvesSoft[net.id] && <> <span class="v-soft" set:html={nobr(involvesSoft[net.id])} /></>}</h2>
-              <ul class="nxi_list" data-nx="involves" role="list">
-                {d.involves.map((r) => (
-                  <li class="nxi_item"><h3 class="nxi_title">{r.title}</h3><p class="nxi_desc">{r.description}</p></li>
-                ))}
-              </ul>
-              {sess && (
-                <figure class="nxi_visual">
-                  <Terminal clip compact label={sess.label} lines={sess.lines} />
-                  <figcaption class="nxi_caption">{sess.caption}</figcaption>
-                </figure>
-              )}
+              <IntegrationMap
+                bottom={{ title: `On ${d.name}`, sub: 'Matched to the guarantees you already give users' }}
+                cols={mapCols}
+                label={`What an integration on ${d.name} involves: ${d.involves.map((r) => r.title).join(', ')}`}
+                nets={mapNets}
+                parts={d.involves.map((r) => ({ icon: r.icon || 'cube', title: r.title, sub: r.description }))}
+                tint="blue"
+                top={{ icon: 'plugs-connected', title: 'Your asset or protocol', sub: 'Live elsewhere, or launching for the first time' }}
+                wide
+              />
             </div>
           </div>
         </section>
@@ -273,26 +258,19 @@ const flow = proofFlow[net.id];
 )}
 
 <style>
-  /* What the integration involves: a calm list (no icon cells). On Stellar the
-     CLI session stays in view beside the list; elsewhere the list runs in two
-     columns. */
-  .nxi { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
-  /* Title and list on one side, the session beside them; on narrow screens
-     the session comes right under the title */
-  .nxi--visual { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-areas: 'head visual' 'list visual'; grid-template-rows: auto 1fr; column-gap: 56px; align-items: start; }
-  .nxi--visual .nxi_h2 { grid-area: head; }
-  .nxi--visual .nxi_list { grid-area: list; min-width: 0; }
-  .nxi--visual .nxi_visual { grid-area: visual; }
-  .nxi_h2 { max-width: 15em; text-wrap: balance; }
+  /* What the integration involves: the heading, then the integration map
+     (services/IntegrationMap.astro), one card per item */
+  .nxi { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
+  .nxi_h2 { max-width: 15em; margin: 0; text-wrap: balance; }
   .nxi_h2 .v-soft { display: block; }
-  .nxi_list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; margin: 0; padding: 0; list-style: none; }
-  .nxi--visual .nxi_list { grid-template-columns: minmax(0, 1fr); }
-  .nxi_item { display: flex; flex-direction: column; gap: 8px; padding: 24px 0 26px; border-top: 1px solid var(--line); }
-  .nxi_title { margin: 0; color: var(--deep-blue); font-size: 19px; font-weight: 600; line-height: 1.3; }
-  .nxi_desc { margin: 0; max-width: 38em; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
-  .nxi_visual { min-width: 0; margin: 0; }
-  .nxi_caption { margin: 14px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; text-align: left; }
-  @media (min-width: 992px) { .nxi_visual { position: sticky; top: 120px; } }
+
+  /* What we ship: the green dot only for what runs on mainnet; any other
+     badge (a role, a beta, a demo) is a neutral chip */
+  .nx_chip { height: 24px; padding: 0 9px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--white); color: var(--ink-2); }
+
+  /* A word among the key figures ("DevX") stays below the figures' size, on
+     their baseline, as on the case pages */
+  .nxjs_statv--word { align-items: flex-end; min-height: 31px; font-size: 22px; line-height: 1.1; letter-spacing: -.01em; }
 
   /* Precedent with a flow (XRPL): the case on one side, with its quote, the
      flow of the programs on the other */
@@ -308,17 +286,20 @@ const flow = proofFlow[net.id];
      (#2f6e10, the green of the site's status pills: 5.1:1) */
   .nx_proof .cs_eyebrow { color: #2f6e10; }
 
-  /* Three key figures in one row, never two and an orphan */
+  /* Three key figures in one row, never two and an orphan; on small phones,
+     one per line, each figure beside its label */
   @media (min-width: 480px) { .nx_stats--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 479px) {
+    .nx_stats--3 { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
+    .nx_stats--3 .nxjs_stat { flex-direction: row; align-items: center; gap: 16px; }
+    .nx_stats--3 .nxjs_statv { flex: 0 0 auto; min-width: 112px; white-space: nowrap; }
+  }
 
   @media (max-width: 991px) {
-    .nxi--visual { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'visual' 'list'; grid-template-rows: auto; }
     .nxp_row { grid-template-columns: minmax(0, 1fr); }
-    .nxi_visual, .nxp_visual { max-width: 640px; }
+    .nxp_visual { max-width: 640px; }
   }
   @media (max-width: 767px) {
-    .nxi_list { grid-template-columns: minmax(0, 1fr); }
-    .nxi_title { font-size: 18px; }
     .nxp_quotetext { font-size: 20px; }
   }
   /* Hero: one column under 1200 px, so the heading keeps to three lines */

@@ -36,11 +36,11 @@ funding:
   body: ''
   rows: []
 cta: ''
-homeDescription: The EVM side of cross-chain integrations, as with LI.FI.
+homeDescription: Your protocol or product on EVM, live elsewhere or launching for the first time.
 homeCta: Cross-chain work
 card:
   name: Cross-chain work
-  line: The EVM side of cross-chain integrations, as with LI.FI.
+  line: Your protocol or product on EVM, live elsewhere or launching for the first time.
   logo: /images/logos/logo-ethereum.webp
   logoAlt: Ethereum
 ---

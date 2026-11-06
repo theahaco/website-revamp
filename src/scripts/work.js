@@ -1,22 +1,28 @@
 import { href } from './base.js';
 
-// Work page: Case studies / Articles views and the audience and network filters.
-// Filter values, in display order. A chip shows only when at least one item of
-// the current view matches it, so no filter leads to an empty list.
+// Work page: Case studies / Articles views and the audience filter.
+// Filter values, in display order. A tag shows only when at least one item of
+// the current view matches it, so no filter leads to an empty list. Items are
+// the elements with a data-fa (audience) attribute: the case study tiles, the
+// group of open-source tool rows (it counts as data-wk-count items), the
+// alliance row, the article rows.
 const AUDS = ['All', 'Financial institutions', 'Protocols and products', 'Ecosystems and open source'];
-const NETS = ['All', 'Stellar', 'XRPL', 'Canton', 'Ethereum', 'Multi-network'];
+// The title in two tones: h1 in the page's colour, soft in the lighter one
+// (no soft part: one tone). The first paint of /work?view=articles uses the
+// same texts (the inline script in src/pages/work.astro).
 const COPY = {
   articles: {
     eyebrow: 'Blog',
     h1: 'Notes from the engineers.',
-    lede: 'What we learned taking regulated assets, protocol integrations and developer tooling to mainnet. Switch to Case studies for the work itself.',
+    soft: '',
+    lede: 'What we learned taking regulated assets, protocol integrations and developer tooling to mainnet.',
     title: 'Blog: notes from the engineers | The Aha Company',
   },
   cases: {
     eyebrow: 'Work',
-    h1: 'Client work, live systems, public code.',
-    lede: 'Case studies and our open-source tools, filtered by who the work was for and the network it runs on.',
-    ledeArticles: ' Switch to Articles for the writing that came out of them.',
+    h1: 'Client work,',
+    soft: 'live systems, public code.',
+    lede: 'Case studies and our open-source tools, filtered by who the work was for.',
     title: 'Blockchain case studies and open source | The Aha Company',
   },
 };
@@ -26,10 +32,12 @@ export function initWork() {
   const artsWrap = document.querySelector('[data-wk="articles"]');
   if (!casesWrap || !artsWrap) return;
   const eyeEl = document.querySelector('[data-wk="eyebrow"]');
-  const h1El = document.querySelector('[data-wk="h1"]');
+  const h1aEl = document.querySelector('[data-wk="h1a"]');
+  const h1bEl = document.querySelector('[data-wk="h1b"]');
   const ledeEl = document.querySelector('[data-wk="lede"]');
   const countEl = document.querySelector('[data-wk="count"]');
   const emptyEl = document.querySelector('[data-wk="empty"]');
+  const group = document.querySelector('[data-wk="aud"]');
   const tabs = document.querySelectorAll('.wk_tab');
   // /work?for=institutions|protocols|ecosystems opens with that audience selected
   // (the Services page links there).
@@ -38,34 +46,34 @@ export function initWork() {
   const state = {
     view: params.get('view') === 'articles' && document.querySelector('.wk_tab[data-view="articles"]') ? 'articles' : 'cases',
     aud: FOR[params.get('for')] || 'All',
-    net: 'All',
   };
 
-  function chips(group, vals) {
-    const g = document.querySelector(`[data-wk="${group}"]`);
-    if (!g) return;
-    vals.forEach((v) => {
+  const select = (v) => {
+    state.aud = v;
+    if (!group) return;
+    group.querySelectorAll('.wk_chip').forEach((c) => {
+      const on = c.getAttribute('data-val') === v;
+      c.classList.toggle('is-on', on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  };
+  if (group) {
+    AUDS.forEach((v) => {
       const b = document.createElement('button');
       b.type = 'button';
-      const on = v === state[group];
-      b.className = 'wk_chip' + (on ? ' is-on' : '');
+      b.className = 'wk_chip';
       b.textContent = v;
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
       b.setAttribute('data-val', v);
       b.addEventListener('click', () => {
-        state[group] = v;
-        g.querySelectorAll('.wk_chip').forEach((c) => {
-          const on = c.getAttribute('data-val') === v;
-          c.classList.toggle('is-on', on);
-          c.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
+        select(v);
         render();
       });
-      g.appendChild(b);
+      group.appendChild(b);
     });
+    select(state.aud);
   }
-  chips('aud', AUDS);
-  chips('net', NETS);
+
+  const countOf = (it) => Number(it.getAttribute('data-wk-count')) || 1;
 
   function render() {
     const isArt = state.view === 'articles';
@@ -73,8 +81,12 @@ export function initWork() {
     casesWrap.style.display = isArt ? 'none' : '';
     artsWrap.style.display = isArt ? '' : 'none';
     if (eyeEl) eyeEl.textContent = copy.eyebrow;
-    if (h1El) h1El.textContent = copy.h1;
-    if (ledeEl) ledeEl.textContent = copy.lede + (copy.ledeArticles && document.querySelector('.wk_tab[data-view="articles"]') ? copy.ledeArticles : '');
+    if (h1aEl) h1aEl.textContent = copy.h1;
+    if (h1bEl) {
+      h1bEl.textContent = copy.soft;
+      h1bEl.hidden = !copy.soft;
+    }
+    if (ledeEl) ledeEl.textContent = copy.lede;
     document.title = copy.title;
     tabs.forEach((t) => {
       const on = t.getAttribute('data-view') === state.view;
@@ -91,37 +103,23 @@ export function initWork() {
       }
     });
     const active = isArt ? artsWrap : casesWrap;
-    const items = [...active.querySelectorAll('.work_item')];
-    const hasA = (it, v) => it.getAttribute('data-fa') === v;
-    const hasN = (it, v) => (it.getAttribute('data-fn') || '').split('|').includes(v);
-    // Hide the chips that match nothing in this view; reset a hidden choice.
-    [['aud', hasA], ['net', hasN]].forEach(([group, has]) => {
-      document.querySelectorAll(`[data-wk="${group}"] .wk_chip`).forEach((c) => {
+    const items = [...active.querySelectorAll('[data-fa]')];
+    // Hide the tags that match nothing in this view; reset a hidden choice.
+    if (group) {
+      group.querySelectorAll('.wk_chip').forEach((c) => {
         const v = c.getAttribute('data-val');
-        const shown = v === 'All' || items.some((it) => has(it, v));
+        const shown = v === 'All' || items.some((it) => it.getAttribute('data-fa') === v);
         c.hidden = !shown;
-        if (!shown && state[group] === v) {
-          state[group] = 'All';
-          c.parentElement.querySelectorAll('.wk_chip').forEach((x) => {
-            const on = x.getAttribute('data-val') === 'All';
-            x.classList.toggle('is-on', on);
-            x.setAttribute('aria-pressed', on ? 'true' : 'false');
-          });
-        }
+        if (!shown && state.aud === v) select('All');
       });
-    });
-    // A filter group with a single choice besides "All" is hidden, and the
-    // whole filter bar when no group is left.
-    document.querySelectorAll('[data-wk="aud"], [data-wk="net"]').forEach((g) => { g.hidden = g.querySelectorAll('.wk_chip:not([hidden])').length <= 2; });
-    const filters = document.querySelector('.wk_filters');
-    if (filters) filters.hidden = [...filters.querySelectorAll('.wk_filtergroup')].every((g) => g.hidden);
+      // A single choice besides "All" is no choice: the tags are hidden.
+      group.hidden = group.querySelectorAll('.wk_chip:not([hidden])').length <= 2;
+    }
     let n = 0;
-    active.querySelectorAll('.work_item').forEach((it) => {
-      const okA = state.aud === 'All' || it.getAttribute('data-fa') === state.aud;
-      const okN = state.net === 'All' || (it.getAttribute('data-fn') || '').split('|').includes(state.net);
-      const show = okA && okN;
+    items.forEach((it) => {
+      const show = state.aud === 'All' || it.getAttribute('data-fa') === state.aud;
       it.style.display = show ? '' : 'none';
-      if (show) n++;
+      if (show) n += countOf(it);
     });
     if (countEl) countEl.textContent = n + (n === 1 ? ' item' : ' items');
     if (emptyEl) emptyEl.classList.toggle('is-shown', n === 0);
@@ -139,13 +137,7 @@ export function initWork() {
   if (clearBtn) {
     clearBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      state.aud = 'All';
-      state.net = 'All';
-      document.querySelectorAll('.wk_chip').forEach((c) => {
-        const on = c.getAttribute('data-val') === 'All';
-        c.classList.toggle('is-on', on);
-        c.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
+      select('All');
       render();
     });
   }

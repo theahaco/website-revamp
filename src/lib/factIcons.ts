@@ -1,6 +1,8 @@
-// Small icon shown before a fact label on case study and tool pages
+// Small icon shown before a fact label on case study, tool and team pages
 // (src/icons). A label without an entry shows no icon.
 const icons: Record<string, string> = {
+  'Based in': 'map-pin',
+  Focus: 'compass-tool',
   Client: 'buildings',
   Alliance: 'handshake',
   Role: 'wrench',

@@ -1,5 +1,17 @@
 ---
 // Team cards: the About page grid, or "The rest of the team" on a team page.
+// About: one white card per person, the portrait square (as the sources
+// are) and in one tone (visual.css), the location with its pin; five a row
+// on wide screens (ten people: 5 + 5, never a lone card on a row). Under
+// 992 px each card becomes a row with the face-centred avatar as a round
+// face, as the home page's testimonial chips: two a row on tablets, one on
+// phones. Team pages: the others as compact chips with their round face,
+// three a row (nine: 3 x 3), one a row on phones.
+// Faces: public/images/team/avatars/<id>-96.webp, or the portrait when a
+// person has no avatar yet.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Icon from './Icon.astro';
 import { team, orderBy } from '../lib/content';
 import { teamPanelOrder } from '../data/curation';
 
@@ -11,6 +23,10 @@ const { variant, exclude } = Astro.props;
 const all = await team();
 // About uses the team order; team pages use the order Webflow showed there.
 const members = (variant === 'about' ? all : orderBy(all, teamPanelOrder)).filter((m) => m.id !== exclude);
+const face = (id: string, portrait: string) => {
+  const avatar = `/images/team/avatars/${id}-96.webp`;
+  return existsSync(join(process.cwd(), 'public', avatar)) ? avatar : portrait;
+};
 ---
 <div class="w-dyn-list">
   <div class={variant === 'about' ? 'ab_teamgrid w-dyn-items' : 'tm_grid w-dyn-items'} role="list">
@@ -18,15 +34,57 @@ const members = (variant === 'about' ? all : orderBy(all, teamPanelOrder)).filte
       <div class="w-dyn-item" role="listitem">
         <a class="tm_gridlink w-inline-block" href={`/team/${m.id}`}>
           <div class="tm_gridportrait">
-            {m.data.portrait && <img alt="" class="tm_portraitimg" src={m.data.portrait} loading="lazy" />}
+            {m.data.portrait && variant === 'about' && (
+              <picture>
+                <source media="(max-width: 991px)" srcset={face(m.id, m.data.portrait)} />
+                <img alt="" class="tm_portraitimg" decoding="async" loading="lazy" src={m.data.portrait} />
+              </picture>
+            )}
+            {m.data.portrait && variant === 'member' && <img alt="" class="tm_portraitimg" decoding="async" height="48" loading="lazy" src={face(m.id, m.data.portrait)} width="48" />}
           </div>
           <span class="cs_namestack">
             <span class="tm_gridname" data-cell={variant === 'member' ? 'name' : undefined}>{m.data.name}</span>
             {m.data.role && <span class="tm_gridrole" data-cell={variant === 'member' ? 'role' : undefined}>{m.data.role}</span>}
-            {variant === 'about' && m.data.location && <span class="ab_teamloc">{m.data.location}</span>}
+            {variant === 'about' && m.data.location && <span class="ab_teamloc"><Icon name="map-pin" size={15} />{m.data.location}</span>}
           </span>
         </a>
       </div>
     ))}
   </div>
 </div>
+
+<style>
+  /* Both: white cards on a 1 px rule, as the home page's client tiles */
+  .tm_gridlink { height: 100%; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--white); transition: border-color .2s, box-shadow .2s, color .2s; }
+  .tm_gridlink:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .tm_gridportrait picture { display: block; width: 100%; height: 100%; }
+  .cs_namestack { min-width: 0; row-gap: 3px; }
+  .tm_gridname { color: var(--ink); font-size: 15px; line-height: 1.3; }
+  .tm_gridrole { font-size: 13px; line-height: 1.35; }
+
+  /* About: the portrait on top, five a row */
+  .ab_teamgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .ab_teamgrid .tm_gridlink { row-gap: 14px; padding: 10px 10px 18px; }
+  .ab_teamgrid .tm_gridportrait { aspect-ratio: 1 / 1; border: 0; border-radius: 10px; background: var(--tint-paper); }
+  .ab_teamgrid .cs_namestack { padding: 0 6px; }
+  .ab_teamloc { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; color: var(--ink-2); font-size: 13px; line-height: 1.3; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
+  .ab_teamloc :global(.icon) { color: var(--deep-blue); }
+
+  /* Team pages: chips with a round face, three a row */
+  .tm_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .tm_grid .tm_gridlink { flex-direction: row; align-items: center; gap: 14px; padding: 12px 16px 12px 12px; }
+  .tm_grid .tm_gridportrait { flex-shrink: 0; width: 48px; aspect-ratio: 1 / 1; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--tint-paper); }
+
+  @media (prefers-reduced-motion: reduce) { .tm_gridlink { transition: none; } }
+  /* Tablets and phones: one row per person, the round face beside the name */
+  @media (max-width: 991px) {
+    .ab_teamgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .ab_teamgrid .tm_gridlink { flex-direction: row; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; }
+    .ab_teamgrid .tm_gridportrait { flex-shrink: 0; width: 64px; border-radius: 50%; }
+    .ab_teamgrid .cs_namestack { padding: 0; }
+    .ab_teamloc { margin-top: 4px; }
+  }
+  @media (max-width: 767px) {
+    .ab_teamgrid, .tm_grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  }
+</style>

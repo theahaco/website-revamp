@@ -1,10 +1,26 @@
 ---
 // Team member template (Webflow collection "Team"). Empty facts and links are
 // skipped, as the Webflow site's script did.
+// The header puts the text first (pill eyebrow, the name with the role as
+// the soft half of the title, the bio, the links), then a profile card drawn
+// like the home page's hero card (a white card on two tinted sheets): the
+// portrait in one tone, round, then the facts as rows with their icons
+// (src/lib/factIcons.ts). Engagements and open-source tools are the rows of
+// the Services precedents (components/services/Precedents.astro): the
+// client's logo (its case study's quote.logo) on the tint of the case
+// study's audience, or the lock on tan for a client not named, never a logo;
+// a tool shows its icon (src/lib/toolIcons.ts) and its headline figure, as
+// before. The rest of the team: compact chips with their faces (TeamGrid).
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
+import Icon from '../../components/Icon.astro';
 import TeamGrid from '../../components/TeamGrid.astro';
+import Precedents, { type PrecedentRow } from '../../components/services/Precedents.astro';
 import { team, caseStudies, posts, tools, orderBy, formatDate } from '../../lib/content';
+import { factIcon } from '../../lib/factIcons';
+import { toolIcons } from '../../lib/toolIcons';
 import { siteUrl, ld } from '../../lib/ld';
 import { engagementOrder } from '../../data/curation';
 
@@ -32,6 +48,37 @@ const links = [
 const engagements = orderBy(await caseStudies(), engagementOrder).filter((c) => c.data.team.includes(member.id));
 const writing = (await posts()).filter((p) => p.data.author === member.id);
 const built = (await tools()).filter((t) => t.data.built.includes(member.id));
+
+// A logo in the precedent tile: 20 px high and at most 56 px wide, in the
+// proportions of the file's own viewBox (SVG); other files take the tile's width.
+const logoSize = (src: string) => {
+  const file = join(process.cwd(), 'public', src);
+  const vb = src.endsWith('.svg') && existsSync(file) ? readFileSync(file, 'utf8').match(/viewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)\s*"/) : null;
+  const ratio = vb ? parseFloat(vb[1]) / parseFloat(vb[2]) : 2.8;
+  return ratio * 20 > 56 ? { w: 56, h: Math.round(56 / ratio) } : { w: Math.round(ratio * 20), h: 20 };
+};
+const tintOf: Record<string, PrecedentRow['tint']> = { 'Financial institutions': 'blue', 'Protocols and products': 'green', 'Ecosystems and open source': 'pink' };
+const engagementRows: PrecedentRow[] = engagements.map((c) => {
+  const logo = !c.data.nda && c.data.quote?.logo ? c.data.quote.logo : '';
+  return {
+    href: `/case-studies/${c.id}`,
+    name: c.data.client || c.data.shortTitle || c.data.title,
+    line: c.data.workTitle || c.data.shortTitle || c.data.title,
+    meta: [c.data.eyebrow, c.data.year].filter(Boolean).join(' · '),
+    logo: logo ? { src: logo, ...logoSize(logo) } : undefined,
+    icon: logo ? undefined : c.data.nda ? 'lock-simple' : 'briefcase',
+    tint: tintOf[c.data.audience] ?? 'blue',
+  };
+});
+const toolRows: PrecedentRow[] = built.map((t) => ({
+  href: `/open-source/${t.id}`,
+  name: t.data.name,
+  line: [t.data.headline?.figure, t.data.headline?.label].filter(Boolean).join(' '),
+  meta: [t.data.category, t.data.network].filter(Boolean).join(' · '),
+  icon: toolIcons[t.id] ?? 'code',
+  tint: 'pink',
+}));
+
 const base = siteUrl(Astro.site);
 // "Fabricius (Fifo) Zatti": the name without the nickname, the nickname apart.
 const plainName = d.name.replace(/ \(.*\)/, '');
@@ -48,27 +95,19 @@ const personLd = ld({
   worksFor: { '@type': 'Organization', '@id': base + '#organization', name: 'The Aha Company', url: base },
   sameAs: [d.links.linkedin, d.links.github].filter((u) => u && u !== '#'),
 });
+const hasCard = Boolean(d.portrait) || facts.length > 0;
 ---
 <BaseLayout title={`${d.name}${d.role ? `, ${d.role}` : ''} | The Aha Company`} description={description} image={d.portrait || undefined} imageAlt={d.portrait ? plainName : undefined}>
   <Fragment slot="head"><script type="application/ld+json" set:html={personLd} /></Fragment>
   <main>
     <article class="tm_article">
-      <a class="art_back" href="/about">← The team</a>
-      <div class="tm_header">
-        <div class="tm_portraitbox">{d.portrait && <img alt={d.name} class="tm_portraitimg" src={d.portrait} />}</div>
+      <a class="art_back" href="/about#team">← The team</a>
+      <div class:list={['tm_header', hasCard && 'tm_header--card']}>
         <div class:list={['tm_col', links.length === 0 && 'tm_col--nolinks']}>
           <div class="tm_intro">
-            <p class="cs_eyebrow">Team</p>
-            <h1 class="intro_h1">{d.name}</h1>
-            {d.role && <p class="art_lede" data-tm="role">{d.role}</p>}
+            <p class="v-eyebrow page_eyebrow">Team</p>
+            <h1 class="intro_h1 tm_h1">{d.name}{d.role && <Fragment> <span class="v-soft" data-tm="role">{d.role}</span></Fragment>}</h1>
           </div>
-          {facts.length > 0 && (
-            <dl class="tm_facts">
-              {facts.map((f) => (
-                <div class="cs_fact" data-fact={f.key}><dt class="cs_dt">{f.label}</dt><dd class="cs_dd">{f.value}</dd></div>
-              ))}
-            </dl>
-          )}
           {hasBio && <div class="blog_richtext w-richtext" data-tm="bio"><Content /></div>}
           {links.length > 0 && (
             <ul aria-label="Links" class="tm_links" role="list">
@@ -76,52 +115,39 @@ const personLd = ld({
             </ul>
           )}
         </div>
+        {hasCard && (
+          <div class="tm_stage">
+            <div aria-hidden="true" class="tm_sheet tm_sheet--back"></div>
+            <div aria-hidden="true" class="tm_sheet tm_sheet--mid"></div>
+            <div class="tm_card">
+              {d.portrait && <div class="tm_face"><img alt={d.name} class="tm_portraitimg" height="168" src={d.portrait} width="168" /></div>}
+              {facts.length > 0 && (
+                <dl class="tm_facts">
+                  {facts.map((f) => (
+                    <div class="cs_fact tm_fact" data-fact={f.key}><dt class="cs_dt">{factIcon(f.label) && <span class="v-iconbox v-iconbox--sm tm_facticon"><Icon name={factIcon(f.label)!} size={20} /></span>}{f.label}</dt><dd class="cs_dd">{f.value}</dd></div>
+                  ))}
+                </dl>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-      {engagements.length > 0 && (
+      {engagementRows.length > 0 && (
         <section class="tm_section" data-tm="engagements">
           <div class="more_header">
             <h2 class="more_h2">Engagements</h2>
-            <a class="more_all" href="/#work">All work ↗</a>
+            <a class="more_all" href="/work">All work ↗</a>
           </div>
-          <div class="w-dyn-list">
-            <div class="work_list w-dyn-items" role="list">
-              {engagements.map((c) => (
-                <div class="work_item w-dyn-item" role="listitem">
-                  <a class="work_article-link w-inline-block" href={`/case-studies/${c.id}`}>
-                    <span class="work_num"></span>
-                    <div class="work_stack">
-                      <div class="work_meta">
-                        <span class="work_eyebrow" data-eng="eyebrow">{c.data.eyebrow}</span>
-                        <span class="work_yeararrow"><span data-eng="year">{c.data.year}</span><span> ↗</span></span>
-                      </div>
-                      <span class="tm_rowtitle" data-eng="title">{c.data.shortTitle || c.data.title}</span>
-                    </div>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Precedents label="" rows={engagementRows} />
         </section>
       )}
-      {built.length > 0 && (
+      {toolRows.length > 0 && (
         <section class="tm_section" data-tm="tools">
           <div class="more_header">
             <h2 class="more_h2">Open source</h2>
             <a class="more_all" href="/open-source">All tools ↗</a>
           </div>
-          <div role="list">
-            {built.map((t) => (
-              <div class="work_item" role="listitem">
-                <a class="more_row" href={`/open-source/${t.id}`}>
-                  <div class="more_stack">
-                    <span class="work_eyebrow">{t.data.category} · {t.data.network}</span>
-                    <span class="more_title">{t.data.name}</span>
-                  </div>
-                  <div class="more_meta"><span class="inline-text">{[t.data.headline?.figure, t.data.headline?.label].filter(Boolean).join(' ')}</span><span class="inline-text"> ↗</span></div>
-                </a>
-              </div>
-            ))}
-          </div>
+          <Precedents label="" rows={toolRows} tint="pink" />
         </section>
       )}
       {writing.length > 0 && (
@@ -152,7 +178,7 @@ const personLd = ld({
       <section class="tm_teampanel" data-tm="team">
         <div class="tm_teamhead">
           <h2 class="tm_teamh2">The rest of the team</h2>
-          <p class="tm_count" data-rv="team-count">Core team · 12+ engineers across the United States, France and Brazil</p>
+          <p class="tm_count" data-rv="team-count">United States · France · Brazil</p>
         </div>
         <TeamGrid variant="member" exclude={member.id} />
       </section>
@@ -160,3 +186,45 @@ const personLd = ld({
   </main>
   <Cta heading="Talk to an engineer, not a sales team." />
 </BaseLayout>
+
+<style>
+  .tm_article { row-gap: clamp(48px, 5vw, 72px); }
+  /* Header: the text, then the profile card beside it */
+  .tm_header { grid-template-columns: minmax(0, 1fr); }
+  .tm_header--card { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 64px; align-items: center; }
+  .tm_col { row-gap: 24px; }
+  .tm_intro { row-gap: 18px; }
+  .tm_h1 { font-size: clamp(36px, 4.4vw, 60px); }
+  .tm_h1 .v-soft { display: block; }
+  .tm_col .blog_richtext { max-width: 36em; }
+
+  /* The profile card on two offset sheets, as the home page's hero card */
+  .tm_stage { position: relative; min-width: 0; padding: 22px 26px 36px 4px; }
+  .tm_sheet { position: absolute; z-index: 0; border: 1px solid var(--line); border-radius: 20px; }
+  .tm_sheet--back { inset: 48px 0 8px 30px; background: var(--tint-pink); }
+  .tm_sheet--mid { inset: 35px 13px 22px 17px; background: var(--tint-blue); }
+  .tm_card { position: relative; z-index: 1; overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--white); box-shadow: var(--shadow-2); }
+  .tm_face { display: grid; place-items: center; padding: 28px 24px; border-bottom: 1px solid var(--line); background: var(--tint-blue); }
+  .tm_face img { display: block; width: 168px; height: 168px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 6px var(--white), var(--shadow-1); }
+  .tm_facts { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; border: 0; }
+  .tm_fact { position: relative; justify-content: center; min-height: 68px; padding: 14px 20px 14px 70px; border-top: 1px solid var(--line); }
+  .tm_fact:first-child { border-top: 0; }
+  .tm_facticon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); }
+  .tm_fact .cs_dd { font-size: 15px; line-height: 1.35; }
+
+  .tm_teampanel { border-radius: var(--radius-lg); row-gap: 24px; }
+
+  @media (max-width: 991px) {
+    .tm_header--card { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
+    .tm_stage { max-width: 480px; padding: 22px 22px 36px 0; }
+  }
+  @media (max-width: 767px) {
+    .tm_face img { width: 136px; height: 136px; }
+    .tm_teampanel { padding: 24px 16px; }
+  }
+  @media (max-width: 479px) {
+    .tm_stage { padding: 20px 14px 30px 0; }
+    .tm_sheet--back { inset: 44px 0 6px 26px; }
+    .tm_sheet--mid { inset: 32px 7px 18px 13px; }
+  }
+</style>

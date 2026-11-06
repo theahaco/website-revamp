@@ -26,7 +26,7 @@ audience: Financial institutions
 # Work page filter: Financial institutions, Protocols and products, or Ecosystems and open source.
 
 network: Stellar
-# Work page filter: Stellar, XRPL, Canton or Multi-network.
+# Shown in the Work page eyebrow: Stellar, XRPL, Canton or Multi-network.
 
 date: November 20, 2026
 # Written exactly like this: month in English, day, comma, year.

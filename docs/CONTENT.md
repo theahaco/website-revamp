@@ -156,8 +156,10 @@ like the article to `public/images/og/` (`what-a-bank-should-ask.png`).
 ## What decides the order
 
 - Articles: newest first, by `date`.
-- Case studies and open-source tools on the Work page: the `order` field
-  (lower first).
+- Case studies on the Work page: the list `workOrder` in
+  `src/data/curation.ts`, then any case not listed there, by its `order`
+  field (lower first). Open-source tools on the Work page: their `order`
+  field.
 - The people on a case study: its `team` list, in that order.
 - The home page selection and the team order on team pages:
   `src/data/curation.ts` (ask Enzo).

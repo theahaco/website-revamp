@@ -1,0 +1,107 @@
+---
+// Case study tiles, two across: the visual on top, then the eyebrow, what was
+// built, the line and the client once, as a byline. Used by the home page's
+// "Selected work" (src/components/HomeWork.astro) and the Work page
+// (src/components/WorkRows.astro). Pass the case ids in display order:
+// <WorkTile ids={['lifi', 'talwex']} />.
+// The visual: the case's entry in src/lib/workVisuals.ts, or else, for the
+// Stellar Development Foundation, its case page's phones (src/lib/caseVisuals.ts,
+// kind "phones"). A client not named keeps the anonymous label of its case
+// file as the byline, with the "Client not named" pill beside the eyebrow, and
+// never a logo. Alliances (PwC US) are not engagements: they get no tile.
+// The text comes first in the markup, so a screen reader meets the title
+// before the picture. Each tile carries its audience (data-fa) for the Work
+// page filter (src/scripts/work.js).
+import { caseStudies, pick, nobr } from '../lib/content';
+import { workVisuals } from '../lib/workVisuals';
+import { caseVisuals } from '../lib/caseVisuals';
+import WorkVisual from './home/WorkVisual.astro';
+import CaseVisual from './cases/CaseVisual.astro';
+
+interface Props {
+  /** Case study ids (file names in src/content/case-studies), in display order. */
+  ids: string[];
+  /** Ids of the tiles drawn across both columns, the text beside the visual. */
+  wide?: string[];
+  /** Heading level of the titles: 3 under a section heading, 2 under the page title. */
+  level?: 2 | 3;
+}
+const { ids, wide = [], level = 3 } = Astro.props;
+const list = pick(await caseStudies(), ids).filter((cs) => !cs.data.alliance);
+const Title = level === 2 ? 'h2' : 'h3';
+---
+<ul class="hw_grid" role="list">
+  {list.map((cs) => {
+    const visual = workVisuals[cs.id];
+    const cv = caseVisuals[cs.id];
+    const phones = !visual && cv?.kind === 'phones' ? cv : undefined;
+    return (
+      <li class:list={['hw_tile', wide.includes(cs.id) && 'hw_tile--wide']} data-client={cs.id} data-fa={cs.data.audience}>
+        <div class="hw_body">
+          {cs.data.eyebrow && <p class:list={['hw_eyebrow', cs.data.nda && 'hw_eyebrow--nda']}>{cs.data.eyebrow}{cs.data.nda && <span class="wk_nda">Client not named</span>}</p>}
+          <Title class="hw_title"><a class="hw_tlink" href={`/case-studies/${cs.id}`}><span set:html={nobr(cs.data.workTitle || cs.data.title)} /><span class="hw_sr">: {cs.data.client || cs.data.title} case study</span></a></Title>
+          {(cs.data.workLine || cs.data.lede) && <p class="hw_line" set:html={nobr(cs.data.workLine || cs.data.lede)} />}
+          <p class="hw_by"><span class="hw_client" set:html={nobr(cs.data.client || cs.data.title)} />{cs.data.year && <span class="hw_year">{cs.data.year}</span>}<span aria-hidden="true" class="hw_arrow">↗</span></p>
+        </div>
+        {visual && <div class="hw_visual"><WorkVisual visual={visual} /></div>}
+        {phones && <div class="hw_visual hw_visual--phones"><CaseVisual visual={phones} /></div>}
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  /* Two across: the visual on top, the text under it. The two tiles of a row
+     share their rows (subgrid), so visuals and texts line up. */
+  .hw_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+  .hw_tile { position: relative; display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 0; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 20px; background: var(--white); transition: border-color .2s, box-shadow .2s; }
+  .hw_tile:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .hw_visual { grid-row: 1; min-width: 0; }
+  .hw_body { grid-row: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; padding: 24px 20px 18px; }
+  .hw_eyebrow { margin: 0; color: var(--green-ink); font-size: 12px; font-weight: 600; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
+  /* A client not named: the pill of the Work page and the case pages (.wk_nda) */
+  .hw_eyebrow--nda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .hw_eyebrow--nda .wk_nda { line-height: 1.4; }
+  .hw_title { margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 28px; font-style: italic; font-weight: 400; line-height: 1.15; letter-spacing: -.005em; text-wrap: balance; }
+  .hw_tlink { color: inherit; text-decoration: none; }
+  .hw_tlink::after { content: ''; position: absolute; inset: 0; z-index: 2; border-radius: 20px; }
+  .hw_tlink:focus-visible { outline: none; }
+  .hw_tile:has(.hw_tlink:focus-visible) { box-shadow: inset 0 0 0 2px var(--green-ink); }
+  .hw_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  .hw_line { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
+  .hw_by { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; width: 100%; margin: auto 0 0; padding-top: 8px; font-size: 14px; line-height: 1.4; }
+  .hw_client { color: var(--deep-blue); font-weight: 600; }
+  .hw_year { color: var(--muted); white-space: nowrap; }
+  .hw_arrow { margin-left: auto; color: var(--deep-blue); font-size: 18px; line-height: 1; opacity: .5; transition: opacity .2s, transform .2s, color .2s; }
+  .hw_tile:hover .hw_arrow { color: var(--green-ink); opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) { .hw_tile:hover .hw_arrow { transform: translate(2px, -2px); } }
+  @media (prefers-reduced-motion: reduce) { .hw_tile, .hw_arrow { transition: none; } }
+
+  /* A wide tile: across both columns, the text beside the visual */
+  .hw_tile--wide { grid-column: 1 / -1; grid-row: auto; grid-template-rows: auto; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 8px; }
+  .hw_tile--wide .hw_body { grid-row: 1; grid-column: 1; padding: 40px 36px; }
+  .hw_tile--wide .hw_visual { grid-row: 1; grid-column: 2; }
+  .hw_tile--wide .hw_title { font-size: 32px; }
+  /* The case page's phones size themselves in container units: their panel
+     needs a definite height, or those units resolve to 0 */
+  .hw_visual--phones :global(.cv) { height: 100%; }
+  .hw_visual--phones :global(.cv_phones) { flex: none; height: 100%; min-height: 300px; border: 0; border-radius: 14px; }
+  .hw_tile--wide .hw_visual--phones :global(.cv_phones) { height: 420px; }
+
+  @media (max-width: 991px) {
+    .hw_title { font-size: 24px; }
+    .hw_body { padding: 20px 16px 16px; }
+    .hw_tile--wide { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; }
+    .hw_tile--wide .hw_visual { grid-row: 1; grid-column: 1; }
+    .hw_tile--wide .hw_body { grid-row: 2; grid-column: 1; padding: 20px 16px 16px; }
+    .hw_tile--wide .hw_title { font-size: 24px; }
+    .hw_visual--phones :global(.cv_phones), .hw_tile--wide .hw_visual--phones :global(.cv_phones) { height: auto; min-height: 0; aspect-ratio: 1.3; }
+  }
+  @media (max-width: 767px) {
+    .hw_grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .hw_tile { grid-row: auto; grid-template-rows: auto auto; }
+  }
+  @media (max-width: 479px) {
+    .hw_visual--phones :global(.cv_phones), .hw_tile--wide .hw_visual--phones :global(.cv_phones) { aspect-ratio: 1; }
+  }
+</style>

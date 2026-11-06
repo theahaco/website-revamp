@@ -2,7 +2,7 @@
 name: Pamphile (Tupui) Roy
 order: 7
 role: Principal Engineer
-location: Austria
+location: France
 focus: Supply-chain security, wallets, standards
 networks: Stellar · XRPL
 since: ''

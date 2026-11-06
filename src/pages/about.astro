@@ -1,64 +1,117 @@
 ---
-// About: the team photo, the figures, how we work (a calm list, no icons),
-// the team, the roles we hold in each ecosystem and the offices.
-// "Roles we hold in the ecosystems" follows the home band's recipe: eyebrow,
-// two-tone title, short lede, one real visual (a Stellar CLI session with our
-// two plugins, recorded on Stellar CLI 30.0.1 on November 5, 2026, unedited
-// apart from whole lines cut at the end of an output, marked "…"), then one
-// cell per network.
+// About, on the home page's recipe (eyebrow pill, two-tone title, short
+// lede, one visual per section):
+// - the header: the title and lede beside the key figures, then the team
+//   photo. The figures are the approved key figures of src/data/site.ts
+//   (keyFigures, toolAdoption), labelled as on the home page's hero card and
+//   open-source band. No team-size figure. The photo is the wide crop of the
+//   office photo (the 3:2 original on phones), with the caption pill of the
+//   home page's "Ways to work with us";
+// - how we work: the five principles in framed cells, each with its icon,
+//   the section head in the first cell;
+// - the team, one card per person (components/TeamGrid.astro), with the
+//   offices under it: each office shows the faces of the people whose team
+//   file (src/content/team) gives that country as their location;
+// - the roles we hold in each ecosystem: one cell per network, its mark in a
+//   white tile (linked to the network's page where there is one), the roles,
+//   and the tools we maintain as chips with their icons (src/lib/toolIcons.ts).
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TeamGrid from '../components/TeamGrid.astro';
 import Cta from '../components/Cta.astro';
-import Terminal from '../components/vx/Terminal.astro';
+import Icon from '../components/Icon.astro';
+import { keyFigures, toolAdoption } from '../data/site';
+import { team } from '../lib/content';
+import { toolIcons } from '../lib/toolIcons';
+
+const figures = [
+  { value: String(keyFigures.founded), plus: false, label: 'Founded', rv: 'fact-founded' },
+  { value: keyFigures.deployments.replace('+', ''), plus: keyFigures.deployments.endsWith('+'), label: 'Deployments on mainnet', rv: 'fact-deployments' },
+  { value: String(keyFigures.audits), plus: false, label: 'Third-party security audits', rv: 'fact-audits' },
+  { value: String(toolAdoption.count), plus: false, label: 'Projects using our open-source tools', rv: 'fact-projects' },
+];
 
 const how = [
-  { title: 'An engineer on every call', body: 'The first conversation is thirty minutes with someone who has shipped the kind of system you are asking about. No sales team.' },
-  { title: 'Milestones your team can verify', body: 'NDA, then an MOU with the scope cut into milestones. Each one has an output you can check, on testnet, before mainnet.' },
-  { title: 'We say no early', body: 'Where an ecosystem program applies, we scope and draft the application. Where it doesn’t, or where the architecture is wrong for the network, we say so before any work starts.' },
-  { title: 'We stay on the account', body: 'Production surfaces questions a testnet never asks. Deployment comes with runbooks and handover, and we keep evolving the system with your team after launch.' },
-  { title: 'Public goods, maintained', body: 'The tooling we build for ecosystems is open source with a quarterly proposal and review, not a one-off deliverable.' },
+  { title: 'An engineer on every call', icon: 'phone-call', body: 'The first conversation is thirty minutes with someone who has shipped the kind of system you are asking about. No sales team.' },
+  { title: 'Milestones your team can verify', icon: 'list-checks', body: 'NDA, then an MOU with the scope cut into milestones. Each one has an output you can check, on testnet, before mainnet.' },
+  { title: 'We say no early', icon: 'hand-palm', body: 'Where an ecosystem program applies, we scope and draft the application. Where it doesn’t, or where the architecture is wrong for the network, we say so before any work starts.' },
+  { title: 'We stay on the account', icon: 'arrows-clockwise', body: 'Production surfaces questions a testnet never asks. Deployment comes with runbooks and handover, and we keep evolving the system with your team after launch.' },
+  { title: 'Public goods, maintained', icon: 'git-branch', body: 'The tooling we build for ecosystems is open source with a quarterly proposal and review, not a one-off deliverable.' },
 ];
 
-// Copied from the raw captures, in run order (see the comment at the top)
-const session = [
-  '$ stellar --version',
-  'stellar 30.0.1 (f2a7b74175c34585f3b30a1abf42a2d41cbcc390)',
-  '…',
-  '$ stellar plugin ls',
-  'Installed Plugins:',
-  '    registry',
-  '    scaffold',
-  '$ stellar scaffold --version',
-  'stellar-scaffold 0.0.34 (92865100a50288d86552fcf30b6cd275f6f90c07)',
-  '…',
-  '$ stellar registry version',
-  'stellar registry 0.3.0 (8311574ee53d629e8b1c1aa7c023aa91fcf2bf8b)',
-  '…',
+// Offices, each with the faces of the people based in its country
+const members = await team();
+const facesIn = (country: string) => members.filter((m) => m.data.location === country).map((m) => `/images/team/avatars/${m.id}-96.webp`);
+const offices = [
+  { country: 'United States', icon: 'buildings', entity: 'Dawning Inc. (dba The Aha Company)', desc: 'Our company, incorporated in Delaware. It operates this site and employs our US-based engineers.', address: ['108 W. 13th Street, Suite 100', 'Wilmington, DE 19801'], rv: 'office-us' },
+  { country: 'France', icon: 'map-pin', entity: 'Paris', desc: 'Engineers in France.', address: [], rv: 'office-fr' },
+  { country: 'Brazil', icon: 'map-pin', entity: 'São Paulo', desc: 'Engineers in Brazil, led by Fabricius Zatti.', address: [], rv: 'office-br' },
+].map((o) => ({ ...o, faces: facesIn(o.country) }));
+
+// Roles we hold, one cell per network. Canton has no page of its own.
+interface NetworkCell {
+  name: string;
+  href?: string;
+  mark: { src: string; w: number; h: number; xrpl?: boolean };
+  roles?: string[];
+  status?: string;
+  tools?: { id: string; label: string }[];
+  rv?: string;
+}
+const networks: NetworkCell[] = [
+  {
+    name: 'Stellar',
+    href: '/networks/stellar',
+    mark: { src: '/images/logos/logo-light-stellar.svg', w: 106, h: 26 },
+    roles: ['Core contributor', 'Stellar Community Fund reviewer', 'Stellar Architect Program expert'],
+    tools: [
+      { id: 'stellar-scaffold', label: 'Stellar Scaffold' },
+      { id: 'stellar-cli', label: 'Stellar CLI plugin system' },
+      { id: 'stellar-registry', label: 'Stellar Registry' },
+      { id: 'nido', label: 'Nido' },
+      { id: 'perch', label: 'Perch' },
+      { id: 'moonlight', label: 'Moonlight' },
+      { id: 'tansu', label: 'Tansu' },
+    ],
+    rv: 'about-roles',
+  },
+  {
+    name: 'XRPL',
+    href: '/networks/xrpl',
+    mark: { src: '/images/logos/logo-xrpl-transparent.webp', w: 313, h: 80, xrpl: true },
+    roles: ['Ripple program partner: accelerator cohorts and hackathons', 'Continuous work on developer experience'],
+    tools: [{ id: 'ghostsig', label: 'GhostSig' }],
+    rv: 'about-roles-xrpl',
+  },
+  {
+    name: 'Canton',
+    mark: { src: '/images/logos/logo-light-canton.svg', w: 1432, h: 369 },
+    status: 'Integrations in progress',
+  },
 ];
 ---
-<BaseLayout title={'About The Aha Company: blockchain engineers since 2021'} description={'12+ blockchain engineers across the United States, France and Brazil, founded in 2021: how we work, who we are and the roles we hold in each ecosystem.'}>
+<BaseLayout title={'About The Aha Company: blockchain engineers since 2021'} description={'Blockchain engineers across the United States, France and Brazil, founded in 2021: how we work, who we are and the roles we hold in each ecosystem.'}>
 <main>
   <section>
     <div class="ab_introcontainer">
-      <div class="ab_introhead">
-        <p class="v-eyebrow page_eyebrow">About</p>
-        <h1 class="intro_h1">We build the tooling. <span class="v-soft">We do the integrations.</span></h1>
-        <p class="art_lede" data-rv="about-lede">Founded in 2021. 12+ engineers across the United States, France and Brazil. Core contributors on Stellar, program partners on XRPL, integrations in progress on Canton.</p>
+      <div class="ab_herotop">
+        <div class="ab_introhead">
+          <p class="v-eyebrow page_eyebrow">About</p>
+          <h1 class="intro_h1">We build the tooling. <span class="v-soft">We do the integrations.</span></h1>
+          <p class="art_lede" data-rv="about-lede">Engineers across the United States, France and Brazil. Core contributors on Stellar, program partners on XRPL, integrations in progress on Canton.</p>
+        </div>
+        <ul aria-label="Key figures" class="ab_figs" role="list">
+          {figures.map((f) => (
+            <li class="ab_fig" data-rv={f.rv}><span class="ab_figv">{f.value}{f.plus && <span class="ab_figplus">+</span>}</span><span class="ab_figl">{f.label}</span></li>
+          ))}
+        </ul>
       </div>
       <figure class="ab_photo">
-        <img alt="The Aha Company team around a table in the office" class="ab_photoimg" fetchpriority="high" height="1065" sizes="(max-width: 991px) 100vw, 1200px" src="/images/photos/team-photo-office.webp" srcset="/images/photos/team-photo-office-960.webp 960w, /images/photos/team-photo-office.webp 1600w, /images/photos/team-photo-office-2400.webp 2400w" width="1600" />
-        <figcaption class="ab_photocaption" data-rv="about-photo-caption">The team · United States · France · Brazil</figcaption>
+        <picture>
+          <source height="1065" media="(max-width: 767px)" sizes="100vw" srcset="/images/photos/team-photo-office-960.webp 960w, /images/photos/team-photo-office.webp 1600w" width="1600" />
+          <img alt="The Aha Company team around a table in the office" class="ab_photoimg" fetchpriority="high" height="966" sizes="(max-width: 1199px) 100vw, 1104px" src="/images/photos/team-band-2208.webp" srcset="/images/photos/team-band-1104.webp 1104w, /images/photos/team-band-2208.webp 2208w" width="2208" />
+        </picture>
+        <figcaption class="ab_cap" data-rv="about-photo-caption"><Icon name="users-three" size={18} /><span class="ab_captitle">The team</span><span aria-hidden="true" class="ab_capsep">·</span><span>United States · France · Brazil</span></figcaption>
       </figure>
-    </div>
-  </section>
-
-  <section aria-label="In numbers" class="ab_facts">
-    <div class="ab_factscontainer">
-      <ul class="ab_factsgrid" role="list">
-        <li class="ab_fact" data-rv="fact-founded"><span class="ab_factnum">2021</span><span class="ab_factlabel">Founded</span></li>
-        <li class="ab_fact" data-rv="fact-team"><span class="ab_factnum">12+</span><span class="ab_factlabel">Engineers</span></li>
-        <li class="ab_fact" data-rv="fact-countries"><span class="ab_factnum">4</span><span class="ab_factlabel">Countries: United States, France, Austria, Brazil</span></li>
-      </ul>
     </div>
   </section>
 
@@ -66,13 +119,14 @@ const session = [
     <div class="ab_container">
       <div class="abh">
         <div class="abh_head">
+          <p class="v-eyebrow">Working with us</p>
           <h2 class="ab_h2 abh_h2" id="ab-how">How we work. <span class="v-soft">One voice for two very different rooms.</span></h2>
           <p class="abh_lede">A bank’s risk committee and a protocol team’s GitHub hear the same things from us.</p>
         </div>
         <ol class="abh_list" role="list">
           {how.map((h, i) => (
-            <li class="abh_row">
-              <span aria-hidden="true" class="abh_num">{String(i + 1).padStart(2, '0')}</span>
+            <li class="abh_cell">
+              <div class="abh_cellhead"><span class="v-iconbox"><Icon name={h.icon} size={26} /></span><span aria-hidden="true" class="abh_num">{String(i + 1).padStart(2, '0')}</span></div>
               <h3 class="abh_title">{h.title}</h3>
               <p class="abh_body">{h.body}</p>
             </li>
@@ -82,78 +136,70 @@ const session = [
     </div>
   </section>
 
-  <section class="ab_team" data-ab="team" id="team">
-    <div class="ab_container">
-      <div class="tm_teamhead">
-        <h2 class="ab_h2">The team</h2>
-        <p class="tm_count" data-rv="about-team-count">The core team · United States · France · Brazil</p>
+  <section aria-labelledby="ab-team" class="ab_team" data-ab="team" id="team">
+    <div class="ab_container abt">
+      <div class="abt_head">
+        <p class="v-eyebrow">Who we are</p>
+        <h2 class="ab_h2 abt_h2" id="ab-team">The team. <span class="v-soft">Across the United States, France and Brazil.</span></h2>
       </div>
       <TeamGrid variant="about" />
+      <div class="abo">
+        <h3 class="abo_label">Offices</h3>
+        <ul class="abo_cells" role="list">
+          {offices.map((o) => (
+            <li class="abo_cell">
+              <span class="v-iconbox"><Icon name={o.icon} size={26} /></span>
+              <h4 class="ab_officecountry">{o.country}</h4>
+              <p class="ab_officeentity" data-rv={o.rv}>{o.entity}</p>
+              <p class="abo_desc" data-rv={`${o.rv}-desc`}>{o.desc}</p>
+              {o.address.length > 0 && <p class="ab_officeaddr">{o.address.map((line, i) => <Fragment>{i > 0 && <br />}<span>{line}</span></Fragment>)}</p>}
+              {o.faces.length > 0 && (
+                <div aria-hidden="true" class="abo_faces">
+                  {o.faces.map((src) => <img alt="" class="tm_portraitimg" decoding="async" height="40" loading="lazy" src={src} width="40" />)}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </section>
 
   <section aria-labelledby="ab-roles" class="ab_white">
     <div class="ab_container abr">
-      <div class="abr_top">
+      <div class="abr_head">
         <div class="abr_text">
           <p class="v-eyebrow">Ecosystems</p>
           <h2 class="ab_h2 abr_h2" id="ab-roles">Roles we hold in the ecosystems. <span class="v-soft">Inside the tooling and the programs.</span></h2>
           <p class="abr_lede">Our engineers wrote parts of the Stellar CLI that developers use every day, and maintain the tools around it. On XRPL, our architects mentor the teams in Ripple’s programs.</p>
         </div>
-        <figure class="abr_visual">
-          <Terminal compact label="A Stellar CLI session: the CLI’s version, its installed plugins, and the versions of our Scaffold and Registry plugins" lines={session} />
-          <figcaption class="abr_caption">A real session, recorded on November 5, 2026: the official Stellar CLI, with the two plugins we maintain running as <code>stellar</code> subcommands.</figcaption>
-        </figure>
+        <a class="abr_all" data-rv="about-os" href="/open-source">See the tools we build and maintain <span aria-hidden="true">→</span></a>
       </div>
       <ul class="abr_cells" role="list">
-        <li class="abr_cell">
-          <img alt="Stellar" class="abr_logo" height="26" loading="lazy" src="/images/logos/logo-light-stellar.svg" width="106" />
-          <ul class="abr_roles" data-rv="about-roles" role="list">
-            <li>Core contributor</li>
-            <li>Stellar Community Fund reviewer</li>
-            <li>Stellar Architect Program expert</li>
-            <li>Maintainer of <a class="ab_rolelink" href="/open-source/stellar-scaffold">Stellar Scaffold</a>, the <a class="ab_rolelink" href="/open-source/stellar-cli">Stellar CLI plugin system</a>, <a class="ab_rolelink" href="/open-source/stellar-registry">Stellar Registry</a>, <a class="ab_rolelink" href="/open-source/nido">Nido</a>, <a class="ab_rolelink" href="/open-source/perch">Perch</a>, <a class="ab_rolelink" href="/open-source/moonlight">Moonlight</a> and <a class="ab_rolelink" href="/open-source/tansu">Tansu</a></li>
-          </ul>
-        </li>
-        <li class="abr_cell">
-          <img alt="XRPL" class="abr_logo abr_logo--xrpl" height="80" loading="lazy" src="/images/logos/logo-xrpl-transparent.webp" width="313" />
-          <ul class="abr_roles" data-rv="about-roles-xrpl" role="list">
-            <li>Ripple program partner: accelerator cohorts and hackathons</li>
-            <li>Continuous work on developer experience</li>
-            <li>Maintainer of <a class="ab_rolelink" href="/open-source/ghostsig">GhostSig</a></li>
-          </ul>
-        </li>
-        <li class="abr_cell">
-          <img alt="Canton" class="abr_logo" height="369" loading="lazy" src="/images/logos/logo-light-canton.svg" width="1432" />
-          <ul class="abr_roles" role="list">
-            <li>Integrations in progress</li>
-          </ul>
-        </li>
+        {networks.map((n) => (
+          <li class="abr_cell">
+            {n.href ? (
+              <a class="abr_mark abr_mark--link" href={n.href}><img alt={n.name} class:list={['abr_logo', n.mark.xrpl && 'abr_logo--xrpl']} height={n.mark.h} loading="lazy" src={n.mark.src} width={n.mark.w} /><span class="abr_sr"> network page</span><span aria-hidden="true" class="abr_arrow">↗</span></a>
+            ) : (
+              <span class="abr_mark"><img alt={n.name} class="abr_logo" height={n.mark.h} loading="lazy" src={n.mark.src} width={n.mark.w} /></span>
+            )}
+            {n.roles && (
+              <ul class="abr_roles" data-rv={n.rv} role="list">
+                {n.roles.map((r) => <li>{r}</li>)}
+              </ul>
+            )}
+            {n.status && <p class="abr_status">{n.status}</p>}
+            {n.tools && (
+              <div class="abr_tools">
+                <p class="abr_label">Maintainer of</p>
+                <ul class="abr_chips" role="list">
+                  {n.tools.map((t) => <li><a class="abr_chip" href={`/open-source/${t.id}`}><Icon name={toolIcons[t.id] ?? 'code'} size={16} />{t.label}</a></li>)}
+                </ul>
+              </div>
+            )}
+          </li>
+        ))}
       </ul>
-      <a class="abr_all" data-rv="about-os" href="/open-source">See the tools we build and maintain <span aria-hidden="true">→</span></a>
-    </div>
-  </section>
-
-  <section class="footer_section">
-    <div class="ab_officescontainer">
-      <div class="ab_officesgrid">
-        <div class="ab_office">
-          <h3 class="ab_officecountry">United States</h3>
-          <p class="ab_officeentity" data-rv="office-us">Dawning Inc. (dba The Aha Company)</p>
-          <p class="ab_officeaddr" data-rv="office-us-desc">Our company, incorporated in Delaware. It operates this site and employs our US-based engineers.</p>
-          <p class="ab_officeaddr"><span>108 W. 13th Street, Suite 100</span><br /><span>Wilmington, DE 19801</span></p>
-        </div>
-        <div class="ab_office">
-          <h3 class="ab_officecountry">France</h3>
-          <p class="ab_officeentity" data-rv="office-fr">Paris</p>
-          <p class="ab_officeaddr" data-rv="office-fr-desc">Engineers in France and Austria.</p>
-        </div>
-        <div class="ab_office">
-          <h3 class="ab_officecountry">Brazil</h3>
-          <p class="ab_officeentity" data-rv="office-br">São Paulo</p>
-          <p class="ab_officeaddr" data-rv="office-br-desc">Engineers in Brazil, led by Fabricius Zatti.</p>
-        </div>
-      </div>
     </div>
   </section>
 </main>
@@ -162,58 +208,119 @@ const session = [
 
 <style>
   .intro_h1 .v-soft { display: block; }
-  /* How we work: a calm list, as on a bank's vendor page. The title stays in
-     view while the five rows scroll by. */
-  .abh { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 64px; row-gap: 40px; align-items: start; }
-  .abh_head { display: flex; flex-direction: column; gap: 20px; }
-  .abh_h2 { max-width: 12em; text-wrap: balance; }
+
+  /* Header: the title and lede beside the figures (framed cells sharing
+     1 px rules, as the home page's "Ways to work with us"), then the photo */
+  .ab_introcontainer { row-gap: 56px; }
+  .ab_herotop { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 64px; align-items: end; }
+  .ab_introhead { max-width: 700px; }
+  /* Wide screens: the title scales with the column beside the figures, as on Services */
+  @media (min-width: 992px) { .ab_introhead .intro_h1 { font-size: clamp(44px, 4.6vw, 64px); } }
+  .ab_figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--line); list-style: none; }
+  .ab_fig { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 22px 24px 24px; background: var(--white); }
+  .ab_figv { color: var(--deep-blue); font-size: 40px; font-weight: 500; line-height: 1; letter-spacing: -.03em; white-space: nowrap; }
+  .ab_figplus { color: var(--green-ink); }
+  .ab_figl { color: var(--ink-2); font-size: 14px; line-height: 1.35; text-wrap: balance; }
+  .ab_photo { position: relative; }
+  .ab_photo picture { display: block; }
+  .ab_photoimg { display: block; width: 100%; height: auto; aspect-ratio: 2208 / 966; object-fit: cover; border-radius: var(--radius-lg); }
+  .ab_cap { position: absolute; left: 20px; bottom: 20px; display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 40px); padding: 10px 16px 10px 12px; border-radius: 999px; background: rgba(255, 255, 255, .94); box-shadow: var(--shadow-1); color: var(--ink-2); font-size: 15px; line-height: 1.3; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
+  .ab_cap :global(.icon) { color: var(--deep-blue); }
+  .ab_captitle { color: var(--deep-blue); font-weight: 600; }
+  .ab_capsep { color: var(--muted); }
+
+  /* How we work: the head and the five principles in one frame of six cells
+     (3 x 2), the list a subgrid that starts after the head */
+  .abh { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--line); }
+  .abh_head { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; min-width: 0; padding: 32px 28px 36px; background: var(--tint-blue); }
+  .abh_h2 { font-size: clamp(28px, 2.6vw, 36px); line-height: 1.14; text-wrap: balance; }
   .abh_h2 .v-soft { display: block; }
-  .abh_lede { margin: 0; max-width: 26em; color: var(--ink-2); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
-  .abh_list { margin: 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
-  .abh_row { display: grid; grid-template-columns: 52px minmax(0, 1fr); row-gap: 8px; padding: 28px 0 30px; border-bottom: 1px solid var(--line); }
-  .abh_num { grid-row: 1 / span 2; padding-top: 4px; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
-  .abh_title { grid-column: 2; margin: 0; color: var(--deep-blue); font-size: 19px; font-weight: 600; line-height: 1.3; }
-  .abh_body { grid-column: 2; margin: 0; max-width: 36em; color: var(--ink-2); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
-  @media (min-width: 992px) { .abh_head { position: sticky; top: 120px; } }
+  .abh_lede { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
+  .abh_list { grid-column: 1 / -1; grid-row: 1 / span 2; display: grid; grid-template-columns: subgrid; grid-template-rows: subgrid; margin: 0; padding: 0; list-style: none; }
+  .abh_cell { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 28px 28px 32px; background: var(--white); }
+  .abh_cell:first-child { grid-column-start: 2; }
+  .abh_cellhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .abh_num { color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1; font-variant-numeric: tabular-nums; }
+  .abh_title { margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 24px; font-style: italic; font-weight: 400; line-height: 1.2; text-wrap: balance; }
+  .abh_body { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
 
-  /* Roles: text and the session side by side, then one cell per network */
+  /* The team, then the offices in framed cells with their people's faces */
+  .abt { row-gap: 48px; }
+  .abt_head { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .abt_h2 { text-wrap: balance; }
+  .abt_h2 .v-soft { display: block; }
+  .abo { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+  .abo_label { margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
+  .abo_cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--line); list-style: none; }
+  .abo_cell { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; padding: 24px; background: var(--white); }
+  .abo_cell .v-iconbox { margin-bottom: 12px; }
+  .abo_cell .ab_officecountry { margin-bottom: 4px; line-height: 1.15; }
+  .abo_desc { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.5; text-wrap: pretty; }
+  .abo_faces { display: flex; margin-top: auto; padding-top: 18px; }
+  .abo_faces img { display: block; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--tint-tan); box-shadow: 0 0 0 3px var(--white); }
+  .abo_faces img + img { margin-left: -9px; }
+
+  /* Roles: the head with its link, then one cell per network */
   .abr { row-gap: 0; }
-  .abr_top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 64px; row-gap: 40px; align-items: center; }
-  .abr_text { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
-  .abr_h2 { max-width: 13em; text-wrap: balance; }
+  .abr_head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px 48px; }
+  .abr_text { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; max-width: 720px; }
+  .abr_h2 { max-width: 15em; text-wrap: balance; }
   .abr_h2 .v-soft { display: block; }
-  .abr_lede { margin: 0; max-width: 32em; color: var(--ink-2); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
-  .abr_visual { min-width: 0; margin: 0; }
-  .abr_caption { margin: 14px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; text-align: left; }
-  .abr_caption code { font: .92em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--deep-blue); }
-
-  .abr_cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 64px 0 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--line); list-style: none; }
-  .abr_cell { display: flex; flex-direction: column; gap: 22px; min-width: 0; padding: 28px 28px 30px; background: var(--white); }
-  .abr_logo { display: block; align-self: flex-start; width: auto; max-width: 100%; height: 26px; }
-  .abr_logo--xrpl { height: 30px; margin: -2px 0; }
+  .abr_lede { margin: 0; max-width: 36em; color: var(--ink-2); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
+  .abr_all { display: inline-flex; align-items: center; gap: 6px; color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.35; text-decoration: none; transition: color .2s; }
+  .abr_all:hover { color: var(--green-ink); }
+  .abr_cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 56px 0 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--line); list-style: none; }
+  .abr_cell { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; min-width: 0; padding: 28px 28px 30px; background: var(--white); }
+  /* The network's mark in a white tile, as the home hero's PwC US tile */
+  .abr_mark { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; height: 60px; padding: 0 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); box-shadow: var(--shadow-1); color: var(--muted); text-decoration: none; transition: border-color .2s; }
+  .abr_mark--link:hover { border-color: var(--line-strong); }
+  .abr_logo { display: block; width: auto; max-width: 100%; height: 26px; }
+  .abr_logo--xrpl { height: 30px; }
+  .abr_arrow { font-size: 15px; line-height: 1; transition: color .2s, transform .2s; }
+  .abr_mark--link:hover .abr_arrow { color: var(--green-ink); transform: translate(2px, -2px); }
+  .abr_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .abr_roles { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
   .abr_roles li { position: relative; padding-left: 16px; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
   .abr_roles li::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
-  .abr_roles :global(.ab_rolelink) { color: var(--deep-blue); text-decoration: underline; text-decoration-color: rgba(26, 59, 96, .35); text-underline-offset: 3px; transition: color .2s, text-decoration-color .2s; }
-  .abr_roles :global(.ab_rolelink:hover) { color: var(--green-ink); text-decoration-color: currentColor; }
-  .abr_all { display: inline-flex; align-items: center; align-self: flex-start; gap: 8px; min-height: 48px; margin-top: 32px; padding: 10px 24px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.35; text-decoration: none; text-wrap: balance; transition: border-color .2s; }
-  .abr_all:hover { border-color: var(--deep-blue); }
+  .abr_status { display: inline-flex; align-items: center; gap: 8px; min-height: 30px; margin: 0; padding: 0 12px 0 10px; border-radius: 999px; background: var(--tint-blue); color: var(--deep-blue); font-size: 13px; font-weight: 600; line-height: 1.2; }
+  .abr_status::before { content: ''; flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--deep-blue); }
+  /* The tools we maintain: white pills with their icon, as the home page's precedent chips */
+  .abr_tools { display: flex; flex-direction: column; gap: 10px; }
+  .abr_label { margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
+  .abr_chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .abr_chip { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 7px 14px 7px 12px; border: 1px solid var(--line-strong); border-radius: 17px; background: var(--white); color: var(--deep-blue); font-size: 14px; font-weight: 500; line-height: 1.25; text-decoration: none; text-wrap: balance; transition: border-color .2s; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
+  .abr_chip:hover { border-color: var(--deep-blue); }
 
+  @media (prefers-reduced-motion: reduce) { .abr_arrow { transition: none; } .abr_mark--link:hover .abr_arrow { transform: none; } }
+  @media (pointer: coarse) { .abr_chip { min-height: 44px; border-radius: 22px; } .abr_all { min-height: 44px; } }
   @media (max-width: 991px) {
-    .abh { grid-template-columns: minmax(0, 1fr); }
-    .abr_top { grid-template-columns: minmax(0, 1fr); }
-    .abr_visual { max-width: 640px; }
-    .abr_cells { grid-template-columns: minmax(0, 1fr); margin-top: 48px; }
-  }
-  @media (max-width: 479px) {
-    .abr_all { align-self: stretch; justify-content: center; text-align: center; }
+    .ab_herotop { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+    .ab_figs { max-width: 640px; }
+    /* How we work: the head, then one row per principle, its icon on the left */
+    .abh { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+    .abh_head { padding: 28px 24px 32px; }
+    .abh_list { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; gap: 1px; }
+    .abh_cell { display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: 20px; row-gap: 6px; padding: 24px; }
+    .abh_cellhead { grid-column: 1; grid-row: 1 / span 2; align-self: start; margin: 0; }
+    .abh_num { display: none; }
+    .abh_title { grid-column: 2; grid-row: 1; font-size: 22px; }
+    .abh_body { grid-column: 2; grid-row: 2; }
+    .abo_cells, .abr_cells { grid-template-columns: minmax(0, 1fr); }
+    .abr_cells { margin-top: 48px; }
   }
   @media (max-width: 767px) {
-    .abh_row { grid-template-columns: 40px minmax(0, 1fr); padding: 24px 0 26px; }
-    .abh_title { font-size: 18px; }
-    .abr_cell { padding: 24px 20px 26px; gap: 18px; }
+    .ab_introcontainer { row-gap: 40px; }
+    .ab_fig { gap: 8px; padding: 18px 18px 20px; }
+    .ab_figv { font-size: 32px; }
+    .ab_figl { font-size: 13px; }
+    .ab_photoimg { aspect-ratio: 3 / 2; }
+    .ab_cap { left: 12px; bottom: 12px; max-width: calc(100% - 24px); padding: 8px 12px 8px 10px; font-size: 13px; }
+    .abo_cell { padding: 20px; }
+    .abr_cell { gap: 18px; padding: 24px 20px 26px; }
   }
-  @media (pointer: coarse) {
-    .abr_all { min-height: 48px; }
+  @media (max-width: 599px) { .ab_cap { flex-wrap: wrap; row-gap: 2px; border-radius: 16px; } }
+  @media (max-width: 479px) {
+    .abh_cell { grid-template-columns: 40px minmax(0, 1fr); column-gap: 16px; padding: 20px; }
+    .abh_cellhead .v-iconbox { width: 40px; height: 40px; border-radius: 10px; }
   }
 </style>

@@ -3,7 +3,8 @@ name: Stellar
 order: 1
 mark: /images/logos/logo-light-stellar.svg
 markAlt: Stellar
-heading: Issue assets and integrate protocols on Stellar, with the team that maintains its tooling.
+heading: Issue assets and integrate protocols on Stellar,
+headingSoft: with the team that maintains its tooling.
 metaTitle: Stellar and Soroban development company | The Aha Company
 lede: Stablecoins, tokenized assets and protocol integrations on Stellar. Native Soroban contracts, adapters and SDKs matched to the guarantees you already give users.
 secondaryCta:
@@ -24,14 +25,17 @@ ship:
     description: Issuance and governance for SG-FORGE
     badge: Live on mainnet
     href: /case-studies/societe-generale-forge
+    live: true
   - name: Settlement stablecoin
     description: Top US commercial bank, architecture and delivery lead
     badge: Live on mainnet
     href: /case-studies/nda-settlement-stablecoin
+    live: true
   - name: LI.FI contracts
     description: Soroban contracts behind the Stellar integration
     badge: Live on mainnet
     href: /case-studies/lifi
+    live: true
   - name: Stellar CLI
     description: Plugin system and bindings
     badge: Core contributor
@@ -52,26 +56,35 @@ ship:
     description: Policy layer under every Nido wallet
     badge: Mainnet
     href: /open-source/perch
+    live: true
   - name: Moonlight
     description: Privacy layer for payments, audited
     badge: Limited mainnet release
     href: /open-source/moonlight
+    live: true
   - name: Tansu
     description: Onchain governance the Stellar Community Fund votes on
     badge: Mainnet
     href: /open-source/tansu
+    live: true
 involves:
 - title: Contracts
+  icon: code
   description: Soroban contracts written for Stellar’s resource model, not ported from EVM. Role and authorization patterns that match Stellar’s account model.
 - title: Adapters and SDKs
+  icon: package
   description: A typed client for your stack, generated from the contract interface, with the surface your existing integration expects.
 - title: Routing and liquidity
+  icon: path
   description: Path payments, the Stellar DEX and anchors where they apply; liquidity plans agreed with the ecosystem where a program is involved.
 - title: Onboarding and wallets
+  icon: wallet
   description: Passkey and smart-account flows, custodian integration where users are institutions, fiat rails through anchors.
 - title: Issuer controls
+  icon: shield-check
   description: Compliance on Stellar’s built-in issuer controls, as EURCV runs today. A flagged address is frozen, with no contract in the transfer path.
 - title: Mint, burn and custody
+  icon: vault
   description: Minting and redemption tied to your core banking, keys in your own custody setup, as for a top US commercial bank.
 stepsLede: Four milestones, each with an output your team can verify.
 steps:

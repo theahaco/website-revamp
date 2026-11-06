@@ -1,51 +1,96 @@
 ---
-// /services, protocols and products: an integration surface mapped to the
-// target network, drawn as product UI. Your protocol at the top, the three
-// layers written for the network in the middle, the networks at the bottom
-// (Stellar, XRPL, Canton or EVM, with their marks).
-// Generic: every label comes from the door's offer and lede on /services.
+// An integration surface mapped to the target network, drawn as product UI:
+// what the client brings at the top, the layers written for the network in
+// the middle, the network (or networks) at the bottom.
+// - /services, protocols and products (no props): your protocol, the three
+//   layers of the door's offer, the four networks with their marks. Every
+//   label comes from the door's offer and lede on /services.
+// - Network pages (src/pages/networks/[slug].astro, `wide`): one card per
+//   item of the network file's `involves`, its description word for word,
+//   and the page's network at the bottom.
 import Icon from '../Icon.astro';
 import NetMark from '../home/NetMark.astro';
 import Panel from './Panel.astro';
 
-const parts = [
-  { icon: 'code', title: 'Native contracts', sub: 'Written for the network, not ported' },
-  { icon: 'package', title: 'Adapters and SDKs', sub: 'A typed client for your stack' },
-  { icon: 'swap', title: 'Routing and liquidity', sub: 'Bridges, exchanges and liquidity plans' },
-];
-const nets = [
-  { net: 'stellar', size: 15 },
-  { net: 'xrpl', size: 14 },
-  { net: 'canton', size: 16 },
-  { net: 'ethereum', size: 17 },
-] as const;
+type Net = 'stellar' | 'xrpl' | 'canton' | 'ethereum';
+export interface MapPart {
+  /** An icon of src/icons. */
+  icon: string;
+  title: string;
+  sub: string;
+}
+interface Props {
+  /** What the map shows, for screen readers. */
+  label?: string;
+  tint?: 'blue' | 'green' | 'pink' | 'paper';
+  /** The card at the top: what the client brings. */
+  top?: { icon: string; title: string; sub?: string };
+  /** One card per layer written for the network. */
+  parts?: MapPart[];
+  /** The networks at the bottom: one gets its mark in a tile, several a stack of marks. */
+  nets?: { net: Net; size?: number }[];
+  bottom?: { title: string; sub?: string };
+  /** Columns of the parts (1 to 4); the fork lands on the centre of each. */
+  cols?: number;
+  /** Network pages: a wider map whose cards carry a full description, in
+      rows, with the titles as headings. */
+  wide?: boolean;
+}
+const {
+  label = 'An integration: your protocol or product, with native contracts, adapters and SDKs, and routing and liquidity written for Stellar, XRPL, Canton or EVM',
+  tint = 'green',
+  top = { icon: 'plugs-connected', title: 'Your protocol or product', sub: 'Live elsewhere, or launching for the first time' },
+  parts = [
+    { icon: 'code', title: 'Native contracts', sub: 'Written for the network, not ported' },
+    { icon: 'package', title: 'Adapters and SDKs', sub: 'A typed client for your stack' },
+    { icon: 'swap', title: 'Routing and liquidity', sub: 'Bridges, exchanges and liquidity plans' },
+  ],
+  nets = [
+    { net: 'stellar', size: 15 },
+    { net: 'xrpl', size: 14 },
+    { net: 'canton', size: 16 },
+    { net: 'ethereum', size: 17 },
+  ],
+  bottom = { title: 'On Stellar, XRPL, Canton or EVM', sub: 'Matched to the guarantees you already give users' },
+  cols = 3,
+  wide = false,
+} = Astro.props;
+const Title = wide ? 'h3' : 'span';
+const Sub = wide ? 'p' : 'span';
 ---
-<Panel class="im" snug label="An integration: your protocol or product, with native contracts, adapters and SDKs, and routing and liquidity written for Stellar, XRPL, Canton or EVM" tint="green">
-  <div class="im_map">
+<Panel class="im" snug={!wide} label={label} tint={tint}>
+  <div class:list={['im_map', wide && 'im_map--wide']} data-cols={cols !== 3 ? cols : undefined}>
     <div class="im_node">
-      <span class="im_tile"><Icon name="plugs-connected" size={24} /></span>
-      <span class="im_text"><span class="im_title im_title--lg">Your protocol or product</span><span class="im_sub">Live elsewhere, or launching for the first time</span></span>
+      <span class="im_tile"><Icon name={top.icon} size={24} /></span>
+      <span class="im_text"><span class="im_title im_title--lg">{top.title}</span>{top.sub && <span class="im_sub">{top.sub}</span>}</span>
     </div>
     <span aria-hidden="true" class="im_fork"></span>
     <ul class="im_parts" role="list">
       {parts.map((p) => (
         <li class="im_part">
-          <span class="im_icon"><Icon name={p.icon} size={20} /></span>
-          <span class="im_title">{p.title}</span>
-          <span class="im_sub">{p.sub}</span>
+          <span class="im_icon"><Icon name={p.icon} size={wide ? 22 : 20} /></span>
+          <Title class="im_title">{p.title}</Title>
+          <Sub class="im_sub">{p.sub}</Sub>
         </li>
       ))}
     </ul>
     <span aria-hidden="true" class="im_fork im_fork--merge"></span>
-    <div class="im_node im_node--net">
-      <span aria-hidden="true" class="im_marks">{nets.map((n) => <span class="im_mark"><NetMark net={n.net} size={n.size} lazy /></span>)}</span>
-      <span class="im_text"><span class="im_title im_title--lg">On Stellar, XRPL, Canton or EVM</span><span class="im_sub">Matched to the guarantees you already give users</span></span>
+    <div class:list={['im_node', nets.length > 1 && 'im_node--net']}>
+      {nets.length > 1 ? (
+        <span aria-hidden="true" class="im_marks">{nets.map((n) => <span class="im_mark"><NetMark net={n.net} size={n.size} lazy /></span>)}</span>
+      ) : nets.length === 1 && (
+        <span class="im_tile"><NetMark net={nets[0].net} size={24} lazy /></span>
+      )}
+      <span class="im_text"><span class="im_title im_title--lg">{bottom.title}</span>{bottom.sub && <span class="im_sub">{bottom.sub}</span>}</span>
     </div>
   </div>
 </Panel>
 
 <style>
-  .im_map { --im-gap: 12px; --im-rail: rgba(26, 59, 96, .3); position: relative; z-index: 1; display: flex; flex-direction: column; width: 100%; max-width: 540px; margin: 0 auto; }
+  .im_map { --im-gap: 12px; --im-cols: 3; --im-rail: rgba(26, 59, 96, .3); position: relative; z-index: 1; display: flex; flex-direction: column; width: 100%; max-width: 540px; margin: 0 auto; }
+  .im_map[data-cols="1"] { --im-cols: 1; }
+  .im_map[data-cols="2"] { --im-cols: 2; }
+  .im_map[data-cols="4"] { --im-cols: 4; }
   .im_text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .im_title { color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.25; text-wrap: balance; }
   .im_title--lg { font-size: 16px; }
@@ -59,20 +104,36 @@ const nets = [
   .im_mark { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--white); box-shadow: 0 0 0 2px var(--white); }
   .im_mark + .im_mark { margin-left: -6px; }
 
-  /* What we write for the network: three cards in a row */
-  .im_parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--im-gap); margin: 0; padding: 0; list-style: none; }
+  /* What we write for the network: cards in a row (three on /services) */
+  .im_parts { display: grid; grid-template-columns: repeat(var(--im-cols), minmax(0, 1fr)); gap: var(--im-gap); margin: 0; padding: 0; list-style: none; }
   .im_part { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; padding: 14px 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); box-shadow: var(--shadow-1); }
   .im_icon { display: grid; place-items: center; width: 34px; height: 32px; margin-bottom: 8px; border-radius: 9px; background: var(--tint-green); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
 
-  /* Dashed fork from the top card to the three parts, and merge into the
-     network card; the drops land on the centre of each part */
+  /* Dashed fork from the top card to the parts, and merge into the network
+     card; the drops land on the centre of each part */
   .im_fork { position: relative; display: block; height: 40px; }
   .im_fork::before { content: ''; position: absolute; left: 50%; top: 0; height: 50%; border-left: 2px dashed var(--im-rail); }
-  .im_fork::after { content: ''; position: absolute; top: calc(50% - 1px); left: calc((100% - 2 * var(--im-gap)) / 6); right: calc((100% - 2 * var(--im-gap)) / 6); border-top: 2px dashed var(--im-rail); }
+  .im_fork::after { content: ''; position: absolute; top: calc(50% - 1px); left: calc((100% - (var(--im-cols) - 1) * var(--im-gap)) / (2 * var(--im-cols))); right: calc((100% - (var(--im-cols) - 1) * var(--im-gap)) / (2 * var(--im-cols))); border-top: 2px dashed var(--im-rail); }
   .im_fork--merge::before { top: 50%; }
   .im_part::before, .im_part::after { content: ''; position: absolute; left: calc(50% - 1px); height: 19px; border-left: 2px dashed var(--im-rail); }
   .im_part::before { top: -21px; }
   .im_part::after { bottom: -21px; }
+
+  /* Network pages: a wide map, each card with its full description. The cards
+     run in rows; across a row gap, the drop under a card (21 px) meets the
+     drop over the card below it, so the gap is twice that. */
+  .im_map--wide { max-width: 1000px; }
+  .im_map--wide .im_node { width: min(100%, 440px); }
+  .im_map--wide .im_parts { row-gap: 42px; }
+  .im_map--wide .im_part { gap: 6px; padding: 18px 18px 20px; }
+  .im_map--wide .im_title, .im_map--wide .im_sub { margin: 0; }
+  .im_map--wide .im_part .im_title { font-size: 16px; text-wrap: pretty; }
+  .im_map--wide .im_part .im_sub { color: var(--ink-2); font-size: 14.5px; line-height: 1.5; text-wrap: pretty; }
+  .im_map--wide .im_icon { width: 40px; height: 38px; border-radius: 10px; }
+  /* Mid-width panels: two columns at most */
+  @container (max-width: 720px) {
+    .im_map--wide { --im-cols: 2; }
+  }
 
   @container (max-width: 470px) {
     .im_part { padding: 12px 12px 14px; }
@@ -97,5 +158,9 @@ const nets = [
     .im_mark { width: 28px; height: 28px; }
     /* The marks over the network names, so the text keeps its width */
     .im_node--net { flex-direction: column; align-items: flex-start; gap: 10px; }
+    /* Wide map: the icon at the top of its card, beside the title */
+    .im_map--wide .im_parts { row-gap: 10px; }
+    .im_map--wide .im_part { align-items: start; row-gap: 4px; padding: 14px 14px 16px; }
+    .im_map--wide .im_icon { width: 34px; height: 32px; border-radius: 9px; }
   }
 </style>

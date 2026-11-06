@@ -1,5 +1,10 @@
 ---
-// Generated from the Webflow page "/work". Edit freely: this file is the source now.
+// The Work page: the header of the Services page (pill, title in two tones,
+// one sentence), one filter line (view, audience, count), then the case
+// studies as the home page's tiles, the open-source tools and the PwC US
+// alliance as compact rows (src/components/WorkRows.astro). The Articles view
+// (/work?view=articles, the Blog link) swaps the header text and the list;
+// src/scripts/work.js holds both texts and the filter.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WorkRows from '../components/WorkRows.astro';
 import { caseStudies, posts, tools } from '../lib/content';
@@ -10,19 +15,59 @@ const hasPosts = (await posts()).length > 0;
 import Cta from '../components/Cta.astro';
 ---
 <BaseLayout title={'Blockchain case studies and open source | The Aha Company'} description={'Blockchain case studies and open-source tools from The Aha Company: stablecoins and tokenized funds for institutions, integrations for protocols, tooling.'}>
-<main data-main="1"><section><div class="wk_container"><div class="lg_header"><p class="v-eyebrow page_eyebrow" data-wk="eyebrow">Work</p><h1 class="intro_h1" data-wk="h1">Client work, live systems, public code.</h1><p class="art_lede" data-wk="lede">Case studies and our open-source tools, filtered by who the work was for and the network it runs on.{hasPosts && ' Switch to Articles for the writing that came out of them.'}</p></div><div class="wk_controls"><div class="wk_togglerow"><div aria-label="Type" class="wk_toggle" role="group"><button aria-pressed="true" class="wk_tab w-button" data-view="cases" type="button">Case studies</button>{hasPosts && <button aria-pressed="false" class="wk_tab w-button" data-view="articles" type="button">Articles</button>}</div><p class="tm_count" data-wk="count">{caseCount} items</p></div><div class="wk_filters"><div class="wk_filtergroup" data-wk="aud"><span class="cs_dt">For</span></div><div class="wk_filtergroup" data-wk="net"><span class="cs_dt">Network</span></div></div></div><div data-wk="cases"><WorkRows kind="cases" /></div><div data-wk="articles"><WorkRows kind="articles" /></div><div class="wk_empty" data-wk="empty"><p>Nothing public matches those filters yet.</p><a class="wk_clear w-button" data-wk="clear" href="#">Clear filters</a></div></div></section></main>
+<main data-main="1"><section><div class="wk_container">
+  <div class="lg_header">
+    <p class="v-eyebrow page_eyebrow" data-wk="eyebrow">Work</p>
+    <h1 class="intro_h1 wk_h1" data-wk="h1"><span data-wk="h1a">Client work,</span> <span class="v-soft" data-wk="h1b">live systems, public code.</span></h1>
+    <p class="art_lede" data-wk="lede">Case studies and our open-source tools, filtered by who the work was for.</p>
+  </div>
+  <div class="wk_controls">
+    <div class="wk_togglerow">
+      <div aria-label="Type" class="wk_toggle" role="group"><button aria-pressed="true" class="wk_tab w-button" data-view="cases" type="button">Case studies</button>{hasPosts && <button aria-pressed="false" class="wk_tab w-button" data-view="articles" type="button">Articles</button>}</div>
+      <div aria-label="Filter by audience" class="wk_filtergroup" data-wk="aud" role="group"><span aria-hidden="true" class="cs_dt">For</span></div>
+      <p class="tm_count" data-wk="count">{caseCount} items</p>
+    </div>
+  </div>
+  <div data-wk="cases"><WorkRows kind="cases" /></div>
+  <div data-wk="articles"><WorkRows kind="articles" /></div>
+  <div class="wk_empty" data-wk="empty"><p>Nothing public matches those filters yet.</p><a class="wk_clear w-button" data-wk="clear" href="#">Clear filters</a></div>
+</div></section></main>
 <script is:inline>
 // Set the requested view before first paint (the Blog link opens /work?view=articles).
+// The texts are those of src/scripts/work.js (COPY.articles).
 (function () {
   if (new URLSearchParams(location.search).get('view') !== 'articles') return;
   var c = document.querySelector('[data-wk="cases"]'), a = document.querySelector('[data-wk="articles"]');
   if (c) c.style.display = 'none';
   var set = function (k, v) { var el = document.querySelector('[data-wk="' + k + '"]'); if (el) el.textContent = v; };
   set('eyebrow', 'Blog');
-  set('h1', 'Notes from the engineers.');
-  set('lede', 'What we learned taking regulated assets, protocol integrations and developer tooling to mainnet. Switch to Case studies for the work itself.');
+  set('h1a', 'Notes from the engineers.');
+  var soft = document.querySelector('[data-wk="h1b"]');
+  if (soft) soft.hidden = true;
+  set('lede', 'What we learned taking regulated assets, protocol integrations and developer tooling to mainnet.');
   if (a) set('count', a.querySelectorAll('.work_item').length + ' items');
 })();
 </script>
 <Cta heading={'Working on something similar? Talk to an engineer.'} />
 </BaseLayout>
+
+<style>
+  /* The title in two tones, sized as on /services (.sv-h1 in services.astro) */
+  .wk_h1 { font-size: clamp(44px, 4.6vw, 64px); }
+  .wk_h1 .v-soft { display: block; }
+  .wk_h1 .v-soft[hidden] { display: none; }
+
+  /* One filter line: the view toggle, the audience tags, the count. No rule
+     under it: the tiles and the article list bring their own edges. */
+  .wk_togglerow { justify-content: flex-start; gap: 12px 28px; }
+  .wk_togglerow .tm_count { margin: 0 0 0 auto; }
+
+  /* Narrower screens: the tags on a line of their own, under the toggle */
+  @media (max-width: 1199px) {
+    .wk_togglerow .wk_filtergroup { order: 3; width: 100%; }
+  }
+  @media (max-width: 991px) { .wk_h1 { font-size: 50px; } }
+  @media (max-width: 767px) { .wk_h1 { font-size: 40px; } }
+  @media (max-width: 479px) { .wk_h1 { font-size: 35px; } }
+  @media (max-width: 359px) { .wk_h1 { font-size: 30px; } }
+</style>

@@ -8,6 +8,16 @@
 // band further down. Each tile's visual: src/lib/workVisuals.ts.
 export const homeFeaturedCases = ["societe-generale-forge", "lifi", "talwex", "ripple"];
 
+/** Work page, the case study tiles: the home page's four first, in the same
+ * order, then the others. A case study not listed here comes after them, by
+ * its `order` field. The Stellar Development Foundation closes the tiles, with
+ * the open-source tools listed under it; the PwC US alliance is always last,
+ * as one row without a link (src/components/WorkRows.astro). */
+export const workOrder = [...homeFeaturedCases, "nda-settlement-stablecoin", "starknet", "nda-money-market-fund", "nda-real-estate-debt-fund", "stellar-development-foundation", "pwc"];
+
+/** Work page: the tiles drawn across both columns, text beside the visual. */
+export const workWideCases = ["stellar-development-foundation"];
+
 /** Home page, the section under the hero: the case studies whose quotes it
  * shows, one at a time (the first by default), over the client tiles. The
  * rows of "Selected work" show their client's logo, not the quote. */

@@ -89,11 +89,12 @@ for (const dir of DIRS) {
       if (desc && (desc.length < 120 || desc.length > 160)) add(file, lineOf('description'), `The description has ${desc.length} characters: aim for 120 to 160.`, 'warning');
     }
     if (['blog', 'case-studies'].includes(dir)) {
-      // Work page filters: any other value hides the item from the filtered lists.
+      // Work page filter (the audience): any other value hides the item from the
+      // filtered list. The network is shown in the eyebrows.
       const AUDS = ['Financial institutions', 'Protocols and products', 'Ecosystems and open source', ...(dir === 'case-studies' ? ['Institutions'] : [])];
       const NETS = ['Stellar', 'XRPL', 'Canton', 'Ethereum', 'Multi-network'];
       if (data.audience && !AUDS.includes(data.audience)) add(file, lineOf('audience'), `"${data.audience}" is not a Work page filter. Write one of: Financial institutions, Protocols and products, Ecosystems and open source.`);
-      if (data.network && !NETS.includes(data.network)) add(file, lineOf('network'), `"${data.network}" is not a Work page filter. Write one of: ${NETS.join(', ')}.`);
+      if (data.network && !NETS.includes(data.network)) add(file, lineOf('network'), `"${data.network}" is not a network the site lists. Write one of: ${NETS.join(', ')}.`);
     }
     const dash = lines.findIndex((l) => l.includes(EM_DASH));
     if (dash !== -1) add(file, dash + 1, 'House style: no long dash (em-dash). Use a colon, a comma or a new sentence.', 'warning');

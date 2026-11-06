@@ -3,7 +3,8 @@ name: XRPL
 order: 2
 mark: /images/logos/logo-xrpl-transparent.webp
 markAlt: XRPL
-heading: Issue and integrate on the XRP Ledger, with the team that mentors its builders.
+heading: Issue and integrate on the XRP Ledger,
+headingSoft: with the team that mentors its builders.
 metaTitle: 'XRP Ledger development and tokenization | The Aha Company'
 lede: Issued tokens and multi-purpose tokens (MPTs) with issuer controls, credentials and permissioned domains, integrated with your custody and your systems. We design for the ledger as it is today, and keep your token model ready for the next amendments.
 secondaryCta:
@@ -36,12 +37,16 @@ ship:
     href: /case-studies/ripple
 involves:
 - title: Token design
+  icon: coins
   description: 'Trust line tokens or MPTs, chosen for your compliance policy: Require Auth as the KYC gate, freeze, clawback, and metadata that carries the instrument''s identifiers.'
 - title: Compliance primitives
+  icon: identification-badge
   description: Credentials and permissioned domains where they apply, with KYC data kept off the ledger.
 - title: Custody and keys
+  icon: key
   description: Custodian integration, multisig issuers and, since October 2026, delegated permissions that give operational roles their own keys, so no single key can mint, freeze or claw back.
 - title: Markets and settlement
+  icon: swap
   description: The ledger's native exchange, AMM and escrow connected to your systems, with the Permissioned DEX for institution-only markets.
 stepsLede: Four milestones, each with an output your team can verify. Protocol changes depend on validator votes, so we plan on what is live, not on what is announced.
 steps:

@@ -61,7 +61,7 @@
 .lg_tile--link:hover .lg_logo, .lg_tile--link:focus-visible .lg_logo { filter: none; opacity: 1; }
 
 /* People in one tone: testimonial portraits and the engineers' faces */
-.work_portrait, .cta_faces img, .fc_faces img { filter: grayscale(1) contrast(1.04); }
+.work_portrait, .cta_faces img, .fc_faces img, .tm_portraitimg, .cs_avatarimg { filter: grayscale(1) contrast(1.04); }
 
 /* Line lengths: case lines and quotes stay readable on mid-size screens */
 .hw_link .work_para { max-width: 66ch; }

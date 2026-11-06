@@ -1,19 +1,29 @@
-// The visual on top of each tile of the home page's "Selected work"
-// (src/components/HomeWork.astro, drawn by src/components/home/WorkVisual.astro).
-// Each case gets a different kind of visual, so the four tiles do not look
-// alike: an onchain record, a list of routes, a path, a flow. None carries the
-// client's logo: the tile names the client once, in its byline.
+// The visual on top of each case study tile (src/components/WorkTile.astro,
+// drawn by src/components/home/WorkVisual.astro): the home page's "Selected
+// work" and the Work page. The four home tiles each get a different kind of
+// visual, so they do not look alike: an onchain record, a list of routes, a
+// path, a flow. The other cases get the "flow" kind: the case page's flow cut
+// to tile size (no opening card, two checks, the closing card). None carries
+// the client's logo: the tile names the client once, in its byline. A client
+// not named gets generic steps only, nothing the case file does not say.
+// The Stellar Development Foundation has no entry: its tile shows the case
+// page's phones (src/lib/caseVisuals.ts, kind "phones").
 //
 // Truth rule, as in src/lib/caseVisuals.ts: every word restates the case file
 // (src/content/case-studies/<id>.md), except EURCV's issuer flags, read on
 // Stellar mainnet (Horizon, the asset record of EURCV, November 6, 2026).
 
-/** Same shape as FlowStep in src/components/vx/Flow.astro. */
+/** Same shape as FlowStep in src/components/vx/Flow.astro (no logo: tiles carry none). */
 export interface FlowStep {
   kind: 'anchor' | 'check';
   title: string;
   sub?: string;
+  /** Anchor tile: an icon from src/icons, or a network's symbol. */
+  icon?: string;
   net?: 'stellar' | 'xrpl' | 'canton' | 'ethereum';
+  tone?: 'blue' | 'green' | 'pink' | 'tan';
+  /** A green status pill on the anchor card: live systems only. */
+  status?: string;
 }
 
 export type Panel = 'blue' | 'green' | 'pink' | 'tan';
@@ -138,5 +148,74 @@ export const workVisuals: Record<string, WorkVisual> = {
     ],
     end: { net: 'xrpl', title: 'Go live', sub: 'XRPL mainnet' },
     note: 'One 2026 cohort: two teams live or ready',
+  },
+
+  // The Work page's other tiles: each case page's flow (caseVisuals.ts) cut to
+  // tile size, as for Talwex above. Systems not live yet keep `planned: true`
+  // (hollow checks) and say where they stand in the closing line, never with
+  // the pill.
+
+  // nda-settlement-stablecoin.md (client not named: generic steps only):
+  // line 53 ("Freeze and clawback held by the bank"), line 54 ("Keys in the
+  // bank's own custody setup"); closing card: title, lines 2 and 45; sub,
+  // line 58 ("issued and operated by the bank"); status, lines 18-21 (Live).
+  'nda-settlement-stablecoin': {
+    kind: 'flow',
+    panel: 'blue',
+    label: 'The settlement stablecoin, live on Stellar: freeze and clawback held by the bank, keys in the bank’s own custody, issued and operated by the bank',
+    steps: [
+      { kind: 'check', title: 'Freeze and clawback', sub: 'Held by the bank' },
+      { kind: 'check', title: 'Keys in the bank’s own custody' },
+      { kind: 'anchor', net: 'stellar', title: 'Settlement stablecoin', sub: 'Issued and operated by the bank', status: 'Live' },
+    ],
+  },
+
+  // starknet.md (a DevX audit, delivered: solid checks, no pill): line 50 (the
+  // core onboarding journey, the experience as a whole), line 51 (the command
+  // line, small and large suggestions); closing card: line 57 and lines 38-40
+  // (metric, receipt: pull request #1480). No logo: the byline names Starknet.
+  starknet: {
+    kind: 'flow',
+    panel: 'pink',
+    label: 'Our DevX audit of Starknet’s developer onboarding: the core onboarding journey and the command line reviewed, then Starknet restructured its quickstart',
+    steps: [
+      { kind: 'check', title: 'Core onboarding journey', sub: 'Analyzed as a whole' },
+      { kind: 'check', title: 'Starknet command line', sub: 'Small and large suggestions' },
+      { kind: 'anchor', icon: 'file-text', tone: 'green', title: 'Quickstart restructured', sub: 'Shortly after our feedback' },
+    ],
+  },
+
+  // nda-money-market-fund.md (client not named; in build): line 59 ("One
+  // contract nets subscriptions against redemptions at the published NAV"),
+  // line 61 (cash leg in a regulated euro stablecoin, delivery versus payment
+  // in one step); closing card: title, line 58; sub, line 6 ("In build; launch
+  // targeted for 2027"), lines 18-20 (Status: In build) and 42-43 (metric).
+  'nda-money-market-fund': {
+    kind: 'flow',
+    panel: 'blue',
+    label: 'The tokenized share class, by design: subscriptions and redemptions netted at the published NAV, delivery versus payment in one step, fund units on Stellar, in build, launch targeted for 2027',
+    steps: [
+      { kind: 'check', title: 'Netted at the published NAV', sub: 'In one contract' },
+      { kind: 'check', title: 'Delivery versus payment in one step', sub: 'Cash leg in a regulated euro stablecoin' },
+      { kind: 'anchor', net: 'stellar', title: 'Fund units on Stellar', sub: 'In build · launch targeted for 2027' },
+    ],
+    planned: true,
+  },
+
+  // nda-real-estate-debt-fund.md (client not named; in design): line 62 (an
+  // allowlist with no personal data onchain), lines 55 and 61 (compliance flags
+  // set once and locked for the life of the fund); closing card: title, lines
+  // 2 and 6; sub, lines 18-20 (Status: In design) and 67 ("One security audit
+  // of the full suite before mainnet").
+  'nda-real-estate-debt-fund': {
+    kind: 'flow',
+    panel: 'blue',
+    label: 'The real estate fund’s interests, by design: an allowlist with no personal data onchain, compliance flags locked for the life of the fund, fund interests on Stellar, in design',
+    steps: [
+      { kind: 'check', title: 'On the allowlist', sub: 'No personal data onchain' },
+      { kind: 'check', title: 'Compliance flags locked', sub: 'For the life of the fund' },
+      { kind: 'anchor', net: 'stellar', title: 'Fund interests on Stellar', sub: 'In design · one audit before mainnet' },
+    ],
+    planned: true,
   },
 };

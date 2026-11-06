@@ -1,13 +1,17 @@
 ---
 // /services: a door's precedents, one row per case study (or the tools
-// page). A public client shows its logo; a client under NDA shows the lock
-// and its anonymous name, never a logo. Each line and status is a fact of the
-// case study's file in src/content/case-studies.
+// page); team pages: a person's engagements and tools, in the same rows. A
+// public client shows its logo; a client under NDA shows the lock and its
+// anonymous name, never a logo. Each line and status is a fact of the case
+// study's file in src/content/case-studies (or of the tool's file). The Work
+// page lists its open-source tools and the PwC US alliance with the same rows,
+// under its own labels; a row without href has no link and no arrow (the
+// alliance).
 import Icon from '../Icon.astro';
 import { nobr } from '../../lib/content';
 
 export interface PrecedentRow {
-  href: string;
+  href?: string;
   name: string;
   line: string;
   /** Network, status, year or audit, as the case study states them. */
@@ -19,32 +23,39 @@ export interface PrecedentRow {
   figure?: { value: string; label: string };
   /** NDA client (the lock) or our tools (an icon), when there is no logo. */
   icon?: string;
+  /** This row's tint, when it is not the list's (team pages: each case study's audience). */
+  tint?: 'blue' | 'green' | 'pink';
   rv?: string;
 }
 interface Props {
   rows: PrecedentRow[];
   tint?: 'blue' | 'green' | 'pink';
+  /** The small label over the rows; empty for none (team pages have their own heading). */
+  label?: string;
 }
-const { rows, tint = 'blue' } = Astro.props;
+const { rows, tint = 'blue', label = 'Precedents' } = Astro.props;
 ---
 <div class="pc">
-  <p class="pc_label">Precedents</p>
+  {label && <p class="pc_label">{label}</p>}
   <ul class="pc_list" role="list">
-    {rows.map((r) => (
+    {rows.map((r) => {
+      const Row = r.href ? 'a' : 'div';
+      return (
       <li class="pc_item">
-        <a class:list={['pc_row', r.figure && 'pc_row--fig']} data-rv={r.rv} href={r.href}>
-          <span class:list={['pc_tile', `pc_tile--${r.icon === 'lock-simple' ? 'nda' : tint}`]}>
+        <Row class:list={['pc_row', r.figure && 'pc_row--fig', !r.href && 'pc_row--static']} data-rv={r.rv} href={r.href}>
+          <span class:list={['pc_tile', `pc_tile--${r.icon === 'lock-simple' ? 'nda' : r.tint ?? tint}`]}>
             {r.logo ? <img alt="" height={r.logo.h} loading="lazy" src={r.logo.src} width={r.logo.w} /> : <Icon name={r.icon ?? 'cube'} size={22} />}
           </span>
           <span class="pc_text">
-            <span class="pc_name"><Fragment set:html={nobr(r.name)} /><span aria-hidden="true" class="pc_arrow">&nbsp;→</span></span>
+            <span class="pc_name"><Fragment set:html={nobr(r.name)} />{r.href && <span aria-hidden="true" class="pc_arrow">&nbsp;→</span>}</span>
             <span class="pc_line" set:html={nobr(r.line)} />
             <span class="pc_meta">{r.live && <span aria-hidden="true" class="v-live pc_live"></span>}{r.meta}</span>
           </span>
           {r.figure && <span class="pc_fig"><span class="pc_figv">{r.figure.value}</span><span class="pc_figl">{r.figure.label}</span></span>}
-        </a>
+        </Row>
       </li>
-    ))}
+      );
+    })}
   </ul>
 </div>
 
@@ -74,6 +85,8 @@ const { rows, tint = 'blue' } = Astro.props;
   .pc_live { width: 7px; height: 7px; margin: 0 8px 1px 0; vertical-align: middle; }
   .pc_row:hover .pc_name { color: var(--green-ink); }
   .pc_row:hover .pc_arrow { left: 3px; color: var(--green-ink); }
+  .pc_row--static { cursor: default; }
+  .pc_row--static:hover .pc_name { color: var(--deep-blue); }
   @media (prefers-reduced-motion: reduce) { .pc_name, .pc_arrow { transition: none; } .pc_row:hover .pc_arrow { left: 0; } }
 
   @media (max-width: 479px) {

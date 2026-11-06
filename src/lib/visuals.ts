@@ -1,5 +1,7 @@
 // The NDA icons of the home page (caseVisual). The thumbnails below are not
-// shown at the moment: the Work page and home page rows have no images.
+// shown at the moment: the home page and the Work page show the case studies
+// as tiles with drawn visuals (src/lib/workVisuals.ts, WorkTile.astro), the
+// tools with their icons (src/lib/toolIcons.ts) and the articles as rows.
 //
 // A case study, article or open-source tool shows its thumbnail when the file
 // exists: public/images/cases/thumbs/<id>.webp, covers/thumbs/<id>.webp or

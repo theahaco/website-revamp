@@ -1,8 +1,9 @@
 # Case study thumbnails
 
-> **Not shown at the moment.** Since November 2026 the Work page and the home
-> page list their rows without images. These files are kept in case the lists get
-> images again; nothing needs to be uploaded here for now.
+> **Not shown at the moment.** The home page and the Work page show the case
+> studies as tiles with drawn visuals (`src/lib/workVisuals.ts`), not these
+> images. These files are kept in case they are used again; nothing needs to be
+> uploaded here for now.
 
 The small image next to each case study on the Work page (the home page list
 has no images). One image per case study, with exactly the same name as the

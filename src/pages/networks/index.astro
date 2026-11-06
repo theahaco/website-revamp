@@ -20,11 +20,15 @@ const hub = [
   const lw = n.w * n.h;
   return { ...n, y, cy: y + 26, lx: 140 + (186 - lw) / 2, ly: y + (52 - n.h) / 2, lw };
 });
+// Stellar and XRPL link to their pages. Canton and Ethereum have none: a status
+// line and a call instead. Canton's status is the About lede's; Ethereum's
+// lines are the protocols door of /services (no case or tool linked from it).
+const talk = { href: '/contact', label: 'Talk to an engineer' };
 const cards = [
   { id: 'stellar', name: 'Stellar', logo: networkMarks.Stellar, href: '/networks/stellar', cta: 'Integrate with Stellar', desc: 'Core contributors, Stellar Community Fund reviewers, tooling maintainers. EURCV and LI.FI live on mainnet.' },
   { id: 'xrpl', name: 'XRPL', logo: networkMarks.XRPL, href: '/networks/xrpl', cta: 'Integrate with XRPL', desc: 'Ripple program partner: accelerator cohorts, hackathons, continuous work on developer experience.' },
-  { id: 'canton', name: 'Canton', logo: networkMarks.Canton, desc: 'Privacy between parties by design. Integrations in progress.' },
-  { id: 'ethereum', name: 'Ethereum', logo: networkMarks.Ethereum, desc: 'EVM counterpart for <span class="nobr">cross-chain</span> work, as in the <a class="net_inlinelink" href="/case-studies/lifi">LI.FI integration</a>.' },
+  { id: 'canton', name: 'Canton', logo: networkMarks.Canton, desc: 'Privacy between parties by design.', status: 'Integrations in progress', link: talk },
+  { id: 'ethereum', name: 'Ethereum', logo: networkMarks.Ethereum, desc: 'Your protocol or product on EVM, live elsewhere or launching for the first time.', status: 'Native contracts, adapters and SDKs', link: talk },
 ];
 ---
 <BaseLayout title={'Stellar, XRPL, Canton or Ethereum: which network fits?'} description={'Stellar, XRPL, Canton or Ethereum: four questions that shape the choice of network for a tokenized asset or an integration, and where we build.'}>
@@ -57,7 +61,7 @@ const cards = [
       <div class="net_explorehead">
         <p class="v-eyebrow">Networks</p>
         <h2 class="ab_h2">Explore the networks we build on</h2>
-        <p class="net_carddesc">What we ship on each, how an integration runs there, and the funding programs that apply.</p>
+        <p class="net_carddesc">What we do on each network, and how to start an integration there.</p>
       </div>
       <div data-net="cards"><NetworkCards items={cards} /></div>
     </div>

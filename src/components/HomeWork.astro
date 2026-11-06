@@ -1,18 +1,16 @@
 ---
-// Home page "Selected work": the numbered case studies (each with its client's
-// logo; their quotes are in the section under the hero, home/Logos.astro), the
-// block of the clients not named ("More work for financial institutions") and
-// the articles tab. Webflow tabs markup, driven by src/scripts/tabs.js. The
-// block's icons come from src/lib/visuals.ts.
+// Home page "Selected work": the case study tiles (WorkTile.astro, each with
+// its visual from src/lib/workVisuals.ts; the quotes are in the section under
+// the hero, home/Logos.astro), the block of the clients not named ("More work
+// for financial institutions") and the articles tab. Webflow tabs markup,
+// driven by src/scripts/tabs.js. The block's icons come from src/lib/visuals.ts.
 import { caseStudies, posts, pick, nobr, formatDate } from '../lib/content';
 import { homeFeaturedCases, homeNdaCases, homeArticles } from '../data/curation';
 import { caseVisual } from '../lib/visuals';
-import { workVisuals } from '../lib/workVisuals';
 import Icon from './Icon.astro';
-import WorkVisual from './home/WorkVisual.astro';
+import WorkTile from './WorkTile.astro';
 
 const all = await caseStudies();
-const featured = pick(all, homeFeaturedCases);
 const nda = pick(all, homeNdaCases);
 // The three most recent articles, unless curation.ts pins a selection.
 const allPosts = await posts();
@@ -27,26 +25,7 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
   <div class="work_panels w-tab-content">
     <div class="w-tab-pane w--tab-active" data-w-tab="Tab 1" id="work-cases">
       <div class="w-dyn-list">
-        <ul class="hw_grid" role="list">
-          {featured.map((cs) => {
-            // One tile per case: its visual on top (a different kind per case,
-            // src/lib/workVisuals.ts), then what was built, the line and the
-            // client once, as a byline. The text comes first in the markup, so
-            // a screen reader meets the title before the picture.
-            const visual = workVisuals[cs.id];
-            return (
-              <li class="hw_tile" data-client={cs.id}>
-                <div class="hw_body">
-                  {cs.data.eyebrow && <p class="hw_eyebrow">{cs.data.eyebrow}</p>}
-                  <h3 class="hw_title"><a class="hw_tlink" href={`/case-studies/${cs.id}`}><span set:html={nobr(cs.data.workTitle || cs.data.title)} /><span class="hw_sr">: {cs.data.client || cs.data.title} case study</span></a></h3>
-                  {(cs.data.workLine || cs.data.lede) && <p class="hw_line" set:html={nobr(cs.data.workLine || cs.data.lede)} />}
-                  <p class="hw_by"><span class="hw_client" set:html={nobr(cs.data.client || cs.data.title)} />{cs.data.year && <span class="hw_year">{cs.data.year}</span>}<span aria-hidden="true" class="hw_arrow">↗</span></p>
-                </div>
-                {visual && <div class="hw_visual"><WorkVisual visual={visual} /></div>}
-              </li>
-            );
-          })}
-        </ul>
+        <WorkTile ids={homeFeaturedCases} />
       </div>
       {nda.length > 0 && (
         <div aria-labelledby="hw-more" class="hw_nda" role="group">
@@ -101,39 +80,9 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
 </div>
 
 <style>
-  /* Case tiles, two across: the visual on top, the text under it. The two
-     tiles of a row share their rows (subgrid), so visuals and texts line up. */
-  .hw_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
-  .hw_tile { position: relative; display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 0; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 20px; background: var(--white); transition: border-color .2s, box-shadow .2s; }
-  .hw_tile:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
-  .hw_visual { grid-row: 1; min-width: 0; }
-  .hw_body { grid-row: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; padding: 24px 20px 18px; }
-  .hw_eyebrow { margin: 0; color: var(--green-ink); font-size: 12px; font-weight: 600; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
-  .hw_title { margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 28px; font-style: italic; font-weight: 400; line-height: 1.15; letter-spacing: -.005em; text-wrap: balance; }
-  .hw_tlink { color: inherit; text-decoration: none; }
-  .hw_tlink::after { content: ''; position: absolute; inset: 0; z-index: 2; border-radius: 20px; }
-  .hw_tlink:focus-visible { outline: none; }
-  .hw_tile:has(.hw_tlink:focus-visible) { box-shadow: inset 0 0 0 2px var(--green-ink); }
-  .hw_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-  .hw_line { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
-  .hw_by { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; width: 100%; margin: auto 0 0; padding-top: 8px; font-size: 14px; line-height: 1.4; }
-  .hw_client { color: var(--deep-blue); font-weight: 600; }
-  .hw_year { color: var(--muted); white-space: nowrap; }
-  .hw_arrow { margin-left: auto; color: var(--deep-blue); font-size: 18px; line-height: 1; opacity: .5; transition: opacity .2s, transform .2s, color .2s; }
-  .hw_tile:hover .hw_arrow { color: var(--green-ink); opacity: 1; }
-  @media (prefers-reduced-motion: no-preference) { .hw_tile:hover .hw_arrow { transform: translate(2px, -2px); } }
-  @media (prefers-reduced-motion: reduce) { .hw_tile, .hw_arrow { transition: none; } }
+  /* The case tiles have their styles in WorkTile.astro */
   a.hw_link:hover .work_article-h3 { color: var(--green-ink); }
   .work_article-h3 { transition: color .2s; }
-
-  @media (max-width: 991px) {
-    .hw_title { font-size: 24px; }
-    .hw_body { padding: 20px 16px 16px; }
-  }
-  @media (max-width: 767px) {
-    .hw_grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-    .hw_tile { grid-row: auto; grid-template-rows: auto auto; }
-  }
 
   /* More work for financial institutions (clients not named): three framed
      cells sharing their borders */
