@@ -92,10 +92,11 @@ export const services: Service[] = [
     audience: 'ecosystems',
     bullets: ['CLIs and scaffolding', 'Registries and sandboxes', 'Maintained as public goods'],
     precedents: [
-      // The two DevX audits: Stellar's (2022, its section in the SDF case
-      // study) and Starknet's (its own case study).
-      { kind: 'mark', logo: `${LOGOS}/logo-light-stellar.svg`, text: 'Stellar DevX audit', href: '/case-studies/stellar-development-foundation#devx-audit' },
-      { kind: 'mark', logo: `${LOGOS}/logo-light-starknet.svg`, text: 'Starknet DevX audit', href: '/case-studies/starknet' },
+      // The two DevX audits, logos alone (the row is the DevX service): Stellar's
+      // (2022, its section in the SDF case study) and Starknet's (its own case
+      // study). The alt text says what the link opens.
+      { kind: 'client', logo: `${LOGOS}/logo-light-stellar.svg`, alt: 'Stellar DevX audit', w: 61, h: 15, href: '/case-studies/stellar-development-foundation#devx-audit' },
+      { kind: 'client', logo: `${LOGOS}/logo-light-starknet.svg`, alt: 'Starknet DevX audit', w: 69, h: 16, href: '/case-studies/starknet' },
       { kind: 'client', logo: `${LOGOS}/logo-light-ripple.svg`, alt: 'Ripple', w: 54, h: 14, href: '/case-studies/ripple' },
       { kind: 'tool', icon: 'terminal-window', text: 'Stellar CLI plugins and bindings', href: '/open-source/stellar-cli' },
       { kind: 'tool', icon: 'stack', text: 'Stellar Scaffold', href: '/open-source/stellar-scaffold' },
