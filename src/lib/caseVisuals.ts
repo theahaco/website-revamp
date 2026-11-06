@@ -1,6 +1,7 @@
-// The one visual of each case study page (/case-studies/<id>), drawn with the
+// The visual of each case study page (/case-studies/<id>), drawn with the
 // vx/ kit (src/components/vx) by src/components/cases/CaseVisual.astro and shown
-// in the page header, beside the title.
+// in the page header, beside the title. Some pages have a second one in their
+// body, after one section: `bodyVisuals`, at the end of this file.
 //
 // Truth rule: every title, sub-line and float below restates something written
 // in the case file, src/content/case-studies/<id>.md. The comment above each
@@ -261,4 +262,40 @@ export const caseVisuals: Record<string, CaseVisual> = {
     // suite before mainnet")
     floats: [{ text: 'In design · one audit before mainnet', icon: 'calendar-blank', at: 'top' }],
   },
+};
+
+/**
+ * A second visual, in the body of a case page, right after one of its
+ * sections (`after`: that section's id). It is a visual the site already
+ * draws from the same case file, shown as is:
+ * - `eurcv`: the /services institutions visual,
+ *   src/components/services/EurcvControls.astro (without its caption);
+ * - `work`: the visual of the case's home page tile, `workVisuals[work]` in
+ *   src/lib/workVisuals.ts, drawn by src/components/home/WorkVisual.astro.
+ * Same truth rule as above: the comment of each entry gives the lines of the
+ * case file that every word restates. Rendered by
+ * src/pages/case-studies/[slug].astro; alliances never get one.
+ */
+export type BodyVisual =
+  | { kind: 'eurcv'; after: string }
+  | { kind: 'work'; work: string; after: string };
+
+export const bodyVisuals: Record<string, BodyVisual> = {
+  // societe-generale-forge.md, after the Solution (lines 45-50), which the
+  // visual draws: the asset (line 6, "regulated euro stablecoin"; lines 50
+  // and 54, "native Stellar asset"; lines 18-19, "Live since Q1 2026"); at
+  // launch, governance on Soroban with issuer, compliance and pause roles, a
+  // denylist and pausable transfers, audited by Hacken before mainnet (line
+  // 48, lines 38-39 and 56); now, Stellar's built-in issuer controls, a
+  // flagged address frozen, no contract in the transfer path, operated by the
+  // SG-FORGE compliance team (lines 50, 55 and 60); every privileged action
+  // visible on the public ledger (line 57).
+  'societe-generale-forge': { kind: 'eurcv', after: 'solution' },
+
+  // lifi.md, after the Outcome (lines 62-64), which the routes card draws:
+  // its four routes restate line 64 (Soroswap, Circle's CCTP, NEAR Intents,
+  // ten EVM chains), "As in LI.FI's documentation" its "According to LI.FI's
+  // documentation", and the Live pill lines 18-21 (Status: Live). Sources
+  // also in src/lib/workVisuals.ts.
+  lifi: { kind: 'work', work: 'lifi', after: 'outcome' },
 };

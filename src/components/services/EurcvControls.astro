@@ -6,11 +6,18 @@
 // Stellar's built-in issuer controls, operated by the SG-FORGE compliance
 // team; the same native Stellar asset throughout. Drawn as product UI, with
 // no amounts. (The home page's institutions row draws the bank's settlement
-// stablecoin; this is other material.)
+// stablecoin; this is other material.) The case study shows it too, after its
+// Solution (src/lib/caseVisuals.ts, bodyVisuals), without the caption: that
+// section ends on the same sentence, and the link would point at the page itself.
 import Icon from '../Icon.astro';
 import Panel from './Panel.astro';
 import { nobr } from '../../lib/content';
 
+interface Props {
+  /** The line under the panel, with its link to the case study (default: shown). */
+  caption?: boolean;
+}
+const { caption = true } = Astro.props;
 const CASE = '/case-studies/societe-generale-forge';
 const stages = [
   {
@@ -55,7 +62,7 @@ const stages = [
       <p class="ec_float"><span aria-hidden="true" class="ec_floaticon"><Icon name="list-magnifying-glass" size={17} /></span><span>Every privileged action visible on the public ledger</span></p>
     </div>
   </Panel>
-  <p class="ec_caption">EURCV stayed the same native Stellar asset throughout (<a class="ec_link" href={CASE}>case study</a>).</p>
+  {caption && <p class="ec_caption">EURCV stayed the same native Stellar asset throughout (<a class="ec_link" href={CASE}>case study</a>).</p>}
 </div>
 
 <style>

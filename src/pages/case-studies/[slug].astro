@@ -4,11 +4,15 @@
 // Each engagement has one visual in its header, beside the title (data and
 // sources: src/lib/caseVisuals.ts); the facts card then sits under the lede.
 // A page without one (the PwC US alliance) keeps the facts card on the right
-// and its header image.
+// and its header image. Some pages have a second visual in their body, after
+// one section (bodyVisuals in the same file).
 import Icon from '../../components/Icon.astro';
 import CaseVisual from '../../components/cases/CaseVisual.astro';
+import EurcvControls from '../../components/services/EurcvControls.astro';
+import WorkVisual from '../../components/home/WorkVisual.astro';
 import { factIcon } from '../../lib/factIcons';
-import { caseVisuals } from '../../lib/caseVisuals';
+import { caseVisuals, bodyVisuals } from '../../lib/caseVisuals';
+import { workVisuals } from '../../lib/workVisuals';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import { caseStudies, team, tools, networks, orderBy, md, serviceAnchor, networkMarks, publicQuote, ogImageFor, nobr } from '../../lib/content';
@@ -55,6 +59,9 @@ const quote = publicQuote(d.quote, !Astro.site || Astro.site.origin === siteData
 // Alliances never get an engagement visual.
 const visual = d.alliance ? undefined : caseVisuals[cs.id];
 const visualCaption = visual ? (visual.caption || d.hero.caption) : '';
+// The body visual, after the section it belongs to (when that section is shown).
+const bodyVisual = d.alliance ? undefined : bodyVisuals[cs.id];
+const bodyWork = bodyVisual?.kind === 'work' ? workVisuals[bodyVisual.work] : undefined;
 ---
 <BaseLayout title={d.metaTitle || `${d.title} | Case study | The Aha Company`} description={d.description || d.lede || d.ndaSummary || undefined} image={ogImageFor(cs.id) || d.hero.image || undefined} imageAlt={d.hero.alt || undefined} noindex={d.alliance}>
   <main>
@@ -120,10 +127,18 @@ const visualCaption = visual ? (visual.caption || d.hero.caption) : '';
       <div class="cs_bodygrid">
         <div class="cs_sections">
           {sections.map((s) => (
-            <section class="cs_section" id={s.id}>
-              <h2 class="cs_h2">{s.title}</h2>
-              <div class="blog_richtext w-richtext" set:html={md(s.body)} />
-            </section>
+            <Fragment>
+              <section class="cs_section" id={s.id}>
+                <h2 class="cs_h2">{s.title}</h2>
+                <div class="blog_richtext w-richtext" set:html={md(s.body)} />
+              </section>
+              {bodyVisual && bodyVisual.after === s.id && (bodyVisual.kind === 'eurcv' || bodyWork) && (
+                <div class="cs_bodyvisual" data-cs="body-visual">
+                  {bodyVisual.kind === 'eurcv' && <EurcvControls caption={false} />}
+                  {bodyWork && <WorkVisual visual={bodyWork} />}
+                </div>
+              )}
+            </Fragment>
           ))}
         </div>
         <aside aria-label="Case details" class="cs_aside">
@@ -222,6 +237,11 @@ const visualCaption = visual ? (visual.caption || d.hero.caption) : '';
   @media (max-width: 767px) {
     .cs_headgrid--visual .art_h1 { font-size: 36px; }
   }
+  /* The body visual: the width of the sections column, titles included. A
+     home tile's panel (WorkVisual, unframed inside its tile) takes the frame
+     of the page's other panels (vx/Flow, services/Panel). */
+  .cs_bodyvisual { min-width: 0; }
+  .cs_bodyvisual :global(.wv) { border: 1px solid var(--line); border-radius: 20px; }
   /* A word in the metrics row ("Native", "Share class") stays below the size
      of the figures, on their baseline */
   .cs_fig--word { align-items: flex-end; min-height: clamp(32px, 3.4vw, 44px); font-size: clamp(22px, 2vw, 26px); line-height: 1.1; letter-spacing: -.01em; }
