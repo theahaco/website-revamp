@@ -40,7 +40,7 @@ const toolNets = (network: string) => network.split(/,| and /).map((n) => n.trim
                 <span class="work_yeararrow"><span data-row="year">{cs.data.year}</span><span> ↗</span></span>
               </div>
             </div>
-            {cs.data.client && <p class="wk_client"><span data-row="client">{cs.data.client}</span>{cs.data.nda && <span class="wk_nda" data-row="nda">Under NDA</span>}</p>}
+            {cs.data.client && <p class="wk_client"><span data-row="client">{cs.data.client}</span>{cs.data.nda && <span class="wk_nda" data-row="nda">Client not named</span>}</p>}
             <h2 class="work_article-h3" data-row="title" set:html={nobr(cs.data.workTitle || cs.data.title)} />
             {cs.data.workLine && <p class="wk_rowline" data-row="line" set:html={nobr(cs.data.workLine)} />}
           </div>

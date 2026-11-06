@@ -8,8 +8,8 @@
 // the section keeps its height. Each quote's last sentence (or last clause)
 // takes the soft tone, like the two-tone headlines. The rows of "Selected
 // work" show their client's logo instead of the quote. Under the quotes, one
-// framed tile per client; a tile links only to the public case study of that
-// same client, the others stay static. The key figures are in the hero's
+// framed tile per client; a tile links to the public case study of that same
+// client, or else to the client's own website (`site`). The key figures are in the hero's
 // "Live on mainnet" card (deployments, audits) and in the open-source band
 // (projects).
 import { caseStudies, publicQuote } from '../../lib/content';
@@ -36,9 +36,10 @@ const logos = [
   { name: 'Stellar Development Foundation', src: '/images/logos/logo-light-stellar.svg', h: 22, w: 90, href: '/case-studies/stellar-development-foundation' },
   { name: 'Société Générale-FORGE', src: '/images/logos/logo-light-sgforge.svg', h: 26, w: 90, href: '/case-studies/societe-generale-forge' },
   { name: 'Ripple', src: '/images/logos/logo-light-ripple.svg', h: 22, w: 85, href: '/case-studies/ripple' },
-  { name: 'Filecoin', src: '/images/logos/logo-light-filecoin.svg', h: 25, w: 87 },
+  // Talwex: symbol and wordmark as on talwex.com (Inter Bold, outlined).
+  { name: 'Talwex', src: '/images/logos/logo-light-talwex.svg', h: 20, w: 101, site: 'https://www.talwex.com/' },
   { name: 'LI.FI', src: '/images/logos/logo-light-lifi.svg', h: 23, w: 63, href: '/case-studies/lifi' },
-  { name: 'Banque Delubac et Cie', src: '/images/logos/logo-light-delubac.svg', h: 25, w: 111 },
+  { name: 'Banque Delubac et Cie', src: '/images/logos/logo-light-delubac.svg', h: 25, w: 111, site: 'https://www.delubac.com/' },
 ];
 ---
 <section aria-labelledby="vc-label" class="vc" data-rv="logos">
@@ -78,10 +79,10 @@ const logos = [
     <ul aria-labelledby="vc-label" class="vc_row" role="list">
       {logos.map((l) => (
         <li class="vc_cell">
-          {l.href ? (
-            <a class="vc_tile vc_tile--link" href={l.href}>
+          {l.href || l.site ? (
+            <a class="vc_tile vc_tile--link" href={l.href || l.site}>
               <img alt={l.name} class="vc_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
-              <span class="vc_sr"> case study</span>
+              <span class="vc_sr">{l.href ? ' case study' : ' website'}</span>
               <span aria-hidden="true" class="vc_arrow">↗</span>
             </a>
           ) : (

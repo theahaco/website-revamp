@@ -121,6 +121,27 @@ export const caseVisuals: Record<string, CaseVisual> = {
     ],
   },
 
+  // starknet.md (a DevX audit: no live system, so no status pill)
+  starknet: {
+    kind: 'flow',
+    label: 'Our DevX audit of Starknet: two engineers, one week, three documents, then Starknet restructured its quickstart',
+    panel: 'pink',
+    steps: [
+      // lines 6 and 44 ("even experienced engineers needed several working days")
+      { kind: 'anchor', logo: { src: `${LOGOS}/logo-starknet-mark.svg`, w: 24, h: 24 }, tone: 'pink', title: 'Starknet onboarding', sub: 'Several working days to functional code' },
+      // line 50
+      { kind: 'check', title: 'Core onboarding journey', sub: 'Analyzed as a whole' },
+      // line 51
+      { kind: 'check', title: 'Starknet command line', sub: 'Small and large suggestions' },
+      // line 52
+      { kind: 'check', title: 'Loam on Starknet', sub: 'At the team’s request' },
+      // line 57 and lines 38-40 (metric, receipt: pull request #1480)
+      { kind: 'anchor', icon: 'file-text', tone: 'green', title: 'Quickstart restructured', sub: 'Shortly after our feedback' },
+    ],
+    // line 6 and lines 21-22 (Engagement: two engineers, one week)
+    floats: [{ text: 'Two engineers · one week', icon: 'users-three', at: 'top' }],
+  },
+
   // societe-generale-forge.md
   'societe-generale-forge': {
     kind: 'flow',

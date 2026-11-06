@@ -11,7 +11,8 @@ export const homeFeaturedCases = ["societe-generale-forge", "lifi", "stellar-dev
  * rows of "Selected work" show their client's logo, not the quote. */
 export const homeQuotes = ["stellar-development-foundation", "lifi", "ripple"];
 
-/** Home page, "Client under NDA" block under the case studies. */
+/** Home page, "More work for financial institutions" block under the case
+ * studies: the clients not named. */
 export const homeNdaCases = ["nda-settlement-stablecoin", "nda-money-market-fund", "nda-real-estate-debt-fund"];
 
 /** "More work" at the bottom of a case study: two other case studies, those for

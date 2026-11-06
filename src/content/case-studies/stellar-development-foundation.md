@@ -45,6 +45,12 @@ sections:
 - id: challenge
   title: Challenge
   body: 'When Stellar added smart contracts with Soroban, it needed developer tooling to match: a command line that builds, deploys and calls contracts, typed clients for front ends, and a way to start a project without assembling it by hand. The Foundation looked for teams that could build that tooling, and keep maintaining it.'
+- id: devx-audit
+  title: DevX audit
+  body: |-
+    In 2022, as Stellar was adding smart contracts with Soroban, we ran a DevX audit of its developer path. It produced three documents for the Stellar team: a proposal for the organization and behavior of the Soroban CLI, a deeper design of its `invoke` command, and an analysis of the Soroban docs, with a new structure and the pages they were missing.
+
+    The Stellar team took up the proposals, and we have shipped many of their recommendations together since: the CLI's plugin system and its TypeScript bindings came out of that work.
 - id: solution
   title: Solution
   body: |-

@@ -2,7 +2,7 @@
 name: Perch
 order: 5
 network: Stellar
-category: Smart accounts
+category: Onchain policies
 title: 'Perch: a policy layer for Stellar smart accounts'
 metaTitle: 'Perch: policy layer for Stellar smart accounts'
 description: 'Perch, a policy layer for Stellar smart accounts: spending caps, session keys and recovery, written as a reviewable document and enforced onchain.'

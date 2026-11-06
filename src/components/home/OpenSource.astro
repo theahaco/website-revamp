@@ -1,7 +1,7 @@
 ---
 // Home page section: the open-source band (dark), after "Ways to work with us".
-// Tools, order, category and network come from src/content/tools (the network
-// is shown when it is not Stellar alone). Under the lede, the band's figure:
+// Tools, order and category come from src/content/tools; the band names no
+// network on the tiles (the tool pages do). Under the lede, the band's figure:
 // the projects using our tools (src/data/site.ts, toolAdoption), without its
 // date or method, which stay on the Open source page. The phones
 // are the tool pages' own mockups, cut out of their backgrounds
@@ -19,8 +19,8 @@ const list = await tools();
     <div class="osb_top">
       <div class="osb_text">
         <p class="v-eyebrow v-eyebrow--dark">Open source</p>
-        <h2 class="osb_h2" id="osb-title">The tooling the Stellar ecosystem runs on. <span class="osb_h2-soft">Some of it already serves XRPL.</span></h2>
-        <p class="osb_lede">We are core contributors to the official Stellar CLI and build the tools around it. Each tool has its own page, with every figure dated.</p>
+        <h2 class="osb_h2" id="osb-title">The tooling blockchain ecosystems run on. <span class="osb_h2-soft">Some of it already serves Stellar and XRPL.</span></h2>
+        <p class="osb_lede">We build and maintain open-source developer tools, wallets and onchain policies. On Stellar, we are core contributors to the official CLI. Each tool has its own page, with every figure dated.</p>
         <p class="osb_fig" data-rv="stat-os"><span class="osb_num">{toolAdoption.count}</span><span class="osb_figl">Projects using our <span class="osb_nowrap">open-source</span> tools</span></p>
       </div>
       <div class="osb_visual">
@@ -33,7 +33,7 @@ const list = await tools();
           <a class="osb_tool" href={`/open-source/${t.id}`}>
             <span class="v-iconbox v-iconbox--dark osb_icon"><Icon name={toolIcons[t.id] ?? 'code'} size={28} /></span>
             <span class="osb_name">{t.data.name}</span>
-            <span class="osb_meta">{t.data.category}{t.data.network !== 'Stellar' && <span> · {t.data.network}</span>}</span>
+            <span class="osb_meta">{t.data.category}</span>
             <span aria-hidden="true" class="osb_arrow">↗</span>
           </a>
         </li>

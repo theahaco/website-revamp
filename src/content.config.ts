@@ -40,10 +40,10 @@ const caseStudies = defineCollection({
     eyebrow: str, // "Financial institution · Stellar"
     lede: str, // also the paragraph in Selected work on the home page
     description: str, // search description (160 characters max); defaults to the lede
-    ndaSummary: str, // one-liner in the "Client under NDA" block on home
+    ndaSummary: str, // one-liner in the "More work for financial institutions" block on home (clients not named)
     cta: str, // heading of the closing call-to-action band
     client: str,
-    nda: z.boolean().default(false), // shows the "Under NDA" pill on the Work page
+    nda: z.boolean().default(false), // client not named: the "Client not named" pill on the Work page and the case page
     workTitle: str, // Work page row title
     workLine: str, // Work page row line
     // Work page filter. "Institutions" (the former label) is still accepted.

@@ -85,7 +85,10 @@ ndaSummary: ''
 client: Société Générale-FORGE
 nda: false
 workTitle: EURCV, a regulated euro stablecoin on Stellar mainnet
-workLine: Issuance and governance on Stellar, compliance controls agreed with the SG-FORGE compliance team.
+# "MiCA-compliant" is SG-FORGE's own word for EURCV (its press release of July 1,
+# 2024) and Stellar's (press release of February 20, 2025); the flags are
+# Stellar's built-in issuer controls (see the Solution section).
+workLine: EURCV's asset design on Stellar, with compliance flags for a MiCA-compliant euro stablecoin.
 audience: Financial institutions
 network: Stellar
 year: 2025-2026

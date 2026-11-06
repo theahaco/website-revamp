@@ -81,7 +81,7 @@ export const analytics: { provider: '' | 'umami' | 'plausible' | 'cloudflare' | 
 
 export const footer = {
   description: 'Blockchain integration partner for financial institutions, protocols and ecosystems.',
-  locations: 'United States · Europe · Brazil',
+  locations: 'United States · France · Brazil',
   // The site is operated by the US company only (see /terms and /privacy).
   legal: ['Dawning Inc. (dba The Aha Company), a Delaware corporation'],
   copyright: '© 2026 Dawning Inc. (dba The Aha Company). All rights reserved.',

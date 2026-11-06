@@ -13,33 +13,47 @@ const tracks: Track[] = [
     tab: 'Tab 1',
     label: 'Financial institutions',
     icon: 'bank',
+    // How these engagements run in practice: a technical session first, then
+    // NDA, the end-to-end process and an MOU; fixed scope, dated milestones,
+    // acceptance by the client's team; a first release of two or three use
+    // cases designed to scale; an independent audit before mainnet (EURCV:
+    // Hacken); then handover, "you keep the keys, the code and the knowledge",
+    // and we stay on (EURCV's compliance moved to built-in controls after launch).
     steps: [
-      { title: 'Scoping', icon: 'magnifying-glass', body: 'One technical session on authorities, custody and compliance controls.', output: 'the end-to-end process, who does what.' },
-      { title: 'Structure', icon: 'signature', body: 'NDA, then an MOU with milestones your team can verify.', output: 'signed MOU, milestone plan, funding application where one applies.' },
-      { title: 'Build', icon: 'code', body: 'A first release of two or three use cases, on testnet with your operations team.', output: 'contracts and integration live on testnet, validated milestone by milestone.' },
-      { title: 'Mainnet and after', icon: 'rocket-launch', body: 'We stay on the account for the changes production surfaces.', output: 'mainnet deployment, runbooks, handover, ongoing support.' },
+      { title: 'Scoping', icon: 'magnifying-glass', body: 'One technical session with your team on authorities, custody, compliance controls and core banking.', output: 'the end-to-end process: who holds which authority, who does what.' },
+      { title: 'Structure', icon: 'signature', body: 'NDA, then an MOU: fixed scope, dated milestones, acceptance by your team.', output: 'signed MOU and milestone plan, with a funding application where one applies.' },
+      { title: 'Build', icon: 'code', body: 'A first release of two or three use cases, designed to scale, on testnet with your operations team.', output: 'contracts and integration on testnet, each milestone accepted by your team.' },
+      { title: 'Mainnet and after', icon: 'rocket-launch', body: 'An independent audit, then mainnet. We stay on for the changes production brings.', output: 'mainnet deployment, then handover: you keep the keys, the code and the knowledge.' },
     ],
   },
   {
     tab: 'Tab 2',
     label: 'Protocols and products',
     icon: 'plugs-connected',
+    // How these integrations run: contracts written for the network, matching
+    // the guarantees the product gives users elsewhere; paid directly or
+    // backed by an ecosystem program; audited before production.
     steps: [
-      { title: 'Roadmap', icon: 'map-trifold', body: 'We map your integration surface to the target network and size the work.', output: 'integration map and sizing.' },
-      { title: 'Proposal', icon: 'clipboard-text', body: 'Milestone-based scope, with or without an ecosystem program behind it.', output: 'milestone proposal, program application where one applies.' },
-      { title: 'Build', icon: 'code', body: 'Native contracts, adapters and SDKs, tested against your existing suite.', output: 'contracts, adapters and SDKs passing your test suite.' },
-      { title: 'Mainnet', icon: 'rocket-launch', body: 'Launch, docs, and a maintenance plan your engineers can run.', output: 'mainnet launch, docs, maintenance plan.' },
+      { title: 'Roadmap', icon: 'map-trifold', body: 'We map your product to the target network: what to write natively, what to adapt.', output: 'an integration roadmap that keeps the guarantees you already give users.' },
+      { title: 'Proposal', icon: 'clipboard-text', body: 'Fixed scope and dated milestones, with or without an ecosystem program behind it.', output: 'milestones with acceptance criteria, and a program application where one applies.' },
+      { title: 'Build', icon: 'code', body: 'Native contracts, adapters and SDKs, written for the network, on testnet first.', output: 'contracts, adapters and SDKs on testnet, each milestone accepted by your team.' },
+      { title: 'Mainnet', icon: 'rocket-launch', body: 'An independent audit and its fixes, then launch.', output: 'audited contracts on mainnet, with docs and a handover to your engineers.' },
     ],
   },
   {
     tab: 'Tab 3',
     label: 'Ecosystems and foundations',
     icon: 'graph',
+    // How our DevX audits run: two senior engineers full time for two weeks;
+    // ranked findings, a docs report, pull requests for the small fixes and a
+    // readout meeting; priorities agreed on the findings, each roadmap item a
+    // project with milestones; then maintenance on a quarterly public-goods
+    // track (proposal and review every quarter).
     steps: [
-      { title: 'DevX audit', icon: 'list-magnifying-glass', body: 'Two engineers, two weeks, on your real onboarding path.', output: 'audit report of the onboarding path, ranked friction points.' },
-      { title: 'Roadmap', icon: 'map-trifold', body: 'Tooling priorities with the ecosystem’s engineering team.', output: 'prioritized tooling roadmap.' },
-      { title: 'Build', icon: 'terminal-window', body: 'CLIs, scaffolding, sandboxes, registries, wallets.', output: 'shipped tooling, open source, with docs.', rv: 'eco-build' },
-      { title: 'Maintain', icon: 'arrows-clockwise', body: 'Quarterly public-goods proposal and review.', output: 'maintained releases and a quarterly proposal.', rv: 'eco-maintain' },
+      { title: 'DevX audit', icon: 'list-magnifying-glass', body: 'Two senior engineers, two weeks full time, on your real onboarding path.', output: 'ranked findings, a docs report, pull requests for the small fixes, a readout.' },
+      { title: 'Roadmap', icon: 'map-trifold', body: 'We go through the findings with your team and agree the priorities.', output: 'a prioritized tooling roadmap, each item a project with its own milestones.' },
+      { title: 'Build', icon: 'terminal-window', body: 'CLIs, scaffolding, sandboxes, registries and wallets, built in the open.', output: 'open-source tools with their docs, shipped milestone by milestone.', rv: 'eco-build' },
+      { title: 'Maintain', icon: 'arrows-clockwise', body: 'Once a tool ships, its maintenance moves to a quarterly public-goods track.', output: 'maintained releases, with a proposal and a review every quarter.', rv: 'eco-maintain' },
     ],
   },
 ];
@@ -109,7 +123,9 @@ const tracks: Track[] = [
 
   .eg-h3 { margin: 0 0 10px; color: #fff; font-family: var(--font-ui); font-size: 20px; font-style: normal; font-weight: 600; line-height: 1.3; }
   .eg-text { margin: 0 0 20px; color: rgba(255, 255, 255, .72); font-size: 15px; line-height: 1.55; }
-  .eg-out { display: flex; align-items: flex-start; align-self: start; gap: 10px; margin: 0; padding: 12px 14px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 12px; background: rgba(255, 255, 255, .05); color: #fff; font-size: 15px; line-height: 1.45; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .35; }
+  /* The four outputs of a track share one height (the tallest), so the boxes
+     line up; stacked on tablets and phones, each keeps its own height. */
+  .eg-out { display: flex; align-items: flex-start; align-self: stretch; gap: 10px; margin: 0; padding: 12px 14px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 12px; background: rgba(255, 255, 255, .05); color: #fff; font-size: 15px; line-height: 1.45; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .35; }
   .eg-out :global(.icon) { color: var(--vibrant-green); margin-top: 1px; }
   .eg-out strong { font-weight: 600; }
 

@@ -3,7 +3,7 @@
 // pages read it. Each `id` is the service's stable key.
 //
 // Precedents are real engagements only. A public client shows its logo alone
-// (its name is enough); a client under NDA shows a lock and its anonymous
+// (its name is enough); a client not named shows a lock and its anonymous
 // name, never a logo; our own tools link to their pages.
 
 /** Who the service is mainly for: sets the icon tint (blue, green, pink, tan). */
@@ -89,6 +89,10 @@ export const services: Service[] = [
     audience: 'ecosystems',
     bullets: ['CLIs and scaffolding', 'Registries and sandboxes', 'Maintained as public goods'],
     precedents: [
+      // The two DevX audits: Stellar's (2022, its section in the SDF case
+      // study) and Starknet's (its own case study).
+      { kind: 'mark', logo: `${LOGOS}/logo-light-stellar.svg`, text: 'Stellar DevX audit', href: '/case-studies/stellar-development-foundation#devx-audit' },
+      { kind: 'mark', logo: `${LOGOS}/logo-light-starknet.svg`, text: 'Starknet DevX audit', href: '/case-studies/starknet' },
       { kind: 'client', logo: `${LOGOS}/logo-light-ripple.svg`, alt: 'Ripple', w: 54, h: 14, href: '/case-studies/ripple' },
       { kind: 'tool', icon: 'terminal-window', text: 'Stellar CLI plugins and bindings', href: '/open-source/stellar-cli' },
       { kind: 'tool', icon: 'stack', text: 'Stellar Scaffold', href: '/open-source/stellar-scaffold' },
