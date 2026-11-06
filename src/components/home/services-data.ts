@@ -63,7 +63,7 @@ export const services: Service[] = [
   {
     id: 'protocol-integration',
     title: 'Protocol and product integration',
-    desc: 'Your protocol or product on Stellar, XRPL or Canton, whether it is live elsewhere or launching for the first time.',
+    desc: 'Your protocol or product on Stellar, XRPL, Canton or EVM, whether it is live elsewhere or launching for the first time.',
     icon: 'plugs-connected',
     audience: 'protocols',
     bullets: ['Integration roadmap', 'Native contracts, adapters and SDKs', 'Routing and liquidity'],

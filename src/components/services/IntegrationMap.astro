@@ -1,7 +1,8 @@
 ---
 // /services, protocols and products: an integration surface mapped to the
 // target network, drawn as product UI. Your protocol at the top, the three
-// layers written for the network in the middle, the network at the bottom.
+// layers written for the network in the middle, the networks at the bottom
+// (Stellar, XRPL, Canton or EVM, with their marks).
 // Generic: every label comes from the door's offer and lede on /services.
 import Icon from '../Icon.astro';
 import NetMark from '../home/NetMark.astro';
@@ -16,9 +17,10 @@ const nets = [
   { net: 'stellar', size: 15 },
   { net: 'xrpl', size: 14 },
   { net: 'canton', size: 16 },
+  { net: 'ethereum', size: 17 },
 ] as const;
 ---
-<Panel class="im" snug label="An integration: your protocol or product, with native contracts, adapters and SDKs, and routing and liquidity written for Stellar, XRPL or Canton" tint="green">
+<Panel class="im" snug label="An integration: your protocol or product, with native contracts, adapters and SDKs, and routing and liquidity written for Stellar, XRPL, Canton or EVM" tint="green">
   <div class="im_map">
     <div class="im_node">
       <span class="im_tile"><Icon name="plugs-connected" size={24} /></span>
@@ -37,7 +39,7 @@ const nets = [
     <span aria-hidden="true" class="im_fork im_fork--merge"></span>
     <div class="im_node im_node--net">
       <span aria-hidden="true" class="im_marks">{nets.map((n) => <span class="im_mark"><NetMark net={n.net} size={n.size} lazy /></span>)}</span>
-      <span class="im_text"><span class="im_title im_title--lg">On Stellar, XRPL or Canton</span><span class="im_sub">Matched to the guarantees you already give users</span></span>
+      <span class="im_text"><span class="im_title im_title--lg">On Stellar, XRPL, Canton or EVM</span><span class="im_sub">Matched to the guarantees you already give users</span></span>
     </div>
   </div>
 </Panel>
@@ -45,15 +47,17 @@ const nets = [
 <style>
   .im_map { --im-gap: 12px; --im-rail: rgba(26, 59, 96, .3); position: relative; z-index: 1; display: flex; flex-direction: column; width: 100%; max-width: 540px; margin: 0 auto; }
   .im_text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .im_title { color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.25; }
+  .im_title { color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.25; text-wrap: balance; }
   .im_title--lg { font-size: 16px; }
   .im_sub { color: var(--muted); font-size: 14px; line-height: 1.35; }
 
   /* The two end cards */
   .im_node { display: flex; align-items: center; gap: 14px; align-self: center; width: min(100%, 420px); padding: 14px 16px 14px 14px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--white); box-shadow: var(--shadow-2); }
   .im_tile { display: grid; place-items: center; flex-shrink: 0; width: 52px; height: 48px; border-radius: 12px; background: var(--tint-green); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
-  .im_marks { display: flex; flex-shrink: 0; gap: 4px; }
-  .im_mark { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--white); }
+  /* The networks' marks, overlapped like a stack of avatars */
+  .im_marks { display: flex; flex-shrink: 0; }
+  .im_mark { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--white); box-shadow: 0 0 0 2px var(--white); }
+  .im_mark + .im_mark { margin-left: -6px; }
 
   /* What we write for the network: three cards in a row */
   .im_parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--im-gap); margin: 0; padding: 0; list-style: none; }
@@ -91,5 +95,7 @@ const nets = [
     .im_node { gap: 12px; padding: 12px 14px 12px 12px; }
     .im_tile { width: 44px; height: 42px; }
     .im_mark { width: 28px; height: 28px; }
+    /* The marks over the network names, so the text keeps its width */
+    .im_node--net { flex-direction: column; align-items: flex-start; gap: 10px; }
   }
 </style>
