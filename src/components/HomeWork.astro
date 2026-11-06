@@ -1,9 +1,10 @@
 ---
-// Home page "Selected work": the numbered case studies (with their quotes and
-// the NDA block) and the articles tab. Webflow tabs markup, driven by
+// Home page "Selected work": the numbered case studies (each with its client's
+// logo; their quotes are in the section under the hero, home/Logos.astro), the
+// NDA block and the articles tab. Webflow tabs markup, driven by
 // src/scripts/tabs.js. The NDA icons come from src/lib/visuals.ts.
 import { caseStudies, posts, pick, publicQuote, nobr, formatDate } from '../lib/content';
-import { homeFeaturedCases, homeNdaCases, homeArticles, homeQuoteCase } from '../data/curation';
+import { homeFeaturedCases, homeNdaCases, homeArticles } from '../data/curation';
 import { caseVisual } from '../lib/visuals';
 import Icon from './Icon.astro';
 import { site as siteData } from '../data/site';
@@ -27,10 +28,10 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
       <div class="w-dyn-list">
         <div class="work_list w-dyn-items" role="list">
           {featured.map((cs) => {
-            // The quote shown under the hero (home/Logos.astro) appears once:
-            // its row shows the client's logo, like a row without a quote.
+            // The quotes are in the section under the hero (home/Logos.astro):
+            // each row shows its client's logo.
             const pq = publicQuote(cs.data.quote, production);
-            const q = cs.id === homeQuoteCase ? { ...pq, label: 'Client', text: '', author: '', role: '', portrait: '' } : pq;
+            const q = { ...pq, label: pq.label || 'Client', text: '', author: '', role: '', portrait: '' };
             const inner = (
               <Fragment>
                 <div class="work_num hw_num"></div>

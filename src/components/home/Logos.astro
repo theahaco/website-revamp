@@ -1,23 +1,34 @@
 ---
-// Home page section under the hero: clients and partners, in one client's
-// words. The quote is the one of the case study named in src/data/curation.ts
-// (homeQuoteCase), read from its file; its last sentence takes the soft tone,
-// like the two-tone headlines. It is shown once on the page: its row in
-// "Selected work" shows the client's logo instead. Under it, one framed tile
-// per client; a tile links only to the public case study of that same client,
-// the others stay static. The key figures are in the hero's "Live on mainnet"
-// card (deployments, audits) and in the open-source band (projects).
+// Home page section under the hero: clients and partners, in their own words.
+// The quotes are those of the case studies listed in src/data/curation.ts
+// (homeQuotes), read from their files, one at a time: the first by default,
+// the others when the reader picks their author below it. Nothing moves on
+// its own. The switch is native radio buttons and CSS (:has), so it works
+// with a keyboard and without JavaScript; the quotes share one grid cell, so
+// the section keeps its height. Each quote's last sentence (or last clause)
+// takes the soft tone, like the two-tone headlines. The rows of "Selected
+// work" show their client's logo instead of the quote. Under the quotes, one
+// framed tile per client; a tile links only to the public case study of that
+// same client, the others stay static. The key figures are in the hero's
+// "Live on mainnet" card (deployments, audits) and in the open-source band
+// (projects).
 import { caseStudies, publicQuote } from '../../lib/content';
-import { homeQuoteCase } from '../../data/curation';
+import { homeQuotes } from '../../data/curation';
 import { site } from '../../data/site';
 
 const production = !Astro.site || Astro.site.origin === site.productionOrigin;
-const cs = (await caseStudies()).find((c) => c.id === homeQuoteCase);
-const q = cs ? publicQuote(cs.data.quote, production) : undefined;
-// "First sentences. Last sentence." : the last one in the soft tone
-const parts = q?.text ? q.text.match(/^(.*[.!?])\s+(\S.*)$/s) : null;
-const lead = parts ? parts[1] : (q?.text ?? '');
-const soft = parts ? parts[2] : '';
+const all = await caseStudies();
+// "First sentences. Last sentence." or "First clause, last clause."
+const split = (text: string) => {
+  const m = text.match(/^(.*[.!?])\s+(\S.*)$/s) || text.match(/^(.*,)\s+(\S.*)$/s);
+  return m ? { lead: m[1], soft: m[2] } : { lead: text, soft: '' };
+};
+const voices = homeQuotes
+  .map((id) => all.find((c) => c.id === id))
+  .filter((c) => c !== undefined)
+  .map((c) => ({ id: c.id, ...publicQuote(c.data.quote, production) }))
+  .filter((q) => q.text && q.author)
+  .map((q) => ({ ...q, ...split(q.text) }));
 
 // h: logo height in px on desktop (per file, for an even optical weight);
 // w: its width at that height (from the file's proportions).
@@ -33,16 +44,36 @@ const logos = [
 <section aria-labelledby="vc-label" class="vc" data-rv="logos">
   <div class="vc_inner">
     <p class="v-eyebrow" id="vc-label">Clients and partners</p>
-    {q?.text && (
-      <figure class="vc_quote" data-rv="home-quote">
-        <blockquote class="vc_text"><p>{lead}{soft && <Fragment> <span class="v-soft">{soft}</span></Fragment>}</p></blockquote>
-        {q.author && (
-          <figcaption class="vc_by">
-            {q.portrait && <img alt="" class="vc_pic" decoding="async" height="56" loading="lazy" src={q.portrait} width="56" />}
-            <span class="vc_who"><span class="vc_name">{q.author}</span>{q.role && <span class="vc_role">{q.role}</span>}</span>
-          </figcaption>
+    {voices.length > 0 && (
+      <div class="vc_voices" data-rv="home-quote">
+        <div class="vc_quotes">
+          {voices.map((v) => (
+            <figure class="vc_quote" id={`vc-q-${v.id}`}>
+              <blockquote class="vc_text"><p>{v.lead}{v.soft && <Fragment> <span class="v-soft">{v.soft}</span></Fragment>}</p></blockquote>
+              <figcaption class="vc_sr">{v.author}{v.role && `, ${v.role}`}</figcaption>
+            </figure>
+          ))}
+        </div>
+        {voices.length > 1 ? (
+          <fieldset class="vc_who">
+            <legend class="vc_sr">Show the quote of</legend>
+            {voices.map((v, i) => (
+              <label class="vc_chip">
+                <input aria-controls={`vc-q-${v.id}`} checked={i === 0} class="vc_radio" name="vc-voice" type="radio" value={v.id} />
+                {v.portrait && <img alt="" class="vc_pic" decoding="async" height="48" loading="lazy" src={v.portrait} width="48" />}
+                <span class="vc_chiptext"><span class="vc_name">{v.author}</span>{v.role && <span class="vc_role">{v.role}</span>}</span>
+              </label>
+            ))}
+          </fieldset>
+        ) : (
+          <div aria-hidden="true" class="vc_who">
+            <span class="vc_chip vc_chip--one">
+              {voices[0].portrait && <img alt="" class="vc_pic" decoding="async" height="48" loading="lazy" src={voices[0].portrait} width="48" />}
+              <span class="vc_chiptext"><span class="vc_name">{voices[0].author}</span>{voices[0].role && <span class="vc_role">{voices[0].role}</span>}</span>
+            </span>
+          </div>
         )}
-      </figure>
+      </div>
     )}
     <ul aria-labelledby="vc-label" class="vc_row" role="list">
       {logos.map((l) => (
@@ -65,19 +96,46 @@ const logos = [
 </section>
 
 <style>
-  /* On white, between the hero and "Selected work", with room around it */
-  .vc { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  /* On white, between the hero and "What we do", with room around it (the
+     next section draws the rule under it) */
+  .vc { background: var(--white); border-top: 1px solid var(--line); }
   .vc_inner { display: flex; flex-direction: column; align-items: flex-start; max-width: var(--container); margin: 0 auto; padding: 120px clamp(24px, 4vw, 48px) 112px; }
+  .vc_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-  /* The quote, at headline size */
-  .vc_quote { margin: 32px 0 0; }
+  /* The quotes, at headline size, in one grid cell: the cell takes the
+     tallest, each sits on the bottom edge, right above its author */
+  .vc_voices { width: 100%; margin-top: 32px; }
+  .vc_quotes { display: grid; }
+  .vc_quote { grid-area: 1 / 1; align-self: end; margin: 0; }
   .vc_text { margin: 0; padding: 0; border: 0; }
-  .vc_text p { max-width: 20em; margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 52px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; }
-  .vc_by { display: flex; align-items: center; gap: 16px; margin-top: 36px; text-align: left; }
-  .vc_pic { flex-shrink: 0; width: 56px; height: 56px; border: 1px solid var(--line-strong); border-radius: 50%; object-fit: cover; filter: grayscale(1) contrast(1.04); }
-  .vc_who { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .vc_name { color: var(--ink); font-size: 16px; font-weight: 600; line-height: 1.3; }
-  .vc_role { color: var(--muted); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+  .vc_text p { max-width: 24em; margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 52px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; }
+  /* Without :has(), the first quote only */
+  .vc_quote + .vc_quote { display: none; }
+  @supports selector(:has(*)) {
+    .vc_quote + .vc_quote { display: block; }
+    .vc_quote { visibility: hidden; opacity: 0; transition: opacity .3s, visibility 0s .3s; }
+    .vc_voices:not(:has(.vc_radio)) .vc_quote,
+    .vc_voices:has(.vc_chip:nth-of-type(1) .vc_radio:checked) .vc_quote:nth-child(1),
+    .vc_voices:has(.vc_chip:nth-of-type(2) .vc_radio:checked) .vc_quote:nth-child(2),
+    .vc_voices:has(.vc_chip:nth-of-type(3) .vc_radio:checked) .vc_quote:nth-child(3),
+    .vc_voices:has(.vc_chip:nth-of-type(4) .vc_radio:checked) .vc_quote:nth-child(4) { visibility: visible; opacity: 1; transition: opacity .3s; }
+  }
+
+  /* The authors: the one quoted on a white card, the others to pick */
+  .vc_who { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; min-width: 0; margin: 36px 0 0; padding: 0; border: 0; }
+  .vc_chip { position: relative; display: flex; align-items: center; gap: 14px; min-width: 0; margin: 0; padding: 12px 16px 12px 12px; border: 1px solid var(--line); border-radius: 16px; font-weight: 400; cursor: pointer; transition: background-color .2s, border-color .2s, box-shadow .2s; }
+  .vc_chip:hover { border-color: var(--line-strong); background: var(--paper); }
+  .vc_chip:has(.vc_radio:checked), .vc_chip--one { border-color: var(--line-strong); background: var(--white); box-shadow: var(--shadow-1); cursor: default; }
+  .vc_chip:has(.vc_radio:focus-visible) { outline: 2px solid var(--green-ink); outline-offset: 3px; }
+  .vc_radio { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+  .vc_pic { flex-shrink: 0; width: 48px; height: 48px; border: 1px solid var(--line-strong); border-radius: 50%; object-fit: cover; filter: grayscale(1) contrast(1.04); opacity: .55; transition: opacity .2s; }
+  .vc_chip:hover .vc_pic, .vc_chip:has(.vc_radio:checked) .vc_pic, .vc_chip--one .vc_pic { opacity: 1; }
+  .vc_chiptext { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .vc_name { color: var(--ink); font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .vc_role { color: var(--muted); font-size: 13px; line-height: 1.4; text-wrap: pretty; }
+  @media (prefers-reduced-motion: reduce) {
+    .vc_quote, .vc_chip, .vc_pic { transition: none !important; }
+  }
 
   /* One framed tile per client, the logos in one tone until hovered */
   .vc_row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; width: 100%; margin: 72px 0 0; padding: 0; list-style: none; }
@@ -89,33 +147,33 @@ const logos = [
   .vc_tile--link:hover .vc_logo, .vc_tile--link:focus-visible .vc_logo { filter: none; opacity: 1; }
   .vc_tile--link:hover .vc_arrow { color: var(--green-ink); opacity: 1; }
   .vc_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
-  .vc_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   @media (prefers-reduced-motion: no-preference) { .vc_tile--link:hover .vc_arrow { transform: translate(2px, -2px); } }
   @media (prefers-reduced-motion: reduce) { .vc_tile, .vc_logo, .vc_arrow { transition: none; } }
 
   @media (max-width: 1199px) {
-    .vc_text p { font-size: 46px; }
+    .vc_text p { font-size: 42px; }
     .vc_tile { padding: 0 14px; }
   }
-  /* Tablets: three tiles a row */
+  /* Tablets: the authors one under the other, three tiles a row */
   @media (max-width: 991px) {
     .vc_inner { padding-top: 96px; padding-bottom: 104px; }
     .vc_text p { font-size: 40px; }
+    .vc_who { grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: 560px; }
     .vc_row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 64px; }
     .vc_tile { height: 92px; }
   }
   @media (max-width: 767px) {
     .vc_inner { padding-top: 72px; padding-bottom: 80px; }
-    .vc_quote { margin-top: 24px; }
+    .vc_voices { margin-top: 24px; }
     .vc_text p { font-size: 32px; line-height: 1.14; }
-    .vc_by { gap: 14px; margin-top: 28px; }
-    .vc_pic { width: 48px; height: 48px; }
-    .vc_role { font-size: 13px; }
+    .vc_who { margin-top: 28px; }
+    .vc_chip { gap: 12px; padding: 10px 14px 10px 10px; }
+    .vc_pic { width: 40px; height: 40px; }
     .vc_logo { height: calc(var(--h) * .92); }
   }
   /* Phones: two tiles a row */
   @media (max-width: 479px) {
-    .vc_text p { font-size: 29px; }
+    .vc_text p { font-size: 27px; }
     .vc_row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 48px; }
     .vc_tile { height: 78px; padding: 0 12px; border-radius: 14px; }
     .vc_arrow { top: 9px; right: 10px; font-size: 12px; }

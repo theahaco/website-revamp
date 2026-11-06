@@ -3,13 +3,13 @@
 
 /** Home page, "Selected work" > Case studies. */
 // Société Générale-FORGE first (a regulated issuer, for the banks reading the
-// page), then the three with a testimonial.
+// page), then LI.FI, the Stellar Development Foundation and Ripple.
 export const homeFeaturedCases = ["societe-generale-forge", "lifi", "stellar-development-foundation", "ripple"];
 
-/** Home page, the section under the hero: the case study whose quote it shows,
- * over the client tiles. That quote appears once on the page: its row in
- * "Selected work" shows the client's logo instead. */
-export const homeQuoteCase = "stellar-development-foundation";
+/** Home page, the section under the hero: the case studies whose quotes it
+ * shows, one at a time (the first by default), over the client tiles. The
+ * rows of "Selected work" show their client's logo, not the quote. */
+export const homeQuotes = ["stellar-development-foundation", "lifi", "ripple"];
 
 /** Home page, "Client under NDA" block under the case studies. */
 export const homeNdaCases = ["nda-settlement-stablecoin", "nda-money-market-fund", "nda-real-estate-debt-fund"];
