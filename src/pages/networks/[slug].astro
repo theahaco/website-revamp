@@ -36,13 +36,9 @@ const involvesSoft: Record<string, string> = {
 // Stellar: the contract commands of the CLI we contribute to, copied from the captures in run order.
 const session: Record<string, { lines: string[]; label: string; caption: string }> = {
   stellar: {
-    label: 'A Stellar CLI session: a new contract project, then the contract commands, client bindings included',
-    caption: 'A real session, recorded on November 5, 2026 with Stellar CLI 30.0.1, which our engineers contribute to: a new contract project, then the contract commands, client bindings included.',
+    label: 'A Stellar CLI session: the contract commands, client bindings included',
+    caption: 'A real session, recorded on November 5, 2026 with Stellar CLI 30.0.1, which our engineers contribute to: the contract commands, client bindings included.',
     lines: [
-      '$ stellar contract init hello-world',
-      'ℹ️ Initializing workspace at "hello-world"',
-      '➕ Writing "hello-world/.gitignore"',
-      '…',
       '$ stellar contract --help',
       'Tools for smart contract developers',
       '',
@@ -133,7 +129,7 @@ const flow = proofFlow[net.id];
               </ul>
               {sess && (
                 <figure class="nxi_visual">
-                  <Terminal compact label={sess.label} lines={sess.lines} />
+                  <Terminal clip compact label={sess.label} lines={sess.lines} />
                   <figcaption class="nxi_caption">{sess.caption}</figcaption>
                 </figure>
               )}
@@ -325,4 +321,11 @@ const flow = proofFlow[net.id];
     .nxi_title { font-size: 18px; }
     .nxp_quotetext { font-size: 20px; }
   }
+  /* Hero: one column under 1200 px, so the heading keeps to three lines */
+  @media (max-width: 1199px) {
+    .nx_herogrid { grid-template-columns: minmax(0, 1fr); }
+    .nx_heroleft .intro_h1 { max-width: 18em; font-size: 56px; }
+  }
+  @media (max-width: 767px) { .nx_heroleft .intro_h1 { font-size: 42px; } }
+  @media (max-width: 479px) { .nx_heroleft .intro_h1 { font-size: 34px; } }
 </style>

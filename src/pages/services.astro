@@ -46,8 +46,8 @@ const doors: Door[] = [
     lede: 'Stablecoins, tokenized funds and deposits, payment and settlement rails, with compliance controls on the asset or in contracts.',
     index: 'Regulated assets onchain',
     cases: [
-      { href: '/case-studies/societe-generale-forge', name: 'Société Générale-FORGE', line: 'EURCV, a regulated euro stablecoin on Stellar', meta: 'Live since Q1 2026 · Issuance and governance', live: true, logo: { src: `${LOGOS}/logo-light-sgforge.svg`, w: 77, h: 22 } },
-      { href: '/case-studies/nda-settlement-stablecoin', rv: 'svc-bank', name: 'Top US commercial bank', line: 'An internal settlement stablecoin on Stellar', meta: 'Live since Q3 2026 · Architecture and delivery lead', live: true, icon: 'lock-simple' },
+      { href: '/case-studies/societe-generale-forge', name: 'Société Générale-FORGE', line: 'EURCV, a regulated euro stablecoin on Stellar', meta: 'Live since Q1 2026 · Issuance and governance', live: true, figure: { value: '€20M+', label: 'issued' }, logo: { src: `${LOGOS}/logo-light-sgforge.svg`, w: 77, h: 22 } },
+      { href: '/case-studies/nda-settlement-stablecoin', rv: 'svc-bank', name: 'Top US commercial bank', line: 'An internal settlement stablecoin on Stellar', meta: 'Live since Q3 2026 · Architecture and delivery lead', live: true, figure: { value: '5 months', label: 'to handover' }, icon: 'lock-simple' },
       { href: '/case-studies/nda-money-market-fund', name: 'Regulated European asset manager', line: 'A tokenized share class of a money market fund', meta: 'In build on Stellar', icon: 'lock-simple' },
     ],
     offer: [
@@ -221,7 +221,7 @@ const doors: Door[] = [
     .sv-index { max-width: 640px; }
     .sv-feature, .sv-feature--flip { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
     .sv-feature--flip .sv-text { order: 0; }
-    .sv-visual { width: 100%; max-width: 640px; }
+    .sv-visual { width: 100%; }
     .sv-doorbox { gap: 56px; }
   }
   @media (max-width: 767px) {
@@ -237,4 +237,5 @@ const doors: Door[] = [
   @media (max-width: 479px) {
     .sv-h1 { font-size: 35px; }
   }
+  @media (max-width: 359px) { .sv-h1 { font-size: 30px; } }
 </style>

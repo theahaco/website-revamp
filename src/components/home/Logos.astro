@@ -1,9 +1,8 @@
 ---
-// Home page section: logos. Clients and partners, as framed tiles continuing
-// the key figures' frame above. A tile links only to the public case study of
-// that same client; the other tiles stay static. Under them, the security
-// auditors we have worked with.
-import Icon from '../Icon.astro';
+// Home page section: logos, in the open (no tiles, no grid rules), under the
+// key figures: clients and partners, then the security auditors we have
+// worked with, each row under its label. A logo links only to the public case
+// study of that same client; the others stay static.
 
 // h: logo height in px on desktop (per file, for an even optical weight);
 // w: its width at that height (from the file's proportions).
@@ -29,81 +28,69 @@ const auditors = [
 ---
 <section aria-label="Clients and partners" class="logos_section lg" data-rv="logos">
   <div class="logos_container lg_container">
-    <ul aria-label="Clients and partners" class="lg_grid" role="list">
-      <li aria-hidden="true" class="lg_label"><span class="lg_dot"></span>Clients and partners</li>
-      {logos.map((l) => (
-        <li class="lg_cell">
-          {l.href ? (
-            <a class="lg_tile lg_tile--link" href={l.href}>
-              <img alt={l.name} class="lg_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
-              <span class="lg_sr"> case study</span>
-              <span class="lg_arrow"><Icon name="arrow-up-right" size={16} /></span>
-            </a>
-          ) : (
-            <div class="lg_tile">
-              <img alt={l.name} class="lg_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
-            </div>
-          )}
-        </li>
-      ))}
-    </ul>
-    <ul aria-label="Auditors we work with" class="lg_grid lg_grid--auditors" role="list">
-      <li aria-hidden="true" class="lg_label lg_label--wide"><span class="lg_dot"></span>Auditors we work with</li>
-      {auditors.map((a) => (
-        <li class="lg_cell lg_cell--auditor">
-          <div class="lg_tile">
-            <img alt={a.name} class="lg_logo" loading="lazy" src={a.src} width={a.w} height={a.h} style={`--h:${a.h}px`} />
-          </div>
-        </li>
-      ))}
-    </ul>
+    <div class="lg_inner">
+      <div class="lg_group">
+        <p class="lg_label" id="lg-clients"><span aria-hidden="true" class="lg_dot"></span>Clients and partners</p>
+        <ul aria-labelledby="lg-clients" class="lg_row" role="list">
+          {logos.map((l) => (
+            <li class="lg_cell">
+              {l.href ? (
+                <a class="lg_tile lg_tile--link" href={l.href}>
+                  <img alt={l.name} class="lg_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+                  <span class="lg_sr"> case study</span>
+                </a>
+              ) : (
+                <span class="lg_tile">
+                  <img alt={l.name} class="lg_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="lg_group lg_group--auditors">
+        <p class="lg_label" id="lg-auditors"><span aria-hidden="true" class="lg_dot"></span>Auditors we work with</p>
+        <ul aria-labelledby="lg-auditors" class="lg_row" role="list">
+          {auditors.map((a) => (
+            <li class="lg_cell">
+              <span class="lg_tile">
+                <img alt={a.name} class="lg_logo" loading="lazy" src={a.src} width={a.w} height={a.h} style={`--h:${a.h}px`} />
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  /* The band's own padding goes: the frame touches its top and bottom rules */
-  .lg_container { --pad: 28px; padding-top: 0; padding-bottom: 0; row-gap: 0; }
-  .lg_grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
-  .lg_grid > li { background: var(--white); }
+  /* One hairline under the key figures, at the width of the content; each
+     label above its row, the logos spread across it */
+  .lg_container { padding-top: 0; padding-bottom: 0; row-gap: 0; }
+  .lg_inner { display: flex; flex-direction: column; gap: 48px; padding: 48px 0 88px; border-top: 1px solid var(--line); }
+  .lg_group { display: flex; flex-direction: column; gap: 22px; }
+  .lg_label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; }
+  .lg_dot { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
 
-  /* Labels start where the key figures' text starts; the dot hangs in the padding */
-  .lg_label { display: flex; align-items: center; margin: 0; padding: 18px 12px 18px var(--pad); font-size: 12px; font-weight: 600; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-wrap: balance; }
-  .lg_dot { flex-shrink: 0; width: 6px; height: 6px; margin: 0 8px 0 -14px; border-radius: 50%; background: var(--vibrant-green); }
-
-  .lg_cell { display: flex; min-height: 108px; }
-  .lg_tile { position: relative; display: grid; place-items: center; flex: 1; min-width: 0; padding: 20px 12px; color: var(--muted); text-decoration: none; transition: background-color .2s; }
+  .lg_row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 32px; margin: 0; padding: 0; list-style: none; }
+  .lg_cell { display: flex; min-width: 0; }
+  .lg_tile { display: grid; place-items: center; padding: 6px 0; color: var(--muted); text-decoration: none; }
   .lg_logo { display: block; width: auto; max-width: 100%; height: var(--h); }
-  .lg_tile--link:hover { background: var(--tint-paper); }
-  .lg_tile--link:focus-visible { outline-offset: -3px; }
-  .lg_arrow { position: absolute; top: 10px; right: 10px; display: inline-flex; color: var(--muted); transition: opacity .2s, transform .2s, color .2s; }
-  .lg_tile--link:hover .lg_arrow, .lg_tile--link:focus-visible .lg_arrow { color: var(--green-ink); opacity: 1; transform: translate(2px, -2px); }
-  @media (hover: hover) { .lg_arrow { opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) { .lg_arrow { transition: none; transform: none !important; } }
-  /* Auditors: the label spans two columns, so the five logos sit under the
-     last five client columns and the rules line up */
-  .lg_grid--auditors { border-top: 1px solid var(--line); }
-  .lg_label--wide { grid-column: span 2; }
-  .lg_cell--auditor { min-height: 96px; }
+  .lg_tile--link { border-radius: 6px; }
+  .lg_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 6px; }
   .lg_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-
-  @media (max-width: 1199px) {
-    .lg_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .lg_grid--auditors { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-    .lg_label--wide { grid-column: 1 / -1; }
-    .lg_label { grid-column: 1 / -1; padding-top: 14px; padding-bottom: 14px; }
-    .lg_cell { min-height: 100px; }
-  }
+  /* Tablets and phones: three, then two logos a row, from the left */
   @media (max-width: 991px) {
-    .lg_container { --pad: 24px; }
+    .lg_inner { gap: 40px; padding: 40px 0 72px; }
+    .lg_row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; justify-items: start; }
   }
   @media (max-width: 767px) {
-    .lg_container { --pad: 20px; }
-    .lg_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .lg_cell { min-height: 88px; }
-    .lg_grid--auditors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .lg_cell--auditor { min-height: 80px; }
-    .lg_cell--auditor:last-child { grid-column: 1 / -1; }
+    .lg_inner { padding: 36px 0 56px; border-top: 0; }
     .lg_logo { height: calc(var(--h) * .92); }
+  }
+  @media (max-width: 479px) {
+    .lg_row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

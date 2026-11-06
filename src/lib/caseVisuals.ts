@@ -16,7 +16,8 @@
 // laptop; a sub-line takes the detail. Steps read top to bottom in the order
 // things happened. Status: a live system ends on a "Live" pill; a system not
 // live yet says where it stands in a float ("In build", "In design"), never
-// with the pill, whose green dot means live.
+// with the pill, whose green dot means live, and sets `planned: true`, which
+// draws its checks hollow (they describe the design, not a running system).
 //
 // Panel tint by audience, as on the home page rows: financial institutions
 // blue, protocols green, ecosystems pink.
@@ -44,6 +45,8 @@ export type CaseVisual =
       panel: Panel;
       steps: CaseStep[];
       floats?: { text: string; icon?: string; at: 'top' | 'bottom' }[];
+      /** Not live yet (in design or in build): hollow checks. */
+      planned?: boolean;
       /** Shown under the panel; when empty, the case file's hero caption is used. */
       caption?: string;
     }
@@ -121,7 +124,7 @@ export const caseVisuals: Record<string, CaseVisual> = {
   // societe-generale-forge.md
   'societe-generale-forge': {
     kind: 'flow',
-    label: 'EURCV on Stellar: compliance controls agreed first, launch governance on Soroban audited by Hacken, live on mainnet since Q1 2026 with compliance on Stellar’s built-in controls',
+    label: 'EURCV on Stellar: compliance controls agreed first, launch governance on Soroban audited by Hacken, live on mainnet since Q1 2026; compliance has since moved to Stellar’s built-in controls',
     panel: 'blue',
     steps: [
       // line 6 ("EURCV, Société Générale-FORGE's regulated euro stablecoin"); the
@@ -136,9 +139,10 @@ export const caseVisuals: Record<string, CaseVisual> = {
       // lines 38-39 (metric: "Audited, by Hacken, before mainnet"), 48 and 56
       { kind: 'check', title: 'Audited by Hacken', sub: 'Before mainnet' },
       // title: line 6 and lines 35-36 (metric: "On Stellar mainnet since Q1 2026");
-      // sub: lines 50, 55 and 60 (compliance moved to, and now runs on,
-      // Stellar's built-in issuer controls); status: lines 18-19
-      { kind: 'anchor', net: 'stellar', title: 'Mainnet since Q1 2026', sub: 'Compliance on built-in controls', status: 'Live' },
+      // sub: lines 50, 55 and 60 (compliance then moved to, and now runs on,
+      // Stellar's built-in issuer controls: "Now", as on /services, since the
+      // launch ran on the governance contracts); status: lines 18-19
+      { kind: 'anchor', net: 'stellar', title: 'Mainnet since Q1 2026', sub: 'Now: compliance on built-in controls', status: 'Live' },
     ],
     // Caption: the case file's hero caption (line 30).
   },
@@ -180,8 +184,9 @@ export const caseVisuals: Record<string, CaseVisual> = {
       { kind: 'check', title: 'Delivery versus payment in one step', sub: 'Cash leg in a regulated euro stablecoin' },
       // line 58 and lines 36-37 (metric: "1:1, tokens in circulation to units
       // on the fund register")
-      { kind: 'anchor', net: 'stellar', title: 'Fund units on Stellar', sub: '1:1 with units on the fund register' },
+      { kind: 'anchor', net: 'stellar', title: 'Fund units on Stellar', sub: '1:1 with units on the fund register, by design' },
     ],
+    planned: true,
     // line 6, lines 19-20 (Status: In build) and 42-43 (metric: 2027, launch targeted)
     floats: [{ text: 'In build · launch targeted for 2027', icon: 'calendar-blank', at: 'top' }],
     // Caption: the case file's hero caption (line 31).
@@ -207,8 +212,9 @@ export const caseVisuals: Record<string, CaseVisual> = {
       { kind: 'check', title: 'Subscriptions in EURC or EURCV', sub: 'Delivery versus payment, or bank wire' },
       // line 6 and lines 39-40 (metric: "the onchain register is the fund's
       // register of record")
-      { kind: 'anchor', net: 'stellar', title: 'Fund interests on Stellar', sub: 'The register of record, onchain' },
+      { kind: 'anchor', net: 'stellar', title: 'Fund interests on Stellar', sub: 'The register of record, by design' },
     ],
+    planned: true,
     // lines 19-20 (Status: In design) and 67 ("One security audit of the full
     // suite before mainnet")
     floats: [{ text: 'In design · one audit before mainnet', icon: 'calendar-blank', at: 'top' }],

@@ -37,7 +37,7 @@ metrics:
   receipt: https://crates.io/crates/sep5
 visual:
   kind: terminal
-  label: 'A Stellar CLI 30.0.1 session: the version, a new key and its address, the default network, a new contract project and the installed plugins'
+  label: 'A Stellar CLI 30.0.1 session: the version, a new key and its address, the networks and the default one, a new contract project and the installed plugins'
   lines:
   - '$ stellar --version'
   - 'stellar 30.0.1 (f2a7b74175c34585f3b30a1abf42a2d41cbcc390)'
@@ -46,6 +46,11 @@ visual:
   - '✅ Key saved with alias alice in "/home/dev/.config/stellar/identity/alice.toml"'
   - '$ stellar keys address alice'
   - 'GAYQDVYRICEBBA62MCJ34Y5TU2SKI2BHPL6D5AMYKUK3TCNV5GJYWGLE'
+  - '$ stellar network ls'
+  - 'local'
+  - 'futurenet'
+  - 'mainnet'
+  - 'testnet'
   - '$ stellar network use testnet'
   - 'ℹ️ The default network is set to `testnet`'
   - '$ stellar contract init hello-world'
@@ -58,7 +63,7 @@ visual:
   - 'Installed Plugins:'
   - '    registry'
   - '    scaffold'
-  caption: 'A real session, recorded on November 5, 2026 with Stellar CLI 30.0.1 (lines cut at the end of an output are marked “…”). Key management and the plugin system, which runs our Scaffold and Registry as `stellar` subcommands, are among the parts our engineers built.'
+  caption: 'A real session, recorded on November 5, 2026 with Stellar CLI 30.0.1 (skipped lines and commands are marked “…”). Key management and the plugin system, which runs our Scaffold and Registry as `stellar` subcommands, are among the parts our engineers built.'
 sections:
 - id: what-it-does
   title: What it does

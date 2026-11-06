@@ -33,11 +33,16 @@ interface Props {
   floats?: FlowFloat[];
   /** Panel tint. */
   panel?: 'paper' | 'blue' | 'pink' | 'tan' | 'green';
+  /** A system not live yet (in design or in build): its checks are drawn
+      hollow, so they read as the design, not as something already running. */
+  planned?: boolean;
+  /** Id of a caption that describes the flow. */
+  describedby?: string;
   class?: string;
 }
-const { label, steps, floats = [], panel = 'paper', class: cls } = Astro.props;
+const { label, steps, floats = [], panel = 'paper', planned = false, describedby, class: cls } = Astro.props;
 ---
-<figure aria-label={label} class:list={['vf', `vf--${panel}`, cls]}>
+<figure aria-describedby={describedby} aria-label={label} class:list={['vf', `vf--${panel}`, planned && 'vf--planned', cls]}>
   <div aria-hidden="true" class="vf_grid"></div>
   <ol class="vf_steps" role="list">
     {steps.map((s) => s.kind === 'anchor' ? (
@@ -100,6 +105,8 @@ const { label, steps, floats = [], panel = 'paper', class: cls } = Astro.props;
   .vf_check::after { content: ''; position: absolute; top: calc(50% - 4px); left: -40px; width: 8px; height: 8px; border-radius: 50%; background: var(--deep-blue); box-shadow: 0 0 0 3px var(--white); }
   .vf_mark { display: grid; place-items: center; flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--vibrant-green); color: var(--white); }
   .vf_check .vf_title { font-weight: 500; color: var(--ink); }
+  /* Not live yet: a hollow mark, the step is designed, not running */
+  .vf--planned .vf_mark { background: none; box-shadow: inset 0 0 0 2px var(--green-ink); color: var(--green-ink); }
 
   /* Floating facts over the panel edges */
   .vf_float { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); margin: 0; padding: 8px 14px 8px 9px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--white); box-shadow: var(--shadow-2); color: var(--deep-blue); font-size: 13px; font-weight: 600; line-height: 1.25; }

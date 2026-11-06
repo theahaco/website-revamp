@@ -15,6 +15,8 @@ export interface PrecedentRow {
   /** Green live dot before the meta. */
   live?: boolean;
   logo?: { src: string; w: number; h: number };
+  /** A figure its case study states, shown at the end of the row. */
+  figure?: { value: string; label: string };
   /** NDA client (the lock) or our tools (an icon), when there is no logo. */
   icon?: string;
   rv?: string;
@@ -30,7 +32,7 @@ const { rows, tint = 'blue' } = Astro.props;
   <ul class="pc_list" role="list">
     {rows.map((r) => (
       <li class="pc_item">
-        <a class="pc_row" data-rv={r.rv} href={r.href}>
+        <a class:list={['pc_row', r.figure && 'pc_row--fig']} data-rv={r.rv} href={r.href}>
           <span class:list={['pc_tile', `pc_tile--${r.icon === 'lock-simple' ? 'nda' : tint}`]}>
             {r.logo ? <img alt="" height={r.logo.h} loading="lazy" src={r.logo.src} width={r.logo.w} /> : <Icon name={r.icon ?? 'cube'} size={22} />}
           </span>
@@ -39,6 +41,7 @@ const { rows, tint = 'blue' } = Astro.props;
             <span class="pc_line" set:html={nobr(r.line)} />
             <span class="pc_meta">{r.live && <span aria-hidden="true" class="v-live pc_live"></span>}{r.meta}</span>
           </span>
+          {r.figure && <span class="pc_fig"><span class="pc_figv">{r.figure.value}</span><span class="pc_figl">{r.figure.label}</span></span>}
         </a>
       </li>
     ))}
@@ -52,6 +55,10 @@ const { rows, tint = 'blue' } = Astro.props;
   .pc_item { border-bottom: 1px solid var(--line); }
   .pc_row { display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 16px; align-items: center; padding: 16px 0; color: inherit; text-decoration: none; }
   .pc_row:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 2px; border-radius: 8px; }
+  .pc_row--fig { grid-template-columns: 72px minmax(0, 1fr) auto; }
+  .pc_fig { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; padding-left: 8px; color: var(--deep-blue); }
+  .pc_figv { font-size: 24px; font-weight: 500; line-height: 1; letter-spacing: -.02em; white-space: nowrap; }
+  .pc_figl { color: var(--muted); font-size: 13px; line-height: 1; white-space: nowrap; }
 
   .pc_tile { display: grid; place-items: center; width: 72px; height: 52px; border-radius: 12px; background: var(--tint-blue); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
   .pc_tile--green { background: var(--tint-green); }
@@ -70,7 +77,9 @@ const { rows, tint = 'blue' } = Astro.props;
   @media (prefers-reduced-motion: reduce) { .pc_name, .pc_arrow { transition: none; } .pc_row:hover .pc_arrow { left: 0; } }
 
   @media (max-width: 479px) {
-    .pc_row { grid-template-columns: 56px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 14px 0; }
+    .pc_row, .pc_row--fig { grid-template-columns: 56px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 14px 0; }
+    .pc_fig { grid-column: 2; flex-direction: row; align-items: baseline; gap: 6px; margin-top: 8px; padding-left: 0; }
+    .pc_figv { font-size: 20px; }
     .pc_tile { width: 56px; height: 44px; border-radius: 10px; }
     .pc_tile img { max-width: 44px; }
     .pc_tile :global(svg) { width: 20px; height: 20px; }

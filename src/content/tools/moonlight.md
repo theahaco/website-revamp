@@ -38,7 +38,7 @@ metrics:
 visual:
   kind: image
   image: /images/tools/moonlight.webp
-  alt: 'Moonlight’s site on a phone: private web3 transactions, built for compliance; confidential onchain, auditable when required.'
+  alt: 'Moonlight’s site on a phone: “Private web3 transactions. Built for compliance.”'
   tone: dark
   caption: 'moonlightprotocol.io. Limited mainnet release since July 2026, for invite-only pilots.'
 sections:

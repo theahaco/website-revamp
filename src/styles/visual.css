@@ -75,3 +75,13 @@
    paper and the tints; on dark bands, white at 60%) */
 .v-soft { color: #66798f; }
 .v-dark .v-soft, .osb .v-soft { color: rgba(255, 255, 255, .6); }
+
+/* Contact: wrapped "I am" options keep air above and below their text */
+.form_radio-label { padding-top: 12px; padding-bottom: 12px; }
+/* The logo keeps its size on the narrowest phones */
+.nav_logo-link { flex-shrink: 0; }
+/* Narrowest phones (320 px): pills on one line, case facts in one column */
+@media (max-width: 359px) {
+  .v-eyebrow { font-size: 11px; letter-spacing: .06em; }
+  .cs_facts { grid-template-columns: minmax(0, 1fr); }
+}

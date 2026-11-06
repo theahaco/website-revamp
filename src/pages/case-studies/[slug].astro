@@ -107,7 +107,7 @@ const visualCaption = visual ? (visual.caption || d.hero.caption) : '';
           <ul class="cs_metrics" role="list">
             {metrics.map((m) => (
               <li class="cs_metric">
-                <span class="cs_fig">
+                <span class:list={['cs_fig', !/\d/.test(m.figure) && 'cs_fig--word']}>
                   <span>{m.figure}</span>
                   {m.receipt && <a aria-label={`Receipt: ${m.label}`} class="cs_figmark" href={m.receipt}>✓</a>}
                 </span>
@@ -222,4 +222,7 @@ const visualCaption = visual ? (visual.caption || d.hero.caption) : '';
   @media (max-width: 767px) {
     .cs_headgrid--visual .art_h1 { font-size: 36px; }
   }
+  /* A word in the metrics row ("Native", "Share class") stays below the size
+     of the figures, on their baseline */
+  .cs_fig--word { align-items: flex-end; min-height: clamp(32px, 3.4vw, 44px); font-size: clamp(22px, 2vw, 26px); line-height: 1.1; letter-spacing: -.01em; }
 </style>

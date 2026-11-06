@@ -44,6 +44,7 @@ visual:
   alt: 'The Stellar Registry interface on a phone: browse and discover deployed smart contracts on the Stellar network, searching by name or Wasm.'
   tone: dark
   label: 'A real session of the Stellar Registry CLI plugin: its help and its first commands, from naming accounts to publishing Wasm'
+  clip: true
   lines:
   - '$ stellar registry --help'
   - 'Add, manage, and use Wasm packages & named contracts in the Stellar Registry'

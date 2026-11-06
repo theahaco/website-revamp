@@ -1,6 +1,6 @@
 ---
-// Home: the key figures, full width under the hero (tablets and desktops;
-// phones show them inside the hero). Figures as the site states them: the
+// Home: the key figures, full width under the hero, in the open (tablets and
+// desktops; phones show them inside the hero). Figures as the site states them: the
 // four networks (/networks), 137 on the Open source page (dated, with how it
 // is counted), the team on About. EURCV's figure is in the proof panel. Icon tints follow the audience colors:
 // financial institutions blue, ecosystems pink, neutral tan.
@@ -32,12 +32,12 @@ import { toolAdoption } from '../../data/site';
 </section>
 
 <style>
-  /* Framed cells: the band's rules run full width, the cells share 1 px borders
-     inside the container (the logo band below continues the same frame). */
+  /* In the open: four figures on white, no frame; the logos follow under one
+     hairline (Logos.astro) */
   .kpi { background: var(--white); border-top: 1px solid var(--line); }
   .kpi_inner { max-width: var(--container); margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px); }
-  .kpi_grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
-  .kpi_cell { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 32px 28px 30px; background: var(--white); }
+  .kpi_grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 56px; margin: 0; padding: 64px 0 48px; list-style: none; }
+  .kpi_cell { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
   .kpi_top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
   .kpi_value { margin: 0; font-size: clamp(38px, 4vw, 52px); font-weight: 500; line-height: 1; letter-spacing: -.035em; color: var(--deep-blue); white-space: nowrap; }
   .kpi_plus { color: var(--green-ink); }
@@ -45,28 +45,15 @@ import { toolAdoption } from '../../data/site';
   .kpi_marks { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; }
   .kpi_label { margin: 0; max-width: 28ch; font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
   .kpi_nowrap { white-space: nowrap; }
-  /* 44 px touch targets on the two links, without moving anything */
 
+  @media (max-width: 1199px) {
+    .kpi_grid { column-gap: 40px; }
+  }
   @media (max-width: 991px) {
-    .kpi_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .kpi_cell { padding: 28px 24px 26px; }
+    .kpi_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 48px 0 40px; }
   }
   /* Phones show the figures inside the hero instead */
   @media (max-width: 767px) {
     .kpi { display: none; }
-  }
-  @media (max-width: 479px) {
-    .kpi_cell { gap: 8px; padding: 20px 20px 22px; }
-    .kpi_top { flex-direction: column-reverse; gap: 14px; }
-    .kpi_icon { width: 36px; height: 36px; margin-top: 0; border-radius: 10px; }
-    .kpi_icon :global(svg) { width: 20px; height: 20px; }
-    .kpi_value { font-size: 36px; }
-    .kpi_label { font-size: 15px; }
-  }
-  /* Small phones: one figure per row */
-  @media (max-width: 374px) {
-    .kpi_grid { grid-template-columns: minmax(0, 1fr); }
-    .kpi_top { flex-direction: row; }
-    .kpi_label { max-width: none; }
   }
 </style>

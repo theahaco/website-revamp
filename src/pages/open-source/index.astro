@@ -169,6 +169,7 @@ const ld = {
   }
 
   .os_grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 1200px) { .os_grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .os_card { display: flex; scroll-margin-top: 120px; }
   .os_cardlink { display: flex; flex-direction: column; gap: 14px; width: 100%; padding: 28px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md); color: inherit; text-decoration: none; transition: border-color .2s; }
   .os_cardlink:hover { border-color: var(--deep-blue); }
@@ -178,7 +179,7 @@ const ld = {
   .os_net { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
   .os_cat { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--green-ink); }
   .os_what { font-size: 17px; line-height: 1.5; color: var(--ink); }
-  .os_kpi { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+  .os_kpi { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
   .os_kpifig { font-size: 32px; font-weight: 500; letter-spacing: -.02em; line-height: 1; color: var(--deep-blue); }
   .os_kpilabel { font-size: 14px; color: var(--muted); }
   .os_more { font-size: 14px; font-weight: 600; color: var(--deep-blue); transition: color .2s; }

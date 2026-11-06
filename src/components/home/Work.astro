@@ -7,5 +7,7 @@ import HomeWork from '../HomeWork.astro';
 <style>
   /* Eyebrow pill above the heading; the pair takes the heading's grid cell. */
   .hw_head { grid-row: 1; grid-column: 1; align-self: end; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; min-width: 0; }
-  .hw_head > .work_h2 { align-self: flex-start; }
+  .hw_head > .work_h2 { align-self: flex-start; font-size: 44px; line-height: 1.1; }
+  @media (max-width: 991px) { .hw_head > .work_h2 { font-size: 36px; } }
+  @media (max-width: 767px) { .hw_head > .work_h2 { font-size: 32px; } }
 </style>

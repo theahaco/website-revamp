@@ -22,14 +22,12 @@ const { visual: v, describedby, class: cls } = Astro.props;
 const whole = (t: string) => t.replace(/(\S)-(?=\S)/g, '$1-\u2060');
 const steps = v.kind === 'flow' ? v.steps.map((s) => ({ ...s, title: whole(s.title), sub: s.sub && whole(s.sub) })) : [];
 const floats = v.kind === 'flow' ? (v.floats ?? []).map((f) => ({ ...f, text: whole(f.text) })) : [];
-// The Flow is a figure named by its label; it is wrapped in a second figure
-// only to tie it to a caption.
-const Wrap = describedby ? 'figure' : 'div';
+// The Flow is a figure named by its label and described by the caption.
 ---
 {v.kind === 'flow' ? (
-  <Wrap aria-describedby={describedby} class:list={['cv', cls]} data-cs="visual">
-    <Flow class="cv_flow" floats={floats} label={v.label} panel={v.panel} steps={steps} />
-  </Wrap>
+  <div class:list={['cv', cls]} data-cs="visual">
+    <Flow class="cv_flow" describedby={describedby} floats={floats} label={v.label} panel={v.panel} planned={v.planned} steps={steps} />
+  </div>
 ) : (
   /* Decorative: the tools are named in the lede and in the caption */
   <div class:list={['cv', cls]} data-cs="visual">

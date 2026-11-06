@@ -44,6 +44,7 @@ visual:
   alt: 'The Stellar Scaffold site on a phone: go from an empty directory to a deployed Stellar dApp, installed with cargo binstall stellar-scaffold-cli.'
   tone: light
   label: 'A real session of the Stellar Scaffold CLI plugin: its help and its first commands, from init to watch'
+  clip: true
   lines:
   - '$ stellar scaffold --help'
   - 'Build smart contracts with frontend support'

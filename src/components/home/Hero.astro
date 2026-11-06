@@ -1,11 +1,13 @@
 ---
-// Home page section: hero (headline, credentials, proof panel), then the
-// key figures band. The credentials are roles the site states:
-// networks/stellar.md, networks/xrpl.md, networks/canton.md and the PwC US
-// co-selling alliance (case-studies/pwc.md, never a link).
+// Home page section: hero (headline, the call to action, proof panel), then
+// the key figures band. Under the buttons, what the first call is (as the FAQ
+// answers "Who will we be talking to?"); under the text, the PwC US
+// co-selling alliance in the words of case-studies/pwc.md (never a link, and
+// never "partner"). The network roles are in the key figures band, the
+// Networks section and About.
+import Icon from '../Icon.astro';
 import HeroProof from './HeroProof.astro';
 import KpiBand from './KpiBand.astro';
-import NetMark from './NetMark.astro';
 import { toolAdoption } from '../../data/site';
 ---
 <section class="hero_section hero">
@@ -13,6 +15,7 @@ import { toolAdoption } from '../../data/site';
     <h1 class="heading-1 hero_h1"><span class="v-eyebrow hero_eyebrow">Blockchain integration partner</span> We integrate institutions and protocols onto the networks we help build.</h1>
     <p class="hero_lead">Stablecoins, tokenized funds and deposits for banks. Integrations for protocols expanding to a new network. Developer tooling for the ecosystems themselves.</p>
     <div class="hero_actions"><a class="btn-primary" href="/contact">Schedule a call</a><a class="btn-secondary" href="/work">See our work</a></div>
+    <p class="hero_call"><Icon name="phone-call" size={18} /><span>First call: 30 minutes with an engineer, not a sales&nbsp;team.</span></p>
     <ul aria-label="Key figures" class="hero_figs" role="list">
       <li><span class="hero_figv">4</span><span class="hero_figl">Networks we build on</span></li>
       <li><span class="hero_figv">20<span class="hero_figplus">+</span></span><span class="hero_figl">Deployments on mainnet</span></li>
@@ -21,12 +24,10 @@ import { toolAdoption } from '../../data/site';
     </ul>
   </div>
   <HeroProof />
-  <ul aria-label="Credentials" class="hero_creds" role="list">
-      <li class="hero_cred"><span class="hero_credmark"><NetMark net="stellar" size={15} /></span>Core contributors on Stellar</li>
-      <li class="hero_cred"><span class="hero_credmark"><NetMark net="xrpl" size={14} /></span>Ripple program partner on XRPL</li>
-      <li class="hero_cred"><span class="hero_credmark"><NetMark net="canton" size={16} /></span>Integrations in progress on Canton</li>
-      <li class="hero_cred"><span class="hero_credmark"><img alt="" class="hero_pwc" src="/images/logos/logo-light-pwc.webp" width="27" height="13" /></span>Co-selling alliance with PwC US</li>
-  </ul>
+  <div class="hero_pwc">
+    <span class="hero_pwclogo"><img alt="" decoding="async" height="25" src="/images/logos/logo-light-pwc.webp" width="52" /></span>
+    <p class="hero_pwctext"><span class="hero_pwctitle">Co-selling alliance with PwC US</span><span class="hero_pwcsub">PwC US’s advisory capabilities with our blockchain engineering, for financial institutions.</span></p>
+  </div>
 </section>
 <KpiBand />
 
@@ -34,16 +35,22 @@ import { toolAdoption } from '../../data/site';
   .hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-areas: 'text proof' 'creds proof'; row-gap: 0; column-gap: clamp(40px, 5vw, 64px); padding-top: clamp(56px, 6.6vw, 96px); padding-bottom: clamp(56px, 6.2vw, 88px); }
   .hero_text { grid-area: text; align-self: end; }
   .hero :global(.hp) { grid-area: proof; }
-  .hero_creds { grid-area: creds; align-self: start; }
+  .hero_pwc { grid-area: creds; align-self: start; }
   .hero_h1 { text-wrap: balance; }
   @media (min-width: 992px) { .hero_h1 { font-size: clamp(40px, 4.3vw, 52px); line-height: 1.08; } }
   .hero_eyebrow { display: flex; margin-bottom: 26px; font-style: normal; letter-spacing: .08em; }
 
-  /* Credentials: two by two, each with its network mark (or logo) in a tile */
-  .hero_creds { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 12px 16px; margin: 28px 0 0; padding: 24px 0 0; list-style: none; border-top: 1px solid var(--line); }
-  .hero_cred { display: flex; align-items: center; gap: 10px; min-width: 0; font-size: 14px; font-weight: 500; line-height: 1.3; color: var(--ink-2); text-wrap: balance; }
-  .hero_credmark { display: grid; place-items: center; flex-shrink: 0; width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); }
-  .hero_pwc { display: block; width: 27px; height: 13px; }
+  /* Under the buttons: what the first call is */
+  .hero_call { display: flex; align-items: center; gap: 8px; margin: 18px 0 0; color: var(--ink-2); font-size: 14px; line-height: 1.4; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .25; }
+  .hero_call :global(.icon) { color: var(--green-ink); }
+
+  /* The PwC US co-selling alliance: its logo in a white tile, then what it is */
+  .hero_pwc { display: flex; align-items: center; gap: 16px; margin: 28px 0 0; padding: 24px 0 0; border-top: 1px solid var(--line); }
+  .hero_pwclogo { display: grid; place-items: center; flex-shrink: 0; width: 76px; height: 56px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); box-shadow: var(--shadow-1); }
+  .hero_pwclogo img { display: block; width: 52px; height: auto; }
+  .hero_pwctext { display: flex; flex-direction: column; gap: 4px; min-width: 0; margin: 0; }
+  .hero_pwctitle { color: var(--deep-blue); font-size: 17px; font-weight: 600; line-height: 1.3; }
+  .hero_pwcsub { max-width: 31em; color: var(--ink-2); font-size: 15px; line-height: 1.45; text-wrap: pretty; }
 
   /* Figures in the hero only on phones (the key figures band takes over above 767 px) */
   .hero_figs { display: none; }
@@ -56,13 +63,16 @@ import { toolAdoption } from '../../data/site';
   }
   @media (max-width: 991px) {
     .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'text' 'proof' 'creds'; row-gap: 48px; }
-    .hero_creds { margin-top: 0; }
+    .hero_pwc { margin-top: 0; }
     .hero_text { max-width: 640px; }
   }
   @media (max-width: 479px) {
     .hero { row-gap: 44px; }
     .hero_eyebrow { margin-bottom: 20px; }
-    .hero_creds { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-top: 20px; }
-    .hero_cred { font-size: 14px; }
+    .hero_pwc { align-items: flex-start; gap: 14px; padding-top: 20px; }
+    .hero_pwclogo { width: 64px; height: 48px; border-radius: 12px; }
+    .hero_pwclogo img { width: 44px; }
+    .hero_pwctitle { font-size: 16px; }
+    .hero_pwcsub { font-size: 14px; }
   }
 </style>
