@@ -17,7 +17,7 @@ export const homeNdaCases = ["nda-settlement-stablecoin", "nda-money-market-fund
 
 /** "More work" at the bottom of a case study: two other case studies, those for
  * the same audience first, in this order. Alliances (PwC US) are never listed. */
-export const moreWork = ["societe-generale-forge", "lifi", "stellar-development-foundation", "nda-settlement-stablecoin", "nda-money-market-fund", "ripple", "nda-real-estate-debt-fund"];
+export const moreWork = ["societe-generale-forge", "lifi", "talwex", "stellar-development-foundation", "nda-settlement-stablecoin", "nda-money-market-fund", "ripple", "nda-real-estate-debt-fund"];
 
 /** Pages whose "More work" is chosen by hand: case study slugs, or tool pages
  * written "/open-source/<tool>". Ripple's page stays on XRPL. */
@@ -34,7 +34,7 @@ export const homeArticles: string[] = [];
 export const teamPanelOrder = ["hugo-heer", "roberson-costa-dresch", "zach-fedor", "pamphile-roy", "elizabeth-engelman", "pamela-selle", "fabricius-zatti", "willem-wyndham", "chad-ostrowski", "enzo-soyer"];
 
 /** Engagement rows on team pages (case studies whose `team` includes the person). */
-export const engagementOrder = ["nda-settlement-stablecoin", "societe-generale-forge", "lifi", "pwc", "stellar-development-foundation", "ripple", "nda-real-estate-debt-fund", "nda-money-market-fund"];
+export const engagementOrder = ["nda-settlement-stablecoin", "societe-generale-forge", "lifi", "talwex", "pwc", "stellar-development-foundation", "ripple", "nda-real-estate-debt-fund", "nda-money-market-fund"];
 
 /** "Other networks" cards at the bottom of a network page. */
 export const otherNetworksOrder = ["ethereum", "canton", "xrpl", "stellar"];

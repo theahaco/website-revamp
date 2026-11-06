@@ -135,6 +135,9 @@ const { label, steps, floats = [], panel = 'paper', planned = false, describedby
     .vf_check::after { left: -23px; }
     .vf_steps::before { left: 25px; }
     .vf_anchor .vf_tile { width: 40px; height: 40px; }
+    /* A client logo keeps a wider tile, so it is never cut */
+    .vf_anchor .vf_tile:has(img:not(.netmark)) { width: 56px; }
+    .vf_anchor .vf_tile img:not(.netmark) { max-width: 44px; }
   }
   @media (max-width: 767px) {
     .vf_float { font-size: 12px; padding: 6px 12px 6px 7px; }

@@ -68,13 +68,13 @@ export const caseVisuals: Record<string, CaseVisual> = {
   'stellar-development-foundation': {
     kind: 'phones',
     panel: 'pink',
-    // Nido: line 60. Stellar Scaffold: line 58 (in front: 111 of the 137
-    // projects counted on November 2, 2026 build on it, line 65). Stellar
-    // Registry: line 59.
+    // Nido: line 66. Stellar Scaffold: line 64 (in front: 111 of the 137
+    // projects counted on November 2, 2026 build on it, line 71). Stellar
+    // Registry: line 65.
     left: 'nido',
     center: 'scaffold-stellar',
     right: 'stellar-registry',
-    // Names: lines 6 and 58-60 ("tooling the Stellar ecosystem runs on")
+    // Names: lines 6 and 64-66 ("tooling the Stellar ecosystem runs on")
     caption: 'Nido, Stellar Scaffold and Stellar Registry, on their own sites: three of the tools we build and maintain.',
   },
 
@@ -119,6 +119,27 @@ export const caseVisuals: Record<string, CaseVisual> = {
       // mentored went live on mainnet or were ready to go live"
       { kind: 'anchor', net: 'xrpl', title: 'Go live on XRPL mainnet', sub: 'One 2026 cohort: two teams live or ready' },
     ],
+  },
+
+  // talwex.md (in build: hollow checks and an "In build" float, no pill)
+  talwex: {
+    kind: 'flow',
+    label: 'Talwex on Stellar: the institutional bond yield pool whose Soroban smart contracts we develop, in build',
+    panel: 'green',
+    steps: [
+      // line 6 and Talwex's own site ("One infrastructure for bonds")
+      { kind: 'anchor', logo: { src: `${LOGOS}/logo-talwex-mark.svg`, w: 27, h: 18 }, tone: 'green', title: 'Talwex', sub: 'One infrastructure for bonds' },
+      // lines 6 and 44
+      { kind: 'check', title: 'Institutional bond yield pool', sub: 'On Stellar' },
+      // line 47 (and lines 35-37, metric)
+      { kind: 'check', title: 'Soroban smart contracts', sub: 'Developed by us, in Rust' },
+      // lines 32-34 (metric, receipt: the Stellar Community Fund page) and 50
+      { kind: 'check', title: 'Stellar Community Fund', sub: 'Awarded, round 43 (Build)' },
+      // lines 18-19 (Status: In build) and 50
+      { kind: 'anchor', net: 'stellar', title: 'Talwex on Stellar', sub: 'Smart contracts in build' },
+    ],
+    planned: true,
+    floats: [{ text: 'In build', icon: 'calendar-blank', at: 'top' }],
   },
 
   // starknet.md (a DevX audit: no live system, so no status pill)

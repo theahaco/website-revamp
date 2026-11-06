@@ -67,7 +67,10 @@ export const services: Service[] = [
     icon: 'plugs-connected',
     audience: 'protocols',
     bullets: ['Integration roadmap', 'Native contracts, adapters and SDKs', 'Routing and liquidity'],
-    precedents: [{ kind: 'client', logo: `${LOGOS}/logo-light-lifi.svg`, alt: 'LI.FI', w: 44, h: 16, href: '/case-studies/lifi' }],
+    precedents: [
+      { kind: 'client', logo: `${LOGOS}/logo-light-lifi.svg`, alt: 'LI.FI', w: 44, h: 16, href: '/case-studies/lifi' },
+      { kind: 'client', logo: `${LOGOS}/logo-light-talwex.svg`, alt: 'Talwex', w: 71, h: 14, href: '/case-studies/talwex' },
+    ],
   },
   {
     id: 'custody-wallets',
