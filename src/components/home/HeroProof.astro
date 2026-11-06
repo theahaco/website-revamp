@@ -1,9 +1,10 @@
 ---
 // Home hero: the proof panel. Three engagements live on mainnet, each row
 // linking to its case study, with the facts of src/content/case-studies
-// (status, network, the EURCV figure and its receipt, the bank's five months
-// from kickoff to handover; the bank's row does not name the network). Each
-// row leads with what is live, the client under it. The round glyph is the kind of asset, drawn like a token icon
+// (status, the EURCV figure and its receipt). The bank's figure is its total
+// assets, $703.0B at September 30, 2026 in its own Q3 2026 earnings release,
+// rounded down (the bank stays unnamed). The card names no network. Each row
+// leads with what is live, the client under it. The round glyph is the kind of asset, drawn like a token icon
 // (not the asset's own logo): a euro coin, a settlement coin, a cross-chain
 // route; deep blue for financial institutions, green for protocols. Under the
 // rows, the card's totals: the key figures of src/data/site.ts (deployments
@@ -25,7 +26,7 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
       <li class="hp_row">
         <span aria-hidden="true" class="hp_av"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="#1A3B60" /><circle cx="23" cy="23" r="19" fill="none" stroke="#fff" stroke-opacity=".22" /><text x="23" y="30.5" fill="#fff" font-family="Space Grotesk, system-ui, sans-serif" font-size="21" font-weight="600" text-anchor="middle">€</text></svg></span>
         <p class="hp_name"><a class="hp_link" href="/case-studies/societe-generale-forge">EURCV, regulated euro stablecoin<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
-        <p class="hp_desc">Société Générale-FORGE · Stellar</p>
+        <p class="hp_desc">Société Générale-FORGE</p>
         <div class="hp_meta">
           <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span data-rv="card-eurcv">Live since Q1 2026</span></span>
         </div>
@@ -38,12 +39,12 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
         <div class="hp_meta">
           <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span data-rv="card-bank">Live since Q3 2026</span></span>
         </div>
-        <div class="hp_fig" data-rv="card-bank-fig"><span class="hp_figv">5 months</span><span class="hp_figl">to handover</span></div>
+        <div class="hp_fig" data-rv="card-bank-fig"><span class="hp_figv">$700B+</span><span class="hp_figl">bank assets</span></div>
       </li>
       <li class="hp_row">
         <span aria-hidden="true" class="hp_av"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="#367A12" /><circle cx="23" cy="23" r="19" fill="none" stroke="#fff" stroke-opacity=".22" /><path d="M16.5 28.5c0-6.5 13-3.5 13-11" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.1" /><circle cx="16.5" cy="29.5" r="3" fill="#367A12" stroke="#fff" stroke-width="2.1" /><circle cx="29.5" cy="16.5" r="3.2" fill="#fff" /></svg></span>
         <p class="hp_name"><a class="hp_link" href="/case-studies/lifi">Cross-chain asset transfers<span aria-hidden="true" class="hp_arrow">&nbsp;→</span></a></p>
-        <p class="hp_desc">LI.FI · Stellar</p>
+        <p class="hp_desc">LI.FI</p>
         <div class="hp_meta">
           <span class="hp_status"><span aria-hidden="true" class="v-live"></span><span>Live</span></span>
         </div>
