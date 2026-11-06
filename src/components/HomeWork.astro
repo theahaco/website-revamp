@@ -4,11 +4,12 @@
 // block of the clients not named ("More work for financial institutions") and
 // the articles tab. Webflow tabs markup, driven by src/scripts/tabs.js. The
 // block's icons come from src/lib/visuals.ts.
-import { caseStudies, posts, pick, publicQuote, nobr, formatDate } from '../lib/content';
+import { caseStudies, posts, pick, nobr, formatDate } from '../lib/content';
 import { homeFeaturedCases, homeNdaCases, homeArticles } from '../data/curation';
 import { caseVisual } from '../lib/visuals';
+import { workVisuals } from '../lib/workVisuals';
 import Icon from './Icon.astro';
-import { site as siteData } from '../data/site';
+import WorkVisual from './home/WorkVisual.astro';
 
 const all = await caseStudies();
 const featured = pick(all, homeFeaturedCases);
@@ -16,7 +17,6 @@ const nda = pick(all, homeNdaCases);
 // The three most recent articles, unless curation.ts pins a selection.
 const allPosts = await posts();
 const articles = homeArticles.length ? pick(allPosts, homeArticles) : allPosts.slice(0, 3);
-const production = !Astro.site || Astro.site.origin === siteData.productionOrigin;
 const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--${tone}`];
 ---
 <div class="work_tabs w-tabs" data-current="Tab 1" data-duration-in="300" data-duration-out="100" data-easing="ease">
@@ -27,50 +27,26 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
   <div class="work_panels w-tab-content">
     <div class="w-tab-pane w--tab-active" data-w-tab="Tab 1" id="work-cases">
       <div class="w-dyn-list">
-        <div class="work_list w-dyn-items" role="list">
+        <ul class="hw_grid" role="list">
           {featured.map((cs) => {
-            // The quotes are in the section under the hero (home/Logos.astro):
-            // each row shows its client's logo.
-            const pq = publicQuote(cs.data.quote, production);
-            const q = { ...pq, label: pq.label || 'Client', text: '', author: '', role: '', portrait: '' };
-            const inner = (
-              <Fragment>
-                <div class="work_num hw_num"></div>
-                <div class="work_stack">
-                  <div class="work_meta">
-                    {cs.data.eyebrow && <p class="work_eyebrow">{cs.data.eyebrow}</p>}
-                    <div class="work_yeararrow">
-                      {cs.data.year && <div>{cs.data.year}</div>}
-                      {!cs.data.alliance && <div aria-hidden="true" class="work_arrow">↗</div>}
-                    </div>
-                  </div>
-                  <h3 class="work_h3" set:html={nobr(cs.data.title)} />
-                  {(cs.data.workLine || cs.data.lede) && <p class="work_para">{cs.data.workLine || cs.data.lede}</p>}
-                </div>
-              </Fragment>
-            );
+            // One tile per case: its visual on top (a different kind per case,
+            // src/lib/workVisuals.ts), then what was built, the line and the
+            // client once, as a byline. The text comes first in the markup, so
+            // a screen reader meets the title before the picture.
+            const visual = workVisuals[cs.id];
             return (
-            <div class="work_item w-dyn-item" role="listitem" data-client={cs.id}>
-              <div class="work_row hw_row">
-                {cs.data.alliance
-                  ? <div class="work_case-link w-inline-block wk_static hw_link">{inner}</div>
-                  : <a class="work_case-link w-inline-block hw_link" href={`/case-studies/${cs.id}`}>{inner}</a>}
-                <figure class:list={['work_quote hw_quote', !q.text && 'work_quote--plain']}>
-                  <p class="work_quote-label">{q.label}</p>
-                  {q.text && <blockquote class="work_blockquote">{q.text}</blockquote>}
-                  {(q.author || q.portrait) && <figcaption class="work_attrib">
-                    {q.portrait && <img alt={q.portraitAlt} class="work_portrait" loading="lazy" src={q.portrait} width="32" height="32" />}
-                    <div class="work_attrib-info">
-                      {q.author && <p class="work_attrib-name">{q.author}</p>}
-                      {q.role && <p class="work_attrib-role">{q.role}</p>}
-                    </div>
-                  </figcaption>}
-                  {q.logo && <img alt={q.logoAlt} class="work_client-logo" loading="lazy" src={q.logo} />}
-                </figure>
-              </div>
-            </div>
-          ); })}
-        </div>
+              <li class="hw_tile" data-client={cs.id}>
+                <div class="hw_body">
+                  {cs.data.eyebrow && <p class="hw_eyebrow">{cs.data.eyebrow}</p>}
+                  <h3 class="hw_title"><a class="hw_tlink" href={`/case-studies/${cs.id}`}><span set:html={nobr(cs.data.workTitle || cs.data.title)} /><span class="hw_sr">: {cs.data.client || cs.data.title} case study</span></a></h3>
+                  {(cs.data.workLine || cs.data.lede) && <p class="hw_line" set:html={nobr(cs.data.workLine || cs.data.lede)} />}
+                  <p class="hw_by"><span class="hw_client" set:html={nobr(cs.data.client || cs.data.title)} />{cs.data.year && <span class="hw_year">{cs.data.year}</span>}<span aria-hidden="true" class="hw_arrow">↗</span></p>
+                </div>
+                {visual && <div class="hw_visual"><WorkVisual visual={visual} /></div>}
+              </li>
+            );
+          })}
+        </ul>
       </div>
       {nda.length > 0 && (
         <div aria-labelledby="hw-more" class="hw_nda" role="group">
@@ -125,20 +101,38 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
 </div>
 
 <style>
-  /* Rows: number and text, and the quote in its own column from 1200 px;
-     below, the quote sits under the text. */
-  .hw_row { display: grid; grid-template-columns: minmax(0, 1fr) 300px; column-gap: 48px; align-items: stretch; }
-  .hw_link .work_meta { min-height: 18px; }
+  /* Case tiles, two across: the visual on top, the text under it. The two
+     tiles of a row share their rows (subgrid), so visuals and texts line up. */
+  .hw_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+  .hw_tile { position: relative; display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 0; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 20px; background: var(--white); transition: border-color .2s, box-shadow .2s; }
+  .hw_tile:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .hw_visual { grid-row: 1; min-width: 0; }
+  .hw_body { grid-row: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; padding: 24px 20px 18px; }
+  .hw_eyebrow { margin: 0; color: var(--green-ink); font-size: 12px; font-weight: 600; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
+  .hw_title { margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 28px; font-style: italic; font-weight: 400; line-height: 1.15; letter-spacing: -.005em; text-wrap: balance; }
+  .hw_tlink { color: inherit; text-decoration: none; }
+  .hw_tlink::after { content: ''; position: absolute; inset: 0; z-index: 2; border-radius: 20px; }
+  .hw_tlink:focus-visible { outline: none; }
+  .hw_tile:has(.hw_tlink:focus-visible) { box-shadow: inset 0 0 0 2px var(--green-ink); }
+  .hw_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  .hw_line { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
+  .hw_by { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; width: 100%; margin: auto 0 0; padding-top: 8px; font-size: 14px; line-height: 1.4; }
+  .hw_client { color: var(--deep-blue); font-weight: 600; }
+  .hw_year { color: var(--muted); white-space: nowrap; }
+  .hw_arrow { margin-left: auto; color: var(--deep-blue); font-size: 18px; line-height: 1; opacity: .5; transition: opacity .2s, transform .2s, color .2s; }
+  .hw_tile:hover .hw_arrow { color: var(--green-ink); opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) { .hw_tile:hover .hw_arrow { transform: translate(2px, -2px); } }
+  @media (prefers-reduced-motion: reduce) { .hw_tile, .hw_arrow { transition: none; } }
   a.hw_link:hover .work_article-h3 { color: var(--green-ink); }
   .work_article-h3 { transition: color .2s; }
-  .hw_quote { align-self: stretch; }
 
-  @media (max-width: 1199px) {
-    .hw_row { display: block; }
-    .hw_quote { margin-left: 72px; margin-top: 20px; }
+  @media (max-width: 991px) {
+    .hw_title { font-size: 24px; }
+    .hw_body { padding: 20px 16px 16px; }
   }
   @media (max-width: 767px) {
-    .hw_quote { margin-left: 0; }
+    .hw_grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .hw_tile { grid-row: auto; grid-template-rows: auto auto; }
   }
 
   /* More work for financial institutions (clients not named): three framed

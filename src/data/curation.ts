@@ -3,8 +3,10 @@
 
 /** Home page, "Selected work" > Case studies. */
 // Société Générale-FORGE first (a regulated issuer, for the banks reading the
-// page), then LI.FI, the Stellar Development Foundation and Ripple.
-export const homeFeaturedCases = ["societe-generale-forge", "lifi", "stellar-development-foundation", "ripple"];
+// page), then LI.FI, Talwex and Ripple, two tiles across. The Stellar
+// Development Foundation is left out here: its tools fill the open-source
+// band further down. Each tile's visual: src/lib/workVisuals.ts.
+export const homeFeaturedCases = ["societe-generale-forge", "lifi", "talwex", "ripple"];
 
 /** Home page, the section under the hero: the case studies whose quotes it
  * shows, one at a time (the first by default), over the client tiles. The

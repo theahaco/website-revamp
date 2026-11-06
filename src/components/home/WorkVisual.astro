@@ -1,0 +1,159 @@
+---
+// The visual on top of a "Selected work" tile (src/components/HomeWork.astro):
+// one of four kinds, chosen per case in src/lib/workVisuals.ts, drawn in the
+// vx kit's manner (white cards on a tinted panel with a faint grid). The
+// tile names the client in its byline, so no visual carries a client logo.
+import Flow from '../vx/Flow.astro';
+import NetMark from './NetMark.astro';
+import type { WorkVisual } from '../../lib/workVisuals';
+
+interface Props {
+  visual: WorkVisual;
+}
+const { visual: v } = Astro.props;
+---
+{v.kind === 'flow' ? (
+  <div class:list={['wv', 'wv--flow', `wv--${v.panel}`]}>
+    <Flow label={v.label} panel={v.panel} planned={v.planned} steps={v.steps} />
+  </div>
+) : (
+  <figure aria-label={v.label} class:list={['wv', `wv--${v.panel}`]}>
+    <div aria-hidden="true" class="wv_grid"></div>
+    {v.kind === 'asset' && (
+      <div class="wv_card">
+        <div class="wv_head">
+          <span class="wv_tile"><NetMark net={v.net} size={20} lazy /></span>
+          <span class="wv_text"><span class="wv_title">{v.title}</span><span class="wv_sub">{v.sub}</span></span>
+          {v.status && <span class="wv_status"><span aria-hidden="true" class="v-live"></span>{v.status}</span>}
+        </div>
+        <p class="wv_label">{v.heading}</p>
+        <ul class="wv_flags" role="list">
+          {v.flags.map((f) => (
+            <li class="wv_flag">
+              <span class="wv_text"><span class="wv_ftitle">{f.title}</span><span class="wv_sub">{f.sub}</span></span>
+              <span aria-hidden="true" class="wv_switch"></span>
+            </li>
+          ))}
+        </ul>
+        <p class="wv_foot"><span class="wv_account">{v.account}</span><span>{v.read}</span></p>
+      </div>
+    )}
+    {v.kind === 'routes' && (
+      <div class="wv_card">
+        <div class="wv_head">
+          <span class="wv_tile"><NetMark net={v.net} size={20} lazy /></span>
+          <span class="wv_text"><span class="wv_title">{v.title}</span><span class="wv_sub">{v.sub}</span></span>
+          {v.status && <span class="wv_status"><span aria-hidden="true" class="v-live"></span>{v.status}</span>}
+        </div>
+        <ul class="wv_routes" role="list">
+          {v.routes.map((r) => (
+            <li class="wv_route">
+              <span class:list={['wv_dir', `wv_dir--${r.dir.toLowerCase()}`]}>{r.dir}</span>
+              <span class="wv_what">{r.what}</span>
+              {r.via && <span class="wv_via"><span class="wv_vialabel">via</span> {r.via}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    {v.kind === 'path' && (
+      <div class="wv_card wv_card--path">
+        <p class="wv_label wv_label--top">{v.heading}</p>
+        <ol class="wv_path" role="list">
+          {v.steps.map((s) => (
+            <li class="wv_pstep">
+              <span aria-hidden="true" class="wv_node"></span>
+              <span class="wv_text"><span class="wv_ptitle">{s.title}</span>{s.sub && <span class="wv_sub">{s.sub}</span>}</span>
+            </li>
+          ))}
+          <li class="wv_pstep wv_pstep--end">
+            <span aria-hidden="true" class="wv_node wv_node--end"><NetMark net={v.end.net} size={16} lazy /></span>
+            <span class="wv_text"><span class="wv_ptitle">{v.end.title}</span>{v.end.sub && <span class="wv_sub">{v.end.sub}</span>}</span>
+          </li>
+        </ol>
+        {v.note && <p class="wv_note"><span aria-hidden="true" class="wv_notedot"></span>{v.note}</p>}
+      </div>
+    )}
+  </figure>
+)}
+
+<style>
+  /* The panel: fills its row of the tile grid, content centered */
+  .wv { position: relative; display: grid; place-items: center; height: 100%; min-height: 300px; margin: 0; padding: 32px 28px; border-radius: 14px; background: var(--tint-paper); container-type: inline-size; }
+  .wv--blue { background: var(--tint-blue); }
+  .wv--green { background: var(--tint-green); }
+  .wv--pink { background: var(--tint-pink); }
+  .wv--tan { background: var(--tint-tan); }
+  .wv_grid { position: absolute; inset: 0; border-radius: inherit; background-image: linear-gradient(rgba(26, 59, 96, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(26, 59, 96, .07) 1px, transparent 1px); background-size: 32px 32px; background-position: center; -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent); mask-image: radial-gradient(closest-side, #000 30%, transparent); pointer-events: none; }
+
+  /* The flow kind: the case page's Flow, drawn as this panel */
+  .wv--flow { padding: 0; background: none; }
+  .wv--flow :global(.vf) { width: 100%; height: 100%; padding: 32px 28px; border: 0; border-radius: 14px; }
+
+  .wv_card { position: relative; z-index: 1; width: 100%; max-width: 420px; padding: 16px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--white); box-shadow: var(--shadow-2); }
+  .wv_head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .wv_tile { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: var(--tint-blue); }
+  .wv--green .wv_tile { background: var(--tint-green); }
+  .wv_text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .wv_title { color: var(--deep-blue); font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .wv_sub { color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .wv_status { display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; height: 26px; margin-left: auto; padding: 0 11px 0 10px; border-radius: 999px; background: var(--tint-green); color: #2f6e10; font-size: 12px; font-weight: 600; line-height: 1; white-space: nowrap; }
+  .wv_status .v-live { width: 7px; height: 7px; }
+  .wv_label { margin: 16px 0 4px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
+  .wv_label--top { margin-top: 0; }
+
+  /* Asset: its flags, each a switch set on */
+  .wv_flags { margin: 0; padding: 0; list-style: none; }
+  .wv_flag { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .wv_ftitle { color: var(--ink); font-size: 14px; font-weight: 500; line-height: 1.3; }
+  .wv_switch { position: relative; flex-shrink: 0; width: 32px; height: 18px; border-radius: 999px; background: var(--vibrant-green); }
+  .wv_switch::after { content: ''; position: absolute; top: 3px; right: 3px; width: 12px; height: 12px; border-radius: 50%; background: var(--white); }
+  .wv_foot { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin: 4px 0 0; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.4; }
+  .wv_account { color: var(--deep-blue); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+
+  /* Routes: direction, what moves, through what */
+  .wv_routes { margin: 14px 0 0; padding: 0; list-style: none; }
+  .wv_route { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .wv_dir { justify-self: start; padding: 3px 8px; border-radius: 999px; background: var(--tint-blue); color: var(--deep-blue); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 1.3; text-transform: uppercase; }
+  .wv_dir--swap { background: var(--tint-green); color: #2f6e10; }
+  .wv_dir--out { background: var(--tint-tan); }
+  .wv_what { color: var(--ink); font-size: 14px; font-weight: 500; line-height: 1.3; }
+  .wv_via { padding: 3px 9px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--deep-blue); font-size: 12px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
+  .wv_vialabel { color: var(--muted); font-weight: 400; }
+
+  /* Path: steps across a dashed rail, the last one the outcome */
+  .wv_card--path { max-width: 460px; padding: 18px 16px 16px; }
+  .wv_path { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+  .wv_path::before { content: ''; position: absolute; top: 14px; left: 12.5%; right: 12.5%; border-top: 2px dashed rgba(26, 59, 96, .28); }
+  .wv_pstep { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; text-align: center; }
+  .wv_node { display: grid; place-items: center; width: 28px; height: 28px; border: 2px solid var(--deep-blue); border-radius: 50%; background: var(--white); box-shadow: 0 0 0 4px var(--white); }
+  .wv_node::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--deep-blue); }
+  .wv_node--end { border-color: var(--vibrant-green); box-shadow: 0 0 0 4px var(--white), 0 0 0 6px var(--tint-green); }
+  .wv_node--end::after { display: none; }
+  .wv_ptitle { color: var(--deep-blue); font-size: 13px; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+  .wv_pstep .wv_sub { font-size: 12px; text-wrap: balance; }
+  .wv_note { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 16px 0 0; padding: 8px 12px; border-radius: 10px; background: var(--tint-green); color: #2f6e10; font-size: 13px; font-weight: 600; line-height: 1.35; text-align: center; }
+  .wv_notedot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--vibrant-green); }
+
+  /* Narrow panels: the path runs down, the routes drop their tag column */
+  @container (max-width: 440px) {
+    .wv_path { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .wv_path::before { top: 14px; bottom: 14px; left: 13px; right: auto; border-top: 0; border-left: 2px dashed rgba(26, 59, 96, .28); }
+    .wv_pstep { flex-direction: row; align-items: center; gap: 12px; text-align: left; }
+    .wv_pstep .wv_text { align-items: flex-start; }
+  }
+  @container (max-width: 360px) {
+    .wv_card { padding: 14px 12px; }
+    .wv_route { grid-template-columns: 46px minmax(0, 1fr); row-gap: 6px; }
+    .wv_via { grid-column: 2; justify-self: start; }
+  }
+  /* Narrow cards: the status pill sits on the card's top edge, as in Flow */
+  @container (max-width: 420px) {
+    .wv_status { position: absolute; top: -12px; right: 12px; margin-left: 0; box-shadow: 0 0 0 3px var(--white); }
+  }
+  @media (max-width: 479px) {
+    .wv { min-height: 0; padding: 24px 14px; }
+    .wv--flow { padding: 0; }
+    .wv--flow :global(.vf) { padding: 28px 12px; }
+  }
+</style>
