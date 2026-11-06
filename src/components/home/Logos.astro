@@ -1,7 +1,7 @@
 ---
-// Home page section: logos, under the key figures and on the same paper band:
+// Home page section: logos, under the key figures (which stay in the open):
 // clients and partners, then the security auditors we have worked with, each
-// row under its label, each logo in its own white tile with space around it.
+// row under its label, each logo in its own framed tile with space around it.
 // A tile links only to the public case study of that same client; the others
 // stay static.
 
@@ -65,23 +65,22 @@ const auditors = [
 </section>
 
 <style>
-  /* The paper band continues from the key figures (no rule between them on
-     tablets and desktops; on phones the figures are in the hero) */
-  .lg { background: var(--tint-paper); }
+  /* On white, under one hairline at the width of the content (on phones the
+     key figures are in the hero, and the band's own rule takes over) */
   @media (min-width: 768px) { .lg { border-top: 0; } }
   .lg_container { padding-top: 0; padding-bottom: 0; row-gap: 0; }
-  .lg_inner { display: flex; flex-direction: column; gap: 40px; padding: 60px 0 88px; }
+  .lg_inner { display: flex; flex-direction: column; gap: 40px; padding: 48px 0 88px; border-top: 1px solid var(--line); }
   .lg_group { display: flex; flex-direction: column; gap: 22px; }
   .lg_label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; }
   .lg_dot { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
 
-  /* One white tile per logo, with space between the tiles */
+  /* One framed tile per logo, with space between the tiles */
   .lg_row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
   .lg_group--auditors .lg_row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .lg_cell { display: flex; min-width: 0; }
-  .lg_tile { display: grid; place-items: center; flex: 1; min-width: 0; height: 92px; padding: 0 20px; border-radius: 16px; background: var(--white); box-shadow: var(--shadow-1); color: var(--muted); text-decoration: none; transition: box-shadow .2s; }
+  .lg_tile { display: grid; place-items: center; flex: 1; min-width: 0; height: 92px; padding: 0 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); color: var(--muted); text-decoration: none; transition: border-color .2s, box-shadow .2s; }
   .lg_logo { display: block; width: auto; max-width: 100%; height: var(--h); }
-  .lg_tile--link:hover { box-shadow: var(--shadow-2); }
+  .lg_tile--link:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
   .lg_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
   .lg_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   @media (prefers-reduced-motion: reduce) { .lg_tile { transition: none; } }
@@ -97,7 +96,7 @@ const auditors = [
     .lg_tile { height: 84px; }
   }
   @media (max-width: 767px) {
-    .lg_inner { padding: 40px 0 56px; }
+    .lg_inner { padding: 40px 0 56px; border-top: 0; }
     .lg_logo { height: calc(var(--h) * .92); }
   }
   /* Phones: two a row */
