@@ -65,11 +65,11 @@ const auditors = [
 </section>
 
 <style>
-  /* On white, under one hairline at the width of the content (on phones the
-     key figures are in the hero, and the band's own rule takes over) */
+  /* On white, right under the key figures' blue banner (on phones the key
+     figures are in the hero, and the band's own rule takes over) */
   @media (min-width: 768px) { .lg { border-top: 0; } }
   .lg_container { padding-top: 0; padding-bottom: 0; row-gap: 0; }
-  .lg_inner { display: flex; flex-direction: column; gap: 40px; padding: 48px 0 88px; border-top: 1px solid var(--line); }
+  .lg_inner { display: flex; flex-direction: column; gap: 40px; padding: 64px 0 88px; }
   .lg_group { display: flex; flex-direction: column; gap: 22px; }
   .lg_label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; }
   .lg_dot { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
@@ -96,7 +96,7 @@ const auditors = [
     .lg_tile { height: 84px; }
   }
   @media (max-width: 767px) {
-    .lg_inner { padding: 40px 0 56px; border-top: 0; }
+    .lg_inner { padding: 40px 0 56px; }
     .lg_logo { height: calc(var(--h) * .92); }
   }
   /* Phones: two a row */

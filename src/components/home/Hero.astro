@@ -19,8 +19,7 @@ import { keyFigures, toolAdoption } from '../../data/site';
     <ul aria-label="Key figures" class="hero_figs" role="list">
       <li><span class="hero_figv">{keyFigures.deployments.replace('+', '')}<span class="hero_figplus">+</span></span><span class="hero_figl">Deployments on mainnet</span></li>
       <li><span class="hero_figv">{keyFigures.audits}</span><span class="hero_figl">Third-party security audits</span></li>
-      <li><span class="hero_figv">{toolAdoption.count}</span><span class="hero_figl">Projects using our open-source tools</span></li>
-      <li><span class="hero_figv"><span class="hero_figsince">Since</span> {keyFigures.founded}</span><span class="hero_figl">Building blockchain infrastructure</span></li>
+      <li><span class="hero_figv">{toolAdoption.count}</span><span class="hero_figl">Projects using our <span class="hero_nowrap">open-source</span> tools</span></li>
     </ul>
   </div>
   <HeroProof />
@@ -55,11 +54,11 @@ import { keyFigures, toolAdoption } from '../../data/site';
   /* Figures in the hero only on phones (the key figures band takes over above 767 px) */
   .hero_figs { display: none; }
   @media (max-width: 767px) {
-    .hero_figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; margin: 28px 0 0; padding: 22px 0 0; list-style: none; border-top: 1px solid var(--line); }
-    .hero_figs li { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .hero_figs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin: 28px 0 0; padding: 22px 0 0; list-style: none; border-top: 1px solid var(--line); }
+    .hero_figs li { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: baseline; column-gap: 14px; min-width: 0; }
     .hero_figv { font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -.03em; color: var(--deep-blue); }
     .hero_figplus { color: var(--green-ink); }
-    .hero_figsince { color: var(--muted); font-size: .45em; letter-spacing: 0; }
+    .hero_nowrap { white-space: nowrap; }
     .hero_figl { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
   }
   @media (max-width: 991px) {

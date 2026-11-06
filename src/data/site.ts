@@ -50,7 +50,8 @@ export const toolAdoption = { count: 137, date: 'November 2, 2026' };
 //   contracts: Hacken (EURCV launch contracts), Halborn (LI.FI on Stellar),
 //   Veridise (Stellar Registry), Runtime Verification (Moonlight core
 //   contracts) and two by Arda.
-// - founded: the year The Aha Company was founded (About).
+// - founded: the year The Aha Company was founded (About); not shown on the
+//   home page for now (taken out of the key figures in November 2026).
 export const keyFigures = { deployments: '20+', audits: 6, founded: 2021 };
 
 export const calendly = {

@@ -1,10 +1,9 @@
 ---
-// Home: the key figures, full width under the hero, in the open (tablets and
-// desktops; phones show them inside the hero). Numbers only, no icons, a
-// hairline between them: deployments on mainnet, third-party audits, projects
-// using our open-source tools (counted on the Open source page) and the year
-// we were founded. The values live in src/data/site.ts (keyFigures,
-// toolAdoption).
+// Home: the key figures, on a deep-blue banner full width under the hero
+// (tablets and desktops; phones show them inside the hero). Numbers only, a
+// hairline between them: deployments on mainnet, third-party security audits
+// and projects using our open-source tools (counted on the Open source page).
+// The values live in src/data/site.ts (keyFigures, toolAdoption).
 import { keyFigures, toolAdoption } from '../../data/site';
 ---
 <section aria-label="Key figures" class="kpi">
@@ -22,35 +21,27 @@ import { keyFigures, toolAdoption } from '../../data/site';
         <p class="kpi_value">{toolAdoption.count}</p>
         <p class="kpi_label">Projects using our <span class="kpi_nowrap">open-source</span> tools</p>
       </li>
-      <li class="kpi_cell" data-rv="stat-founded">
-        <p class="kpi_value"><span class="kpi_since">Since</span> {keyFigures.founded}</p>
-        <p class="kpi_label">Building blockchain infrastructure</p>
-      </li>
     </ul>
   </div>
 </section>
 
 <style>
-  /* In the open: four numbers on white, a hairline between them; the logo
-     tiles follow under one hairline (Logos.astro) */
-  .kpi { background: var(--white); border-top: 1px solid var(--line); }
+  /* The banner: white numbers on deep blue, a light hairline between them;
+     the logo tiles follow on white (Logos.astro) */
+  .kpi { background: var(--deep-blue); color: var(--white); }
   .kpi_inner { max-width: var(--container); margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px); }
-  .kpi_grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 64px 0 48px; list-style: none; }
-  .kpi_cell { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding: 0 32px; border-left: 1px solid var(--line); }
+  .kpi_grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 60px 0; list-style: none; }
+  .kpi_cell { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding: 0 40px; border-left: 1px solid rgba(255, 255, 255, .16); }
   .kpi_cell:first-child { padding-left: 0; border-left: 0; }
-  .kpi_value { margin: 0; font-size: clamp(42px, 4.2vw, 56px); font-weight: 500; line-height: 1; letter-spacing: -.035em; color: var(--deep-blue); white-space: nowrap; }
-  .kpi_plus { color: var(--green-ink); }
-  .kpi_since { color: var(--muted); font-size: .42em; font-weight: 500; letter-spacing: 0; }
-  .kpi_label { margin: 0; max-width: 24ch; font-size: 15px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
+  .kpi_value { margin: 0; color: var(--white); font-size: clamp(44px, 4.4vw, 60px); font-weight: 500; line-height: 1; letter-spacing: -.035em; white-space: nowrap; }
+  /* Vibrant green on deep blue passes for large text (3.5:1) */
+  .kpi_plus { color: var(--vibrant-green); }
+  .kpi_label { margin: 0; max-width: 26ch; color: rgba(255, 255, 255, .76); font-size: 15px; line-height: 1.45; text-wrap: pretty; }
   .kpi_nowrap { white-space: nowrap; }
 
-  @media (max-width: 1199px) {
-    .kpi_cell { padding: 0 24px; }
-  }
-  /* Tablets: two by two, the hairline only between the two columns */
   @media (max-width: 991px) {
-    .kpi_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; padding: 48px 0 40px; }
-    .kpi_cell:nth-child(odd) { padding-left: 0; border-left: 0; }
+    .kpi_grid { padding: 48px 0; }
+    .kpi_cell { padding: 0 24px; }
   }
   /* Phones show the figures inside the hero instead */
   @media (max-width: 767px) {
