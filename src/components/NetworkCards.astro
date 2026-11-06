@@ -1,12 +1,18 @@
 ---
-// Network cards, logo first: the home "Networks" section and the cards at the
-// bottom of /networks. A card links to the network's page only when it has
-// one (`href`); the others are plain cards, without an arrow, which can carry
-// a status line and a link of their own (`link`, e.g. to /contact). `desc` is
-// HTML, so it must be trusted text.
+// Network cards as the site's tiles (the tool tiles of /open-source): white,
+// a 1 px line, 16 px corners, the network's symbol in an icon box first, then
+// the name, the line, and a ruled foot with the next step. A tile links to
+// the network's page only when it has one (`href`), with the arrow in its
+// corner; the others are plain tiles, without an arrow, which can carry a
+// status line and a link of their own (`link`, e.g. to /contact). `desc` is
+// HTML, so it must be trusted text. Used by /networks (and by the former home
+// section, HomeNetworks.astro, which no page renders).
+import NetMark from './home/NetMark.astro';
+
 interface Item {
   id: string;
   name: string;
+  /** The network's logo, drawn only for a network NetMark does not know. */
   logo: string;
   desc: string;
   href?: string;
@@ -18,86 +24,77 @@ interface Props {
   items: Item[];
 }
 const { items } = Astro.props;
-// Each mark at the height that gives the four the same visual weight, with
-// its intrinsic aspect ratio (width / height) so the space is kept while it loads.
-const marks: Record<string, { h: number; ratio: number }> = {
-  stellar: { h: 30, ratio: 106 / 26 },
-  xrpl: { h: 34, ratio: 313 / 80 },
-  canton: { h: 30, ratio: 1432 / 369 },
-  ethereum: { h: 34, ratio: 320 / 80 },
-};
-const size = (id: string) => {
-  const m = marks[id] ?? { h: 30, ratio: 4 };
-  return { h: m.h, w: Math.round(m.h * m.ratio) };
-};
+const nets = ['stellar', 'xrpl', 'canton', 'ethereum'] as const;
+type Net = (typeof nets)[number];
+const isNet = (id: string): id is Net => (nets as readonly string[]).includes(id);
 ---
 <ul class="nwc" role="list">
   {items.map((n) => {
-    const Card = n.href ? 'a' : 'div';
+    const Tile = n.href ? 'a' : 'div';
     return (
       <li class="nwc_item">
-        <Card class:list={['nwc_card', !n.href && 'nwc_card--static']} href={n.href}>
-          <div class="nwc_tile">
-            <img class="nwc_logo" src={n.logo} alt="" width={size(n.id).w} height={size(n.id).h} style={`--h:${size(n.id).h}px`} loading="lazy" decoding="async" />
-            {n.href && <span aria-hidden="true" class="nwc_go">↗</span>}
-          </div>
+        <Tile class:list={['nwc_tile', !n.href && 'nwc_tile--static']} href={n.href}>
+          <span class="nwc_top">
+            <span class="v-iconbox nwc_icon">{isNet(n.id) ? <NetMark net={n.id} size={24} lazy /> : <img alt="" class="nwc_logo" height="24" loading="lazy" src={n.logo} />}</span>
+            {n.href && <span aria-hidden="true" class="nwc_arrow">↗</span>}
+          </span>
+          <h3 class="nwc_name">{n.name}</h3>
           <div class="nwc_body">
-            <h3 class="nwc_name">{n.name}</h3>
             <p class="nwc_desc" set:html={n.desc} />
             {n.status && <p class="nwc_status">{n.status}</p>}
+          </div>
+          <div class="nwc_foot">
             {n.href && n.cta && <span class="nwc_link">{n.cta} <span aria-hidden="true">→</span></span>}
             {!n.href && n.link && <a class="nwc_link" href={n.link.href}>{n.link.label}&nbsp;<span aria-hidden="true">→</span></a>}
           </div>
-        </Card>
+        </Tile>
       </li>
     );
   })}
 </ul>
 
 <style>
-  /* One frame, the cards sharing 1 px rules (as the other grids of the page) */
-  .nwc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; width: 100%; margin: 0; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
-  .nwc_item { display: flex; min-width: 0; }
-  .nwc_card { display: flex; flex-direction: column; width: 100%; background: var(--white); color: var(--ink); text-decoration: none; transition: background-color .2s; }
-  a.nwc_card:hover { background: var(--paper); }
-  a.nwc_card:focus-visible { outline-offset: -3px; }
-  .nwc_card--static { cursor: default; }
-  .nwc_tile { position: relative; display: grid; place-items: center; height: 96px; padding: 0 24px; border-bottom: 1px solid var(--line); background: var(--tint-paper); }
-  .nwc_logo { display: block; width: auto; max-width: 100%; height: var(--h, 30px); }
-  .nwc_go { position: absolute; top: 14px; right: 14px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--white); color: var(--deep-blue); font-size: 15px; line-height: 1; opacity: 0; transform: translate(-3px, 3px); transition: opacity .2s, transform .2s; }
-  a.nwc_card:hover .nwc_go, a.nwc_card:focus-visible .nwc_go { opacity: 1; transform: none; }
-  .nwc_body { display: flex; flex: 1; flex-direction: column; gap: 10px; padding: 24px 24px 26px; }
-  .nwc_name { margin: 0; font-family: var(--font-display); font-size: 26px; font-style: italic; font-weight: 400; line-height: 1.2; color: var(--deep-blue); transition: color .2s; }
-  .nwc_desc { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+  /* Four across; the tiles share their rows (subgrid), so names, lines and
+     feet line up */
+  .nwc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; width: 100%; margin: 0; padding: 0; list-style: none; }
+  .nwc_item { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; min-width: 0; }
+  .nwc_tile { position: relative; display: grid; grid-row: 1 / span 4; grid-template-rows: subgrid; row-gap: 0; min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--white); color: var(--ink); text-decoration: none; transition: border-color .2s, box-shadow .2s; }
+  a.nwc_tile:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  a.nwc_tile:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 2px; }
+  .nwc_tile--static { cursor: default; }
+  .nwc_top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .nwc_logo { display: block; width: auto; max-width: 36px; height: 24px; object-fit: cover; object-position: left center; }
+  .nwc_arrow { color: var(--muted-2); font-size: 18px; line-height: 1; transition: color .2s, transform .2s; }
+  a.nwc_tile:hover .nwc_arrow { color: var(--green-ink); transform: translate(2px, -2px); }
+  .nwc_name { margin: 0 0 8px; color: var(--deep-blue); font-family: var(--font-display); font-size: 26px; font-style: italic; font-weight: 400; line-height: 1.15; }
+  .nwc_body { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+  .nwc_desc { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
   .nwc_desc :global(a) { position: relative; z-index: 1; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
   .nwc_desc :global(a:hover) { color: var(--green-ink); }
-  .nwc_link { margin-top: auto; padding-top: 10px; font-size: 14px; font-weight: 600; color: var(--deep-blue); transition: color .2s; }
-  a.nwc_card:hover .nwc_name, a.nwc_card:hover .nwc_link { color: var(--green-ink); }
-  /* A card without a page: its status, then its own link, at the foot of the card */
-  .nwc_status { margin: auto 0 0; padding-top: 10px; font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--muted); }
-  .nwc_status + .nwc_link { margin-top: 0; padding-top: 4px; }
-  a.nwc_link { align-self: flex-start; text-decoration: none; }
-  a.nwc_link:hover { color: var(--green-ink); }
-  @media (pointer: coarse) { a.nwc_link { display: inline-flex; align-items: center; min-height: 44px; padding-top: 0; } }
+  /* A tile without a page: its status under the line */
+  .nwc_status { margin: 0; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1.4; }
+  .nwc_foot { display: flex; align-items: center; padding-top: 16px; border-top: 1px solid var(--line); }
+  .nwc_link { color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.4; text-decoration: none; transition: color .2s; }
+  a.nwc_tile:hover .nwc_link, a.nwc_link:hover { color: var(--green-ink); }
+  @media (pointer: coarse) { a.nwc_link { display: inline-flex; align-items: center; min-height: 44px; } .nwc_foot { padding-top: 6px; } }
   @media (prefers-reduced-motion: reduce) {
-    .nwc_go { transform: none; transition: none; }
+    .nwc_tile, .nwc_arrow { transition: none; }
+    a.nwc_tile:hover .nwc_arrow { transform: none; }
   }
-  @media (max-width: 991px) {
+  @media (max-width: 1199px) {
     .nwc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  /* Phones: one card per row, the logo tile on the left */
+  /* Phones: one tile per row, the icon box beside the name (as the tool tiles) */
   @media (max-width: 599px) {
-    .nwc { grid-template-columns: minmax(0, 1fr); }
-    .nwc_card { flex-direction: row; }
-    .nwc_tile { flex: 0 0 120px; height: auto; min-height: 104px; padding: 0 12px; border-right: 1px solid var(--line); border-bottom: 0; }
-    .nwc_logo { height: calc(var(--h, 30px) * .8); }
-    .nwc_go { display: none; }
-    .nwc_body { gap: 6px; padding: 16px 18px 18px; }
-    .nwc_name { font-size: 22px; }
-  }
-  /* Small phones: the logo tile above the text again, so the text keeps its width */
-  @media (max-width: 374px) {
-    .nwc_card { flex-direction: column; }
-    .nwc_tile { flex: none; min-height: 72px; border-right: 0; border-bottom: 1px solid var(--line); }
+    .nwc { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .nwc_item { display: block; grid-row: auto; }
+    .nwc_tile { grid-template-columns: 40px minmax(0, 1fr); grid-template-rows: auto; column-gap: 14px; padding: 18px 18px 16px 16px; }
+    .nwc_top { display: contents; }
+    .nwc_icon { grid-column: 1; grid-row: 1; width: 40px; height: 40px; border-radius: 10px; }
+    .nwc_icon :global(.netmark) { transform: scale(.84); }
+    .nwc_arrow { position: absolute; top: 16px; right: 16px; font-size: 16px; }
+    .nwc_name { grid-column: 2; grid-row: 1; align-self: center; margin: 0; padding-right: 24px; font-size: 22px; }
+    .nwc_body { grid-column: 1 / -1; gap: 8px; padding: 12px 0 16px; }
+    .nwc_foot { grid-column: 1 / -1; padding-top: 12px; }
   }
 </style>

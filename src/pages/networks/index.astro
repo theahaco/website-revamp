@@ -1,15 +1,20 @@
 ---
 // Generated from the Webflow page "/networks". Edit freely: this file is the source now.
-// The four-question route builder is filled in by src/scripts/integrate.js
-// (data-net hooks); the network cards (shared component, no longer on the home page)
-// (src/components/NetworkCards.astro), with this page's own lines.
+// Bands as on the home page: the header on paper, the four questions on a deep
+// blue band (src/components/networks/RouteBuilder.astro, filled in by
+// src/scripts/integrate.js), the network cards as tiles on paper
+// (src/components/NetworkCards.astro, with this page's own lines), then the
+// closing band.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import NetworkCards from '../../components/NetworkCards.astro';
+import RouteBuilder from '../../components/networks/RouteBuilder.astro';
 import { networkMarks } from '../../lib/content';
 
-// Header figure: one open question, the networks we build on (the marks of the cards
-// below), drawn like the route builder: 2 px rules, a deep blue node.
+// Header figure: one open question, the networks we build on (the marks of the
+// cards below), drawn as the Flow visuals: dashed branches from a deep blue
+// node, each landing on a dot at a white logo tile, over a faint blueprint
+// grid. Under 1200 px the four logos are a grid of tiles.
 const hub = [
   { id: 'stellar', logo: networkMarks.Stellar, w: 106 / 26, h: 24 },
   { id: 'xrpl', logo: networkMarks.XRPL, w: 313 / 80, h: 28 },
@@ -17,8 +22,10 @@ const hub = [
   { id: 'ethereum', logo: networkMarks.Ethereum, w: 320 / 80, h: 26 },
 ].map((n, i) => {
   const y = 10 + i * 76;
-  const lw = n.w * n.h;
-  return { ...n, y, cy: y + 26, lx: 140 + (186 - lw) / 2, ly: y + (52 - n.h) / 2, lw };
+  const cy = y + 26;
+  // Each branch leaves the node already heading for its tile, so the dashes never pile up
+  const wire = `M50 ${(150 + (cy - 150) * 0.08).toFixed(1)} C 84 ${(150 + (cy - 150) * 0.42).toFixed(1)}, 102 ${cy}, 140 ${cy}`;
+  return { ...n, y, wire, lw: Math.round(n.w * n.h) };
 });
 // Stellar and XRPL link to their pages. Canton and Ethereum have none: a status
 // line and a call instead. Canton's status is the About lede's; Ethereum's
@@ -36,32 +43,26 @@ const cards = [
   <section>
     <div class="svc_introcontainer">
       <div class="net_intro">
-        <div class="lg_header"><p class="v-eyebrow page_eyebrow">Integrate</p><h1 class="intro_h1">Which network fits your case? <span class="v-soft">Four questions shape the choice.</span></h1><p class="art_lede">We do not score networks on a web page: the answer depends on your custody, your counterparties and your regulator. Pick your branches, then bring them to a thirty-minute call.</p><p class="net_jump">Already chose? <a href="/networks/stellar"><img alt="" class="cs_netmark" height="16" src={networkMarks.Stellar} width="16" />Stellar</a> · <a href="/networks/xrpl"><img alt="" class="cs_netmark" height="16" src={networkMarks.XRPL} width="21" />XRPL</a></p></div>
-        <figure aria-hidden="true" class="net_hub">
-          <svg viewBox="0 0 330 300" width="330" height="300">
-            <g fill="none" stroke="rgba(26,59,96,.2)" stroke-width="2">
-              {hub.map((n) => <path d={`M56 150 C 100 150, 96 ${n.cy}, 140 ${n.cy}`} />)}
-            </g>
-            <circle cx="30" cy="150" r="26" fill="#1A3B60" />
-            <text x="30" y="156" fill="#fff" font-family="Space Grotesk, system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">?</text>
-            {hub.map((n) => (
-              <g>
-                <rect x="140" y={n.y} width="186" height="52" rx="12" fill="#fff" stroke="rgba(26,59,96,.2)" stroke-width="2" />
-                <image href={n.logo} x={n.lx.toFixed(1)} y={n.ly.toFixed(1)} width={n.lw.toFixed(1)} height={n.h} />
-              </g>
-            ))}
+        <div class="lg_header"><p class="v-eyebrow page_eyebrow">Networks</p><h1 class="intro_h1">Which network fits your case? <span class="v-soft">Four questions shape the choice.</span></h1><p class="art_lede">We do not score networks on a web page: the answer depends on your custody, your counterparties and your regulator. Pick your branches, then bring them to a thirty-minute call.</p><p class="net_jump">Already chose? <a href="/networks/stellar"><img alt="" class="cs_netmark" height="16" src={networkMarks.Stellar} width="16" />Stellar</a> · <a href="/networks/xrpl"><img alt="" class="cs_netmark" height="16" src={networkMarks.XRPL} width="21" />XRPL</a></p></div>
+        <figure aria-hidden="true" class="nh">
+          <div class="nh_grid v-blueprint"></div>
+          <svg class="nh_wires" height="300" viewBox="0 0 330 300" width="330">
+            {hub.map((n) => <path d={n.wire} />)}
           </svg>
+          <span class="nh_node">?</span>
+          <ul class="nh_tiles">
+            {hub.map((n) => <li class="nh_tile" style={`--y:${n.y}px`}><img alt="" height={n.h} src={n.logo} style={`--h:${n.h}px`} width={n.lw} /></li>)}
+          </ul>
         </figure>
       </div>
     </div>
   </section>
-  <section class="ab_white"><div class="net_treegrid"><ol aria-label="Questions" class="net_qs" data-net="qs" role="list"></ol><aside aria-label="Your route" class="net_route"><div class="net_routehead"><span class="net_routelabel">Your route</span><span class="net_routeprogress" data-net="progress">0 of 4</span></div><ul class="net_routelist" data-net="routelist" role="list"></ul><div class="net_routefoot"><p class="net_verdict" data-net="verdict">Pick a branch on each question. The route fills in here.</p><a class="btn-green" data-net="cta" href="/contact">Schedule a call with these answers</a><a class="net_reset w-button" data-net="reset" href="#">Start over</a></div></aside></div></section>
-  <section class="footer_section">
+  <RouteBuilder />
+  <section aria-labelledby="nt-title" class="nt">
     <div class="ab_container">
-      <div class="net_explorehead">
-        <p class="v-eyebrow">Networks</p>
-        <h2 class="ab_h2">Explore the networks we build on</h2>
-        <p class="net_carddesc">What we do on each network, and how to start an integration there.</p>
+      <div class="nt_head">
+        <p class="v-eyebrow">Where we build</p>
+        <h2 class="ab_h2 nt_h2" id="nt-title">Explore the networks we build on. <span class="v-soft">What we do on each network, and how to start an integration there.</span></h2>
       </div>
       <div data-net="cards"><NetworkCards items={cards} /></div>
     </div>
@@ -72,12 +73,38 @@ const cards = [
 
 <style>
   .net_jump .cs_netmark { margin-right: 6px; vertical-align: -3px; }
-  .net_hub { display: none; margin: 0; }
-  .net_hub svg { display: block; width: 100%; height: auto; }
+
+  /* Header figure. Under 1200 px: the four logos as a row of white tiles
+     (two by two on phones), under the text */
+  .nh { position: relative; margin: 36px 0 0; }
+  .nh_grid, .nh_wires, .nh_node { display: none; }
+  .nh_tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 760px; margin: 0; padding: 0; list-style: none; }
+  .nh_tile { position: relative; display: grid; place-items: center; height: 56px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--white); box-shadow: var(--shadow-1); }
+  .nh_tile img { display: block; width: auto; max-width: calc(100% - 20px); height: var(--h); }
+  /* Wide screens: the figure beside the text, the logo tiles on dashed branches */
   @media (min-width: 1200px) {
-    .net_intro { display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 1fr); column-gap: 24px; align-items: center; }
-    .net_hub { display: block; justify-self: end; width: 100%; max-width: 330px; }
+    .net_intro { display: grid; grid-template-columns: minmax(0, 760px) 330px; justify-content: space-between; column-gap: 14px; align-items: center; }
+    .nh { justify-self: end; width: 330px; height: 300px; margin: 0; }
+    .nh_grid { position: absolute; inset: -56px -48px -56px -40px; display: block; -webkit-mask-image: radial-gradient(closest-side, #000 40%, transparent); mask-image: radial-gradient(closest-side, #000 40%, transparent); }
+    .nh_wires { position: absolute; inset: 0; display: block; overflow: visible; }
+    .nh_wires path { fill: none; stroke: rgba(26, 59, 96, .28); stroke-width: 2; stroke-dasharray: 6 5; }
+    .nh_node { position: absolute; top: 124px; left: 4px; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--deep-blue); color: var(--white); font-family: var(--font-ui); font-size: 19px; font-weight: 700; line-height: 1; box-shadow: 0 0 0 6px rgba(26, 59, 96, .07), var(--shadow-1); }
+    .nh_node::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(255, 255, 255, .22); border-radius: 50%; }
+    .nh_tiles { position: absolute; inset: 0; display: block; max-width: none; }
+    .nh_tile { position: absolute; top: var(--y); left: 140px; width: 186px; height: 52px; }
+    /* Where each branch lands: a deep blue dot on a ring (the Flow visuals' chips) */
+    .nh_tile::before { content: ''; position: absolute; top: calc(50% - 4px); left: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--deep-blue); box-shadow: 0 0 0 3px var(--paper); }
   }
-  .net_explorehead { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-  .net_explorehead .ab_h2, .net_explorehead .net_carddesc { margin: 0; }
+  @media (max-width: 599px) {
+    .nh { margin-top: 28px; }
+    .nh_tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .nh_tile { height: 52px; border-radius: 12px; }
+    .nh_tile img { height: calc(var(--h) * .86); }
+  }
+
+  /* The networks: the tiles on paper, under a two-tone title */
+  .nt { background: var(--paper); }
+  .nt_head { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .nt_h2 { max-width: 20em; text-wrap: balance; }
+  .nt_h2 .v-soft { display: block; }
 </style>

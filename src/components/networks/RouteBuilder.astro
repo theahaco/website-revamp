@@ -1,0 +1,183 @@
+---
+// /networks: the four questions as steps on a deep blue band, in the language
+// of the home page's "How an engagement runs" (home/Process.astro): an icon
+// node with its number on a rail, the question, then its options, each a
+// native radio button. A picked option turns white (as the current tab
+// there) and its node turns green. Under the steps, the "Your route" card
+// fills in as the visitor answers, next to the call button that carries the
+// answers to /contact; src/scripts/integrate.js keeps the picks and fills it
+// in (data-net hooks). Nothing here ranks, scores or recommends a network.
+import Icon from '../Icon.astro';
+import { QS } from '../../data/questions';
+
+// One icon per question (src/icons)
+const icons: Record<string, string> = { what: 'cube', who: 'list-magnifying-glass', where: 'globe-hemisphere-west', fund: 'hand-coins' };
+// The check of the Flow visuals' chips (vx/Flow.astro)
+const check = '<svg fill="none" height="12" viewBox="0 0 14 14" width="12"><path d="M2.5 7.4 5.6 10.3 11.5 3.9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" /></svg>';
+---
+<section aria-labelledby="nq-title" class="process_section nq">
+  <div class="section-inner nq_inner">
+    <div class="nq_titles">
+      <p class="v-eyebrow v-eyebrow--dark">Four questions</p>
+      <h2 class="process_h2 nq_h2" id="nq-title">Every branch ends in the same place. <span class="v-soft">The answer is the call.</span></h2>
+    </div>
+
+    <ol aria-label="Questions" class="nq_steps" data-net="qs" role="list">
+      {QS.map((qd, qi) => (
+        <li class="nq_step" data-q={qd.id}>
+          <div aria-hidden="true" class="nq_rail">
+            <span class="nq_node"><Icon name={icons[qd.id]} size={26} /><span class="nq_num">{qi + 1}</span></span>
+            <span class="nq_line"></span>
+          </div>
+          <h3 class="nq_h3" id={`nq-${qd.id}`}>{qd.q}</h3>
+          <div aria-labelledby={`nq-${qd.id}`} class="nq_opts" role="radiogroup">
+            {qd.opts.map((op, oi) => (
+              <label class="nq_opt">
+                <input autocomplete="off" class="nq_input" data-opt={oi} name={`nq-${qd.id}`} type="radio" value={String(oi)} />
+                <span aria-hidden="true" class="nq_radio"><Fragment set:html={check} /></span>
+                <span class="nq_optlabel">{op}</span>
+              </label>
+            ))}
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <aside aria-labelledby="nq-route" class="nq_route">
+      <div class="nq_routehead">
+        <h3 class="nq_routetitle" id="nq-route">Your route</h3>
+        <p class="nq_progress"><span aria-hidden="true" class="nq_dots">{QS.map((qd) => <i data-dot={qd.id}></i>)}</span><span data-net="progress">0 of 4</span></p>
+      </div>
+      <ol class="nq_cells" data-net="routelist" role="list">
+        {QS.map((qd) => (
+          <li class="nq_cell" data-rq={qd.id}>
+            <span class="nq_cellq">{qd.q}</span>
+            <span class="nq_cella"><span aria-hidden="true" class="nq_cellmark"><Fragment set:html={check} /></span><span data-ra="1">Not answered</span></span>
+          </li>
+        ))}
+      </ol>
+      <div class="nq_routefoot">
+        <span aria-hidden="true" class="nq_callnode"><Icon name="phone-call" size={22} /></span>
+        <div class="nq_callcopy">
+          <p aria-live="polite" class="nq_verdict" data-net="verdict">Pick a branch on each question. The route fills in here.</p>
+          <p class="nq_note">An engineer reads your answers and tells you what the integration takes, and where it should run.</p>
+        </div>
+        <div class="nq_actions">
+          <a class="btn-green" data-net="cta" href="/contact">Schedule a call with these answers</a>
+          <button class="nq_reset" data-net="reset" type="button">Start over</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  /* The band: Process's paddings, a little tighter */
+  .nq_inner { row-gap: 0; padding-top: 112px; padding-bottom: 112px; }
+  .nq_titles { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .nq_h2 { max-width: 16em; text-wrap: balance; }
+  .nq_h2 .v-soft { display: block; color: rgba(255, 255, 255, .6); }
+
+  /* Four steps across. Rail, question and the three options line up across
+     the steps (subgrid), so each row of options shares one height. */
+  .nq_steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 32px; margin: 48px 0 0; padding: 0; list-style: none; }
+  .nq_step { display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 0; min-width: 0; }
+  .nq_rail { display: flex; align-items: center; margin-bottom: 24px; }
+  .nq_node { position: relative; display: grid; place-items: center; flex-shrink: 0; width: 56px; height: 56px; border: 2px solid rgba(246, 226, 255, .55); border-radius: 50%; background: var(--deep-blue-2); color: #fff; transition: background-color .2s, border-color .2s; --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+  /* The step number, cut out of the node's ring */
+  .nq_num { position: absolute; top: -6px; right: -8px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 999px; background: var(--cool-pink); box-shadow: 0 0 0 3px var(--deep-blue); color: var(--deep-blue); font-size: 12px; font-weight: 700; line-height: 1; }
+  .nq_line { flex: 1; height: 2px; margin-right: -32px; background: rgba(246, 226, 255, .3); transition: background-color .2s; }
+  .nq_step:last-child .nq_line { visibility: hidden; }
+  /* An answered question: its node turns green, as the last step of Process */
+  .nq_step.is-done .nq_node { border-color: var(--vibrant-green); background: var(--vibrant-green); --icon-tint: #fff; --icon-tint-opacity: .3; }
+  .nq_step.is-done .nq_line { background: var(--vibrant-green); }
+  .nq_h3 { margin: 0 0 16px; color: #fff; font-family: var(--font-ui); font-size: 20px; font-style: normal; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+
+  /* The options: Process's output boxes; picked, white, as the current tab */
+  .nq_opts { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; min-width: 0; }
+  .nq_opt { position: relative; display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 52px; margin: 0 0 8px; padding: 11px 14px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 12px; background: rgba(255, 255, 255, .05); color: #fff; font-size: 15px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s; }
+  .nq_opt:last-child { margin-bottom: 0; }
+  .nq_opt:hover { border-color: rgba(255, 255, 255, .36); background: rgba(255, 255, 255, .09); }
+  /* The radio itself stays in the page for the keyboard and screen readers;
+     the box draws it, and its focus ring is white on the band */
+  .nq_input { position: absolute; top: 50%; left: 14px; width: 20px; height: 20px; margin: -10px 0 0; opacity: 0; cursor: pointer; }
+  .nq_opt:has(.nq_input:focus-visible) { outline: 2px solid #fff; outline-offset: 2px; }
+  .nq_radio { display: grid; place-items: center; flex-shrink: 0; width: 20px; height: 20px; border: 2px solid rgba(255, 255, 255, .45); border-radius: 50%; color: #fff; transition: background-color .2s, border-color .2s; }
+  .nq_radio :global(svg) { opacity: 0; }
+  .nq_step.is-done .nq_opt:not(:has(.nq_input:checked)) { color: rgba(255, 255, 255, .78); }
+  .nq_opt:has(.nq_input:checked) { border-color: #fff; background: #fff; color: var(--deep-blue); }
+  .nq_opt:has(.nq_input:checked) .nq_radio { border-color: var(--vibrant-green); background: var(--vibrant-green); }
+  .nq_opt:has(.nq_input:checked) .nq_radio :global(svg) { opacity: 1; }
+
+  /* The route: a white card on the band, one cell per question (questions on
+     one row, answers on the next), then the call */
+  .nq_route { margin-top: 40px; overflow: hidden; border-radius: var(--radius-lg); background: var(--white); color: var(--ink); box-shadow: 0 2px 6px rgba(8, 20, 38, .18), 0 24px 48px rgba(8, 20, 38, .26); }
+  .nq_route :focus-visible { outline-color: var(--green-ink); }
+  .nq_routehead { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--line); }
+  .nq_routetitle { margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 22px; font-style: italic; font-weight: 400; line-height: 1.2; white-space: nowrap; }
+  .nq_progress { display: inline-flex; align-items: center; gap: 10px; height: 28px; margin: 0; padding: 0 12px; border-radius: 999px; background: var(--tint-blue); color: var(--deep-blue); font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; }
+  .nq_dots { display: inline-flex; gap: 4px; }
+  .nq_dots i { width: 14px; height: 4px; border-radius: 2px; background: var(--line-strong); }
+  .nq_dots i.is-on { background: var(--vibrant-green); }
+  .nq_cells { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+  .nq_cell { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 8px; align-content: start; min-width: 0; padding: 16px 24px 20px; }
+  .nq_cell + .nq_cell { border-left: 1px solid var(--line); }
+  .nq_cellq { color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .nq_cella { display: flex; align-items: flex-start; gap: 10px; color: var(--muted); font-size: 15px; font-weight: 500; line-height: 1.4; text-wrap: pretty; }
+  .nq_cellmark { display: grid; place-items: center; flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px; border: 1.5px dashed var(--muted-2); border-radius: 50%; color: #fff; }
+  .nq_cellmark :global(svg) { opacity: 0; }
+  .nq_cell.is-done .nq_cella { color: var(--deep-blue); font-weight: 600; }
+  .nq_cell.is-done .nq_cellmark { border: 0; background: var(--vibrant-green); }
+  .nq_cell.is-done .nq_cellmark :global(svg) { opacity: 1; }
+  .nq_routefoot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; padding: 18px 24px; border-top: 1px solid var(--line); background: var(--tint-blue); }
+  .nq_callnode { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--vibrant-green); color: #fff; --icon-tint: #fff; --icon-tint-opacity: .3; }
+  .nq_callcopy { display: flex; flex: 1 1 360px; flex-direction: column; gap: 4px; min-width: 0; }
+  .nq_verdict { margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 20px; font-style: italic; line-height: 1.3; text-wrap: pretty; }
+  .nq_note { max-width: 62ch; margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+  .nq_actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .nq_reset { margin: 0; padding: 0; border: 0; background: none; color: var(--ink-2); font: inherit; font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .nq_reset:hover { color: var(--green-ink); }
+  @media (prefers-reduced-motion: reduce) { .nq_node, .nq_line, .nq_opt, .nq_radio { transition: none; } }
+  @media (pointer: coarse) { .nq_reset { min-height: 44px; } }
+
+  /* Below 1200 px the four columns get too narrow for the options: the steps
+     go down, the node and its rail on the left (as Process on phones) */
+  @media (max-width: 1199px) {
+    .nq_inner { padding-top: 96px; padding-bottom: 96px; }
+    .nq_steps { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
+    .nq_step { grid-row: auto; grid-template-columns: 48px minmax(0, 1fr); grid-template-rows: auto; column-gap: 18px; }
+    .nq_rail { flex-direction: column; grid-column: 1; grid-row: 1 / span 2; margin: 0; }
+    .nq_node { width: 48px; height: 48px; }
+    .nq_node :global(.icon) { width: 24px; height: 24px; }
+    .nq_line { width: 2px; height: auto; margin: 0; }
+    .nq_h3 { grid-column: 2; margin-bottom: 14px; padding-top: 11px; font-size: 18px; }
+    .nq_opts { display: flex; flex-direction: column; gap: 8px; grid-column: 2; grid-row: auto; padding-bottom: 40px; }
+    .nq_opt { margin: 0; }
+    .nq_step:last-child .nq_opts { padding-bottom: 0; }
+    .nq_cells { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .nq_cell:nth-child(3) { border-left: 0; }
+    .nq_cell:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 767px) {
+    .nq_inner { padding-top: 72px; padding-bottom: 72px; }
+  }
+  /* Phones: the route card in one column, the button at full width */
+  @media (max-width: 599px) {
+    .nq_inner { padding-top: 64px; padding-bottom: 64px; }
+    .nq_steps { margin-top: 40px; }
+    .nq_opt { min-height: 48px; padding: 11px 14px 11px 12px; gap: 11px; }
+    .nq_input { left: 12px; }
+    .nq_routehead { padding: 14px 18px; }
+    .nq_routetitle { font-size: 20px; }
+    .nq_cells { grid-template-columns: minmax(0, 1fr); }
+    .nq_cell { row-gap: 6px; padding: 14px 18px 16px; }
+    .nq_cell + .nq_cell { border-top: 1px solid var(--line); border-left: 0; }
+    .nq_routefoot { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 16px 14px; padding: 18px; }
+    .nq_callnode { align-self: start; width: 40px; height: 40px; }
+    .nq_verdict { font-size: 18px; }
+    .nq_actions { grid-column: 1 / -1; flex-direction: column; align-items: stretch; gap: 4px; }
+    .nq_actions .btn-green { white-space: normal; text-align: center; }
+    .nq_reset { align-self: flex-start; padding: 10px 0; }
+  }
+  @media (max-width: 359px) { .nq_dots { display: none; } }
+</style>

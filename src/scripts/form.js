@@ -26,7 +26,7 @@ export function initForms(root = document) {
     const answers = Object.keys(labels).filter((k) => params.get(k)).map((k) => `${labels[k]}: ${params.get(k)}`);
     const message = form.querySelector('textarea');
     if (answers.length && message && !message.value) {
-      message.value = `From the Integrate page:\n${answers.join('\n')}\n\n`;
+      message.value = `From the Networks page:\n${answers.join('\n')}\n\n`;
     }
     // Calendly fills its first invitee question from a1, so the call starts
     // with the same answers (ignored if the event asks no question).

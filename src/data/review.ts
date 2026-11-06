@@ -94,4 +94,9 @@ export const review: ReviewItem[] = [
   { page: '/open-source', target: '.os_tools', kind: 'changed', title: 'Tools as tiles', note: 'One white tile per tool on the paper band, with its icon, network and headline figure in a small tile, as in the home band.' },
   { page: '/open-source/moonlight', target: '.tl_h1', kind: 'changed', title: 'Pill and two-tone title', note: 'The tool’s name, then the rest of the title in the soft tone, as on Home and Services. Same on every tool page; code samples wrap on phones.' },
   { page: '/faq', target: '[data-rv=faq-team]', kind: 'changed', title: 'Team answer', note: 'No team-size figure; United States, France and Brazil, as across the site.' },
+  { page: '/networks', target: '.page_eyebrow', kind: 'changed', title: 'Page label', note: 'The pill reads “Networks”, as in the navigation (it read “Integrate”).' },
+  { page: '/networks', target: '.nq_titles', kind: 'new', title: 'Questions band', note: 'The four questions on a deep blue band, as the home page’s “How an engagement runs”: pill “Four questions”, title from the questionnaire’s closing step.' },
+  { page: '/networks', target: '.nq_steps', kind: 'changed', title: 'The questions as steps', note: 'Same questions and options, each a step with its options in output boxes. The route card fills in as you answer; nothing ranks or recommends a network.' },
+  { page: '/networks', target: '.nq_note', kind: 'changed', title: 'Shorter sentence', note: '“An engineer reads your answers and tells you what the integration takes, and where it should run.” It no longer says the engineer has shipped on every network shown.' },
+  { page: '/networks', target: '.nt_head', kind: 'changed', title: 'Network tiles', note: 'Pill “Where we build”, a two-tone title, and the cards as the site’s tiles, with the arrow only where a network page exists.' },
 ];
