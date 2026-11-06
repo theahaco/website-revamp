@@ -8,7 +8,6 @@ import HomeOpenSource from '../components/home/OpenSource.astro';
 import HomeServices from '../components/home/Services.astro';
 import HomeProcess from '../components/home/Process.astro';
 import HomeWays from '../components/home/Ways.astro';
-import HomeNetworksSection from '../components/home/Networks.astro';
 import Cta from '../components/Cta.astro';
 import { siteUrl, organization, ld } from '../lib/ld';
 const base = siteUrl(Astro.site);
@@ -24,7 +23,6 @@ const webLd = ld({ '@type': 'WebSite', name: 'The Aha Company', url: base, publi
   <HomeProcess />
   <HomeWays />
   <HomeOpenSource />
-  <HomeNetworksSection />
 </main>
 <Cta heading={'Bring your institution or protocol onchain, with the team that builds the tooling.'} />
 

@@ -286,3 +286,8 @@ a.more_row:hover .more_title,a.networks_row:hover .networks_h3,summary.faq_q:hov
 .cs_dd-net .cs_netmark{margin-top:4px}
 /* Case study header images on phones: square, on the diagram (the title is already the H1) */
 @media (max-width:767px){.cs_heroimg{aspect-ratio:1/1;object-fit:cover;object-position:100% 50%}}
+
+/* Home: the open-source band runs straight into the closing band (both deep
+   blue), so a rule parts them, at the band's content width */
+main:has(> .osb:last-child) + .cta_section .cta_container{padding-top:0}
+main:has(> .osb:last-child) + .cta_section .cta_container::before{content:'';height:1px;margin-bottom:72px;background:rgba(255,255,255,.16)}

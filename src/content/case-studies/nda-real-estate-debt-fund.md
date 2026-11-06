@@ -77,7 +77,9 @@ tech:
 - SEP-49
 receipts: ''
 relatedService: Tokenized funds and deposits
-team: []
+team:
+- enzo-soyer
+- hugo-heer
 quote:
   label: ''
   text: ''
