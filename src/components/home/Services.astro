@@ -18,7 +18,7 @@ const of = (a: Service['audience']) => services.filter((s) => s.audience === a);
 const precedentsOf = (list: readonly Service[], clientsOnly = false) => {
   const seen = new Set<string>();
   const out: Precedent[] = [];
-  for (const s of list) for (const p of s.precedents) if (!seen.has(p.text) && !(clientsOnly && p.kind === 'tool')) { seen.add(p.text); out.push(p); }
+  for (const s of list) for (const p of s.precedents) if (!seen.has(p.href) && !(clientsOnly && p.kind === 'tool')) { seen.add(p.href); out.push(p); }
   return out;
 };
 
@@ -89,7 +89,7 @@ const cli = [
               <ul class="wd-chips" role="list">
                 {precedentsOf(r.services, r.id === 'institutions').map((p) => (
                   <li>
-                    {p.kind === 'client' && <a class="wd-chip" href={p.href}><img class="wd-logo" src={p.logo} alt={p.alt} width={p.w} height={p.h} loading="lazy" />{p.text}</a>}
+                    {p.kind === 'client' && <a class="wd-chip wd-chip--logo" href={p.href}><img class="wd-logo" src={p.logo} alt={p.alt} width={p.w} height={p.h} loading="lazy" /></a>}
                     {p.kind === 'mark' && <a class="wd-chip" href={p.href}><img class="wd-mark" src={p.logo} alt="" width="16" height="16" loading="lazy" />{p.text}</a>}
                     {p.kind === 'nda' && <a class="wd-chip wd-chip--nda" href={p.href}><Icon name="lock-simple" size={16} />{p.text}</a>}
                     {p.kind === 'tool' && <a class="wd-chip wd-chip--tool" href={p.href}><Icon name={p.icon} size={16} />{p.text}</a>}
@@ -167,10 +167,11 @@ const cli = [
   .wd-precedent { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
   .wd-label { margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
   .wd-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-  .wd-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 6px 12px 6px 11px; border: 1px solid var(--line-strong); border-radius: 17px; background: var(--white); color: var(--deep-blue); font-size: 14px; font-weight: 500; line-height: 1.25; text-decoration: none; text-wrap: balance; transition: border-color .2s, color .2s; }
+  /* One white pill for every precedent: a public client's logo alone, a
+     client under NDA with its lock, a tool with its icon */
+  .wd-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 7px 14px 7px 12px; border: 1px solid var(--line-strong); border-radius: 17px; background: var(--white); color: var(--deep-blue); font-size: 14px; font-weight: 500; line-height: 1.25; text-decoration: none; text-wrap: balance; transition: border-color .2s, color .2s; }
   .wd-chip:hover { border-color: var(--deep-blue); }
-  .wd-chip--nda { border-color: transparent; background: var(--tint-paper); color: var(--ink-2); }
-  .wd-chip--nda:hover { border-color: var(--line-strong); }
+  .wd-chip--logo { padding: 7px 16px; }
   .wd-chip--nda :global(.icon) { color: var(--muted); --icon-tint: var(--muted); }
   .wd-chip--tool :global(.icon) { --icon-tint: var(--vibrant-green); --icon-tint-opacity: .5; }
   .wd-logo { display: block; width: auto; }

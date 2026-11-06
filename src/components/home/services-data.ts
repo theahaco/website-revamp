@@ -2,16 +2,16 @@
 // precedents) and on /services (with their bullets). Edit the copy here; both
 // pages read it. Each `id` is the service's stable key.
 //
-// Precedents are real engagements only. A public client shows its logo; a
-// client under NDA shows a lock and its anonymous name, never a logo; our own
-// tools link to their pages.
+// Precedents are real engagements only. A public client shows its logo alone
+// (its name is enough); a client under NDA shows a lock and its anonymous
+// name, never a logo; our own tools link to their pages.
 
 /** Who the service is mainly for: sets the icon tint (blue, green, pink, tan). */
 export type Audience = 'institutions' | 'protocols' | 'ecosystems' | 'any';
 
 export type Precedent =
-  /** A public client: its logo (drawn at w x h px), then a few words. */
-  | { kind: 'client'; logo: string; alt: string; w: number; h: number; text: string; href: string }
+  /** A public client: its logo alone (drawn at w x h px). */
+  | { kind: 'client'; logo: string; alt: string; w: number; h: number; href: string }
   /** A network mark (cropped to the symbol), then a few words. */
   | { kind: 'mark'; logo: string; text: string; href: string }
   /** A client under NDA: lock icon and its anonymous name, no logo. */
@@ -45,7 +45,7 @@ export const services: Service[] = [
     audience: 'institutions',
     bullets: ['Role separation, freeze and clawback', 'Allow and deny lists, alerting-to-freeze automation', 'Mint and burn bridges to core banking'],
     precedents: [
-      { kind: 'client', logo: `${LOGOS}/logo-light-sgforge.svg`, alt: 'Société Générale-FORGE', w: 63, h: 18, text: 'EURCV', href: '/case-studies/societe-generale-forge' },
+      { kind: 'client', logo: `${LOGOS}/logo-light-sgforge.svg`, alt: 'Société Générale-FORGE', w: 63, h: 18, href: '/case-studies/societe-generale-forge' },
       { kind: 'nda', text: 'Top US commercial bank', href: NDA_BANK },
     ],
   },
@@ -67,7 +67,7 @@ export const services: Service[] = [
     icon: 'plugs-connected',
     audience: 'protocols',
     bullets: ['Integration roadmap', 'Native contracts, adapters and SDKs', 'Routing and liquidity'],
-    precedents: [{ kind: 'client', logo: `${LOGOS}/logo-light-lifi.svg`, alt: 'LI.FI', w: 44, h: 16, text: 'on Stellar', href: '/case-studies/lifi' }],
+    precedents: [{ kind: 'client', logo: `${LOGOS}/logo-light-lifi.svg`, alt: 'LI.FI', w: 44, h: 16, href: '/case-studies/lifi' }],
   },
   {
     id: 'custody-wallets',
@@ -89,7 +89,7 @@ export const services: Service[] = [
     audience: 'ecosystems',
     bullets: ['CLIs and scaffolding', 'Registries and sandboxes', 'Maintained as public goods'],
     precedents: [
-      { kind: 'client', logo: `${LOGOS}/logo-light-ripple.svg`, alt: 'Ripple', w: 54, h: 14, text: 'XRPL DevX audit', href: '/case-studies/ripple' },
+      { kind: 'client', logo: `${LOGOS}/logo-light-ripple.svg`, alt: 'Ripple', w: 54, h: 14, href: '/case-studies/ripple' },
       { kind: 'tool', icon: 'terminal-window', text: 'Stellar CLI plugins and bindings', href: '/open-source/stellar-cli' },
       { kind: 'tool', icon: 'stack', text: 'Stellar Scaffold', href: '/open-source/stellar-scaffold' },
     ],
