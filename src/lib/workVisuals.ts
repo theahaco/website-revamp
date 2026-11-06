@@ -6,7 +6,7 @@
 //
 // Truth rule, as in src/lib/caseVisuals.ts: every word restates the case file
 // (src/content/case-studies/<id>.md), except EURCV's issuer flags, read on
-// Stellar mainnet (Horizon, the asset record of EURCV) on the date given.
+// Stellar mainnet (Horizon, the asset record of EURCV, November 6, 2026).
 
 /** Same shape as FlowStep in src/components/vx/Flow.astro. */
 export interface FlowStep {
@@ -66,26 +66,25 @@ export type WorkVisual =
 export const workVisuals: Record<string, WorkVisual> = {
   // societe-generale-forge.md: line 6 ("regulated euro stablecoin"), lines
   // 18-19 (Status: Live since Q1 2026), line 55 ("Compliance on the protocol's
-  // issuer controls: a flagged address is frozen"). The flags are EURCV's
-  // own, read from Horizon on November 6, 2026: auth_required, auth_revocable
-  // and auth_clawback_enabled are true (auth_immutable false). Read them again
-  // before changing this, and change `read` with them.
+  // issuer controls: a flagged address is frozen"). The two flags are EURCV's
+  // own: auth_revocable and auth_clawback_enabled, true on Horizon on
+  // November 6, 2026. auth_required is left off the card on purpose (decision
+  // of November 6, 2026): do not add it back. The card gives no read date.
   'societe-generale-forge': {
     kind: 'asset',
     panel: 'blue',
-    label: 'EURCV on Stellar mainnet: a native Stellar asset with three issuer flags set (authorization required, authorization revocable, clawback enabled), as read on November 6, 2026',
+    label: 'EURCV on Stellar mainnet: a native Stellar asset issued by SG-FORGE, with two issuer flags set: authorization revocable, so a flagged address is frozen, and clawback enabled',
     net: 'stellar',
     title: 'EURCV',
     sub: 'Native Stellar asset, issued by SG‑FORGE',
     status: 'Live',
     heading: 'Issuer flags',
     flags: [
-      { title: 'Authorization required', sub: 'Holders approved by the issuer' },
       { title: 'Authorization revocable', sub: 'A flagged address is frozen' },
       { title: 'Clawback enabled', sub: 'The issuer can claw back' },
     ],
     account: 'GCEYG…AXW3G',
-    read: 'Read on Stellar mainnet, November 6, 2026',
+    read: 'Issuer account, Stellar mainnet',
   },
 
   // lifi.md, line 64 (Outcome): "According to LI.FI's documentation, users can
