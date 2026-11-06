@@ -6,6 +6,11 @@
 // page), then the three with a testimonial.
 export const homeFeaturedCases = ["societe-generale-forge", "lifi", "stellar-development-foundation", "ripple"];
 
+/** Home page, the section under the hero: the case study whose quote it shows,
+ * over the client tiles. That quote appears once on the page: its row in
+ * "Selected work" shows the client's logo instead. */
+export const homeQuoteCase = "stellar-development-foundation";
+
 /** Home page, "Client under NDA" block under the case studies. */
 export const homeNdaCases = ["nda-settlement-stablecoin", "nda-money-market-fund", "nda-real-estate-debt-fund"];
 

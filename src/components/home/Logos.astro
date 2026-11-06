@@ -1,9 +1,23 @@
 ---
-// Home page section: logos, under the key figures (which stay in the open):
-// clients and partners, then the security auditors we have worked with, each
-// row under its label, each logo in its own framed tile with space around it.
-// A tile links only to the public case study of that same client; the others
-// stay static.
+// Home page section under the hero: clients and partners, in one client's
+// words. The quote is the one of the case study named in src/data/curation.ts
+// (homeQuoteCase), read from its file; its last sentence takes the soft tone,
+// like the two-tone headlines. It is shown once on the page: its row in
+// "Selected work" shows the client's logo instead. Under it, one framed tile
+// per client; a tile links only to the public case study of that same client,
+// the others stay static. The key figures are in the hero's "Live on mainnet"
+// card (deployments, audits) and in the open-source band (projects).
+import { caseStudies, publicQuote } from '../../lib/content';
+import { homeQuoteCase } from '../../data/curation';
+import { site } from '../../data/site';
+
+const production = !Astro.site || Astro.site.origin === site.productionOrigin;
+const cs = (await caseStudies()).find((c) => c.id === homeQuoteCase);
+const q = cs ? publicQuote(cs.data.quote, production) : undefined;
+// "First sentences. Last sentence." : the last one in the soft tone
+const parts = q?.text ? q.text.match(/^(.*[.!?])\s+(\S.*)$/s) : null;
+const lead = parts ? parts[1] : (q?.text ?? '');
+const soft = parts ? parts[2] : '';
 
 // h: logo height in px on desktop (per file, for an even optical weight);
 // w: its width at that height (from the file's proportions).
@@ -15,93 +29,95 @@ const logos = [
   { name: 'LI.FI', src: '/images/logos/logo-light-lifi.svg', h: 23, w: 63, href: '/case-studies/lifi' },
   { name: 'Banque Delubac et Cie', src: '/images/logos/logo-light-delubac.svg', h: 25, w: 111 },
 ];
-
-// Security auditors we have worked with, as logos (the firms' own artwork,
-// taken from their sites; shown in one tone like the client logos).
-// h: logo height in px on desktop; w: its width at that height.
-const auditors = [
-  { name: 'Hacken', src: '/images/logos/logo-hacken.svg', h: 12, w: 115 },
-  { name: 'Halborn', src: '/images/logos/logo-halborn.svg', h: 12, w: 117 },
-  { name: 'Runtime Verification', src: '/images/logos/logo-runtime-verification.png', h: 28, w: 142 },
-  { name: 'Arda', src: '/images/logos/logo-arda.png', h: 25, w: 85 },
-];
 ---
-<section aria-label="Clients and partners" class="logos_section lg" data-rv="logos">
-  <div class="logos_container lg_container">
-    <div class="lg_inner">
-      <div class="lg_group">
-        <p class="lg_label" id="lg-clients"><span aria-hidden="true" class="lg_dot"></span>Clients and partners</p>
-        <ul aria-labelledby="lg-clients" class="lg_row" role="list">
-          {logos.map((l) => (
-            <li class="lg_cell">
-              {l.href ? (
-                <a class="lg_tile lg_tile--link" href={l.href}>
-                  <img alt={l.name} class="lg_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
-                  <span class="lg_sr"> case study</span>
-                </a>
-              ) : (
-                <span class="lg_tile">
-                  <img alt={l.name} class="lg_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div class="lg_group lg_group--auditors">
-        <p class="lg_label" id="lg-auditors"><span aria-hidden="true" class="lg_dot"></span>Auditors we work with</p>
-        <ul aria-labelledby="lg-auditors" class="lg_row" role="list">
-          {auditors.map((a) => (
-            <li class="lg_cell">
-              <span class="lg_tile">
-                <img alt={a.name} class="lg_logo" loading="lazy" src={a.src} width={a.w} height={a.h} style={`--h:${a.h}px`} />
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+<section aria-labelledby="vc-label" class="vc" data-rv="logos">
+  <div class="vc_inner">
+    <p class="v-eyebrow" id="vc-label">Clients and partners</p>
+    {q?.text && (
+      <figure class="vc_quote" data-rv="home-quote">
+        <blockquote class="vc_text"><p>{lead}{soft && <Fragment> <span class="v-soft">{soft}</span></Fragment>}</p></blockquote>
+        {q.author && (
+          <figcaption class="vc_by">
+            {q.portrait && <img alt="" class="vc_pic" decoding="async" height="56" loading="lazy" src={q.portrait} width="56" />}
+            <span class="vc_who"><span class="vc_name">{q.author}</span>{q.role && <span class="vc_role">{q.role}</span>}</span>
+          </figcaption>
+        )}
+      </figure>
+    )}
+    <ul aria-labelledby="vc-label" class="vc_row" role="list">
+      {logos.map((l) => (
+        <li class="vc_cell">
+          {l.href ? (
+            <a class="vc_tile vc_tile--link" href={l.href}>
+              <img alt={l.name} class="vc_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+              <span class="vc_sr"> case study</span>
+              <span aria-hidden="true" class="vc_arrow">↗</span>
+            </a>
+          ) : (
+            <span class="vc_tile">
+              <img alt={l.name} class="vc_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
 <style>
-  /* On white, right under the key figures' blue banner (on phones the key
-     figures are in the hero, and the band's own rule takes over) */
-  @media (min-width: 768px) { .lg { border-top: 0; } }
-  .lg_container { padding-top: 0; padding-bottom: 0; row-gap: 0; }
-  .lg_inner { display: flex; flex-direction: column; gap: 40px; padding: 64px 0 88px; }
-  .lg_group { display: flex; flex-direction: column; gap: 22px; }
-  .lg_label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.35; letter-spacing: .08em; text-transform: uppercase; }
-  .lg_dot { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--vibrant-green); }
+  /* On white, between the hero and "Selected work", with room around it */
+  .vc { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .vc_inner { display: flex; flex-direction: column; align-items: flex-start; max-width: var(--container); margin: 0 auto; padding: 120px clamp(24px, 4vw, 48px) 112px; }
 
-  /* One framed tile per logo, with space between the tiles */
-  .lg_row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
-  .lg_group--auditors .lg_row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .lg_cell { display: flex; min-width: 0; }
-  .lg_tile { display: grid; place-items: center; flex: 1; min-width: 0; height: 92px; padding: 0 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); color: var(--muted); text-decoration: none; transition: border-color .2s, box-shadow .2s; }
-  .lg_logo { display: block; width: auto; max-width: 100%; height: var(--h); }
-  .lg_tile--link:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
-  .lg_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
-  .lg_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  @media (prefers-reduced-motion: reduce) { .lg_tile { transition: none; } }
+  /* The quote, at headline size */
+  .vc_quote { margin: 32px 0 0; }
+  .vc_text { margin: 0; padding: 0; border: 0; }
+  .vc_text p { max-width: 20em; margin: 0; color: var(--deep-blue); font-family: var(--font-display); font-size: 52px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; }
+  .vc_by { display: flex; align-items: center; gap: 16px; margin-top: 36px; text-align: left; }
+  .vc_pic { flex-shrink: 0; width: 56px; height: 56px; border: 1px solid var(--line-strong); border-radius: 50%; object-fit: cover; filter: grayscale(1) contrast(1.04); }
+  .vc_who { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .vc_name { color: var(--ink); font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .vc_role { color: var(--muted); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+
+  /* One framed tile per client, the logos in one tone until hovered */
+  .vc_row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; width: 100%; margin: 72px 0 0; padding: 0; list-style: none; }
+  .vc_cell { display: flex; min-width: 0; }
+  .vc_tile { position: relative; display: grid; place-items: center; flex: 1; min-width: 0; height: 104px; padding: 0 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-decoration: none; transition: border-color .2s, box-shadow .2s, background-color .2s; }
+  .vc_logo { display: block; width: auto; max-width: 100%; height: var(--h); filter: grayscale(1); opacity: .82; transition: filter .2s, opacity .2s; }
+  .vc_arrow { position: absolute; top: 12px; right: 14px; color: var(--muted); font-size: 14px; line-height: 1; opacity: .55; transition: opacity .2s, color .2s, transform .2s; }
+  .vc_tile--link:hover { border-color: var(--line-strong); background: var(--white); box-shadow: var(--shadow-1); }
+  .vc_tile--link:hover .vc_logo, .vc_tile--link:focus-visible .vc_logo { filter: none; opacity: 1; }
+  .vc_tile--link:hover .vc_arrow { color: var(--green-ink); opacity: 1; }
+  .vc_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
+  .vc_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (prefers-reduced-motion: no-preference) { .vc_tile--link:hover .vc_arrow { transform: translate(2px, -2px); } }
+  @media (prefers-reduced-motion: reduce) { .vc_tile, .vc_logo, .vc_arrow { transition: none; } }
 
   @media (max-width: 1199px) {
-    .lg_tile { padding: 0 12px; }
+    .vc_text p { font-size: 46px; }
+    .vc_tile { padding: 0 14px; }
   }
-  /* Tablets: three clients and two auditors a row */
+  /* Tablets: three tiles a row */
   @media (max-width: 991px) {
-    .lg_inner { gap: 36px; padding: 48px 0 72px; }
-    .lg_row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .lg_group--auditors .lg_row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .lg_tile { height: 84px; }
+    .vc_inner { padding-top: 96px; padding-bottom: 104px; }
+    .vc_text p { font-size: 40px; }
+    .vc_row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 64px; }
+    .vc_tile { height: 92px; }
   }
   @media (max-width: 767px) {
-    .lg_inner { padding: 40px 0 56px; }
-    .lg_logo { height: calc(var(--h) * .92); }
+    .vc_inner { padding-top: 72px; padding-bottom: 80px; }
+    .vc_quote { margin-top: 24px; }
+    .vc_text p { font-size: 32px; line-height: 1.14; }
+    .vc_by { gap: 14px; margin-top: 28px; }
+    .vc_pic { width: 48px; height: 48px; }
+    .vc_role { font-size: 13px; }
+    .vc_logo { height: calc(var(--h) * .92); }
   }
-  /* Phones: two a row */
+  /* Phones: two tiles a row */
   @media (max-width: 479px) {
-    .lg_row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .lg_tile { height: 76px; border-radius: 14px; }
+    .vc_text p { font-size: 29px; }
+    .vc_row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 48px; }
+    .vc_tile { height: 78px; padding: 0 12px; border-radius: 14px; }
+    .vc_arrow { top: 9px; right: 10px; font-size: 12px; }
   }
 </style>

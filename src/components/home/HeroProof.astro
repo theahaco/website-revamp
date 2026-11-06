@@ -2,12 +2,14 @@
 // Home hero: the proof panel. Three engagements live on mainnet, each row
 // linking to its case study, with the facts of src/content/case-studies
 // (status, network, the EURCV figure and its receipt, the bank's five months
-// from kickoff to handover). The audits are in the row under the logos.
-// Each row leads with what is live, the client under it. The round glyph is
-// the kind of asset, drawn like a token icon (not the asset's own logo):
-// a euro coin, a settlement coin, a cross-chain route; deep blue for
-// financial institutions, green for protocols. The client logos are in the
-// band under the hero.
+// from kickoff to handover). Each row leads with what is live, the client
+// under it. The round glyph is the kind of asset, drawn like a token icon
+// (not the asset's own logo): a euro coin, a settlement coin, a cross-chain
+// route; deep blue for financial institutions, green for protocols. Under the
+// rows, the card's totals: the key figures of src/data/site.ts (deployments
+// on mainnet, third-party security audits). The project count is in the
+// open-source band, the client logos in the section under the hero.
+import { keyFigures } from '../../data/site';
 
 const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G';
 ---
@@ -47,6 +49,10 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
         </div>
       </li>
     </ul>
+    <ul aria-label="Key figures" class="hp_tot" role="list">
+      <li class="hp_totcell" data-rv="stat-deploy"><span class="hp_totv">{keyFigures.deployments.replace('+', '')}<span class="hp_totplus">+</span></span><span class="hp_totl">Deployments on mainnet</span></li>
+      <li class="hp_totcell" data-rv="stat-audits"><span class="hp_totv">{keyFigures.audits}</span><span class="hp_totl">Third-party security audits</span></li>
+    </ul>
   </div>
 </figure>
 
@@ -65,7 +71,6 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
   .hp_rows { margin: 0; padding: 0; list-style: none; }
   .hp_row { position: relative; display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; grid-template-areas: 'tile name fig' 'tile desc fig' 'tile meta fig'; column-gap: 16px; align-items: center; padding: 18px 20px; border-top: 1px solid var(--line); transition: background-color .2s; }
   .hp_row:first-child { border-top: 0; }
-  .hp_row:last-child { border-radius: 0 0 15px 15px; }
   .hp_row:hover { background: var(--paper); }
 
   .hp_av { grid-area: tile; align-self: center; display: block; width: 46px; height: 46px; }
@@ -77,7 +82,6 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
   .hp_link::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
   .hp_link:focus-visible { outline: none; }
   .hp_link:focus-visible::after { outline: 2px solid var(--green-ink); outline-offset: -3px; }
-  .hp_row:last-child .hp_link::after { border-radius: 0 0 15px 15px; }
   .hp_arrow { position: relative; left: 0; font-weight: 500; color: var(--muted); transition: left .2s, color .2s; }
   .hp_row:hover .hp_link { color: var(--green-ink); }
   .hp_row:hover .hp_arrow { left: 3px; color: var(--green-ink); }
@@ -94,6 +98,14 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
   .hp_figl { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1; color: var(--muted); }
   .hp_receipt { z-index: 2; }
 
+  /* The card's totals: the key figures, side by side on a blue tint */
+  .hp_tot { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); border-radius: 0 0 15px 15px; background: var(--tint-blue); }
+  .hp_totcell { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 17px 20px 18px; }
+  .hp_totcell + .hp_totcell { border-left: 1px solid var(--line-strong); }
+  .hp_totv { flex-shrink: 0; color: var(--deep-blue); font-size: 30px; font-weight: 500; line-height: 1; letter-spacing: -.03em; white-space: nowrap; }
+  .hp_totplus { color: var(--green-ink); }
+  .hp_totl { min-width: 0; color: var(--ink-2); font-size: 13px; line-height: 1.35; text-wrap: balance; }
+
   @media (prefers-reduced-motion: reduce) { .hp_row, .hp_arrow { transition: none; } .hp_row:hover .hp_arrow { left: 0; } }
   .hp_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
@@ -103,6 +115,8 @@ const receipt = 'https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVB
     .hp_av { align-self: start; width: 42px; height: 42px; margin-top: 2px; }
     .hp_fig { flex-direction: row; align-items: center; gap: 8px; justify-self: start; margin-top: 12px; }
     .hp_head { padding: 14px 18px; }
+    .hp_totcell { flex-direction: column; align-items: flex-start; gap: 7px; padding: 15px 16px 16px; }
+    .hp_totv { font-size: 26px; }
   }
   /* Phones: the tile next to the name, the facts at full width under it */
   @container (max-width: 380px) {

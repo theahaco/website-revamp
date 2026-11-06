@@ -1,12 +1,14 @@
 ---
 // Home page section: the open-source band (dark), after "Ways to work with us".
 // Tools, order, category and network come from src/content/tools (the network
-// is shown when it is not Stellar alone; the project count is in the key
-// figures under the hero). The phones
+// is shown when it is not Stellar alone). Under the lede, the band's figure:
+// the projects using our tools (src/data/site.ts, toolAdoption), without its
+// date or method, which stay on the Open source page. The phones
 // are the tool pages' own mockups, cut out of their backgrounds
 // (public/images/tools/<tool>-phone-<width>.webp, drawn by vx/PhoneStack).
 import Icon from '../Icon.astro';
 import { tools } from '../../lib/content';
+import { toolAdoption } from '../../data/site';
 import { toolIcons } from '../../lib/toolIcons';
 import PhoneStack from '../vx/PhoneStack.astro';
 
@@ -19,6 +21,7 @@ const list = await tools();
         <p class="v-eyebrow v-eyebrow--dark">Open source</p>
         <h2 class="osb_h2" id="osb-title">The tooling the Stellar ecosystem runs on. <span class="osb_h2-soft">Some of it already serves XRPL.</span></h2>
         <p class="osb_lede">We are core contributors to the official Stellar CLI and build the tools around it. Each tool has its own page, with every figure dated.</p>
+        <p class="osb_fig" data-rv="stat-os"><span class="osb_num">{toolAdoption.count}</span><span class="osb_figl">Projects using our <span class="osb_nowrap">open-source</span> tools</span></p>
       </div>
       <div class="osb_visual">
         <PhoneStack left="scaffold-stellar" center="nido" right="stellar-registry" />
@@ -51,6 +54,11 @@ const list = await tools();
   .osb_h2 { margin: 0; max-width: 14em; font-family: var(--font-display); font-size: 44px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.01em; color: #fff; text-wrap: balance; }
   .osb_h2-soft { display: block; color: rgba(255, 255, 255, .6); }
   .osb_lede { margin: 0; max-width: 30em; font-size: 17px; line-height: 1.55; color: var(--osb-soft); text-wrap: pretty; }
+  /* The band's figure, big, with its label, over a rule */
+  .osb_fig { display: flex; align-items: flex-end; gap: 20px; width: 100%; margin: 8px 0 0; padding-top: 32px; border-top: 1px solid var(--osb-rule); }
+  .osb_num { flex-shrink: 0; color: #fff; font-size: 96px; font-weight: 500; line-height: .8; letter-spacing: -.045em; }
+  .osb_figl { min-width: 0; color: #fff; font-size: 18px; font-weight: 500; line-height: 1.3; text-wrap: balance; }
+  .osb_nowrap { white-space: nowrap; }
 
   /* Phones: one stage, cut at the bottom by the top rule of the tool grid.
      Sizes are in % of the stage, so the composition scales as one piece;
@@ -83,12 +91,16 @@ const list = await tools();
     .osb_top { grid-template-columns: minmax(0, 1fr); }
     .osb_h2 { font-size: 36px; }
     .osb_text { padding-bottom: 56px; }
+    .osb_num { font-size: 84px; }
     .osb_visual { justify-self: center; max-width: 520px; aspect-ratio: 1.3; }
     .osb_tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 767px) {
     .osb_inner { padding-top: 72px; padding-bottom: 72px; }
     .osb_h2 { font-size: 32px; }
+    .osb_fig { gap: 16px; padding-top: 24px; }
+    .osb_num { font-size: 72px; }
+    .osb_figl { font-size: 16px; }
     .osb_tool { padding: 20px 18px 22px; }
     .osb_icon { width: 40px; height: 40px; margin-bottom: 12px; border-radius: 10px; }
     .osb_name { font-size: 16px; }
@@ -104,4 +116,5 @@ const list = await tools();
     .osb_meta { font-size: 13px; }
     .osb_arrow { top: 14px; right: 12px; font-size: 15px; }
   }
+  @media (max-width: 359px) { .osb_fig { flex-direction: column; align-items: flex-start; } }
 </style>

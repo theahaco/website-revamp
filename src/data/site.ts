@@ -39,11 +39,13 @@ export const contact = {
 };
 
 // Projects using our open-source tools, and the date they were counted
-// (/open-source#how-we-count). Shown on the home page and the Open source page.
+// (/open-source#how-we-count). Shown on the home page (the open-source band,
+// without the date) and the Open source page.
 export const toolAdoption = { count: 137, date: 'November 2, 2026' };
 
-// Home key figures (hero on phones, the band under it elsewhere), as the CEO
-// approved them in November 2026.
+// Home key figures, as the CEO approved them in November 2026: the totals of
+// the hero's "Live on mainnet" card (the project count, toolAdoption above,
+// is in the open-source band).
 // - deployments: smart contract deployments on mainnet, stated by the CEO
 //   (add the source and a date here when there is one).
 // - audits: third-party security audits of our code and our clients'
