@@ -234,7 +234,7 @@ a.work_case-link[href]:hover .work_h3{color:#367A12}
 /* Visible focus everywhere, white on the dark bands */
 :where(a,button,summary,[tabindex]:not([tabindex="-1"])):focus-visible{outline:2px solid var(--green-ink);outline-offset:2px}
 .process_tab:focus-visible{outline:2px solid #fff;outline-offset:-2px}
-.cta_section :focus-visible,.process_section :focus-visible,.net_route :focus-visible{outline-color:#fff}
+.process_section :focus-visible,.net_route :focus-visible{outline-color:#fff}
 /* Anchors and focused messages land below the sticky header */
 html{scroll-padding-top:125px}
 @media (max-width:991px){html{scroll-padding-top:101px}}
@@ -289,5 +289,3 @@ a.more_row:hover .more_title,a.networks_row:hover .networks_h3,summary.faq_q:hov
 
 /* Home: the open-source band runs straight into the closing band (both deep
    blue), so a rule parts them, at the band's content width */
-main:has(> .osb:last-child) + .cta_section .cta_container{padding-top:0}
-main:has(> .osb:last-child) + .cta_section .cta_container::before{content:'';height:1px;margin-bottom:72px;background:rgba(255,255,255,.16)}

@@ -2531,14 +2531,14 @@ textarea.w-input, textarea.w-select {
 }
 
 .cta_section {
-  background-color: var(--deep-blue);
-  color: var(--white);
+  background-color: var(--tint-blue);
+  color: var(--ink);
 }
 
 .cta_h2 {
   max-width: 860px;
   font-family: var(--font-display);
-  color: var(--white);
+  color: var(--deep-blue);
   letter-spacing: -.015em;
   margin-top: 0;
   margin-bottom: 0;
@@ -2549,7 +2549,7 @@ textarea.w-input, textarea.w-select {
 }
 
 .cta_email {
-  color: var(--white);
+  color: var(--deep-blue);
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
@@ -2557,7 +2557,7 @@ textarea.w-input, textarea.w-select {
 }
 
 .cta_email:hover {
-  color: var(--white);
+  color: var(--deep-blue);
   text-decoration: underline;
 }
 
