@@ -82,8 +82,9 @@ const json = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
         <a class="art_back" href="/open-source">← All open-source tools</a>
         <div class="cs_headgrid">
           <div class="cs_intro" data-tl="intro">
-            <p class="cs_eyebrow">Open source · {d.category}</p>
-            <h1 class="art_h1" set:html={nobr(d.title)} />
+            <p class="v-eyebrow">Open source · {d.category}</p>
+            {/* Two tones, as the Home and Services titles: the name, then the rest */}
+            <h1 class="art_h1 tl_h1">{d.title.includes(':') ? (<Fragment><span set:html={nobr(d.title.slice(0, d.title.indexOf(':') + 1))} /> <span class="v-soft" set:html={nobr(d.title.slice(d.title.indexOf(':') + 1).trim())} /></Fragment>) : <span set:html={nobr(d.title)} />}</h1>
             {d.lede && <p class="art_lede">{d.lede}</p>}
           </div>
           <dl class="cs_facts" data-tl="facts">

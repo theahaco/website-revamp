@@ -1,5 +1,6 @@
 ---
-// Home page section: the open-source band (dark), after "Ways to work with us".
+// Home page section: the open-source band (light, on paper), after "Ways to
+// work with us" and before the deep blue closing band.
 // Tools, order and category come from src/content/tools; the band names no
 // network on the tiles (the tool pages do). Under the lede, the band's figure:
 // the projects using our tools (src/data/site.ts, toolAdoption), without its
@@ -18,20 +19,20 @@ const list = await tools();
   <div class="osb_inner">
     <div class="osb_top">
       <div class="osb_text">
-        <p class="v-eyebrow v-eyebrow--dark">Open source</p>
+        <p class="v-eyebrow">Open source</p>
         <h2 class="osb_h2" id="osb-title">The tooling blockchain ecosystems run on. <span class="osb_h2-soft">Some of it already serves Stellar and XRPL.</span></h2>
         <p class="osb_lede">We build and maintain open-source developer tools, wallets and onchain policies.</p>
         <p class="osb_fig" data-rv="stat-os"><span class="osb_num">{toolAdoption.count}</span><span class="osb_figl">Projects using our <span class="osb_nowrap">open-source</span> tools</span></p>
       </div>
       <div class="osb_visual">
-        <PhoneStack left="scaffold-stellar" center="nido" right="stellar-registry" />
+        <PhoneStack left="scaffold-stellar" center="nido" right="stellar-registry" glow={false} />
       </div>
     </div>
     <ul class="osb_tools" role="list">
       {list.map((t) => (
         <li class="osb_cell">
           <a class="osb_tool" href={`/open-source/${t.id}`}>
-            <span class="v-iconbox v-iconbox--dark osb_icon"><Icon name={toolIcons[t.id] ?? 'code'} size={28} /></span>
+            <span class="v-iconbox v-iconbox--pink osb_icon"><Icon name={toolIcons[t.id] ?? 'code'} size={28} /></span>
             <span class="osb_name">{t.data.name}</span>
             <span class="osb_meta">{t.data.category}</span>
             <span aria-hidden="true" class="osb_arrow">↗</span>
@@ -44,40 +45,41 @@ const list = await tools();
 </section>
 
 <style>
-  .osb { --osb-rule: rgba(255, 255, 255, .16); --osb-soft: rgba(255, 255, 255, .72); background: var(--deep-blue); color: #fff; overflow: hidden; }
-  .osb :focus-visible { outline-color: #fff; }
+  .osb { --osb-rule: var(--line); --osb-soft: var(--ink-2); background: var(--paper); color: var(--ink); overflow: hidden; }
   .osb_inner { display: flex; flex-direction: column; align-items: flex-start; max-width: var(--container); margin: 0 auto; padding: 120px clamp(24px, 4vw, 48px) 104px; }
   .osb_top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 48px; align-items: end; width: 100%; }
 
   /* Text column */
   .osb_text { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; padding-bottom: 48px; }
-  .osb_h2 { margin: 0; max-width: 14em; font-family: var(--font-display); font-size: 44px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.01em; color: #fff; text-wrap: balance; }
-  .osb_h2-soft { display: block; color: rgba(255, 255, 255, .6); }
+  .osb_h2 { margin: 0; max-width: 14em; font-family: var(--font-display); font-size: 44px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.01em; color: var(--deep-blue); text-wrap: balance; }
+  .osb_h2-soft { display: block; color: #66798f; }
   .osb_lede { margin: 0; max-width: 30em; font-size: 17px; line-height: 1.55; color: var(--osb-soft); text-wrap: pretty; }
   /* The band's figure, big, with its label, over a rule */
   .osb_fig { display: flex; align-items: flex-end; gap: 20px; width: 100%; margin: 8px 0 0; padding-top: 32px; border-top: 1px solid var(--osb-rule); }
-  .osb_num { flex-shrink: 0; color: #fff; font-size: 96px; font-weight: 500; line-height: .8; letter-spacing: -.045em; }
-  .osb_figl { min-width: 0; color: #fff; font-size: 18px; font-weight: 500; line-height: 1.3; text-wrap: balance; }
+  .osb_num { flex-shrink: 0; color: var(--deep-blue); font-size: 96px; font-weight: 500; line-height: .8; letter-spacing: -.045em; }
+  .osb_figl { min-width: 0; color: var(--ink); font-size: 18px; font-weight: 500; line-height: 1.3; text-wrap: balance; }
   .osb_nowrap { white-space: nowrap; }
 
   /* Phones: one stage, cut at the bottom by the top rule of the tool grid.
      Sizes are in % of the stage, so the composition scales as one piece;
      every phone runs past the bottom edge, where the stage cuts it. */
   .osb_visual { position: relative; width: 100%; aspect-ratio: 1.2; clip-path: inset(-120px -120px 0 -120px); }
+  /* A light shadow on paper (the stack's own shadow is drawn for dark bands) */
+  .osb_visual :global(.vps_phone) { filter: drop-shadow(0 18px 30px rgba(20, 36, 58, .2)) drop-shadow(0 2px 6px rgba(20, 36, 58, .08)); }
 
   /* Tools: framed cells sharing their rules */
   .osb_tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; width: 100%; margin: 0; padding: 0; list-style: none; background: var(--osb-rule); border: 1px solid var(--osb-rule); border-radius: var(--radius-lg); overflow: hidden; }
-  .osb_cell { display: flex; min-width: 0; background: var(--deep-blue); }
-  .osb_tool { position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 24px 24px 26px; color: #fff; text-decoration: none; transition: background-color .2s; }
-  .osb_tool:hover { background-color: rgba(255, 255, 255, .05); }
+  .osb_cell { display: flex; min-width: 0; background: var(--white); }
+  .osb_tool { position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 24px 24px 26px; color: var(--ink); text-decoration: none; transition: background-color .2s; }
+  .osb_tool:hover { background-color: var(--surface-muted); }
   .osb_tool:focus-visible { outline-offset: -2px; }
   .osb_icon { margin-bottom: 18px; }
-  .osb_name { padding-right: 24px; font-size: 18px; font-weight: 600; line-height: 1.3; }
-  .osb_meta { font-size: 15px; line-height: 1.45; color: var(--osb-soft); }
-  .osb_arrow { position: absolute; top: 22px; right: 22px; font-size: 18px; line-height: 1; color: rgba(255, 255, 255, .5); transition: color .2s, transform .2s; }
-  .osb_tool:hover .osb_arrow { color: var(--vibrant-green); transform: translate(2px, -2px); }
-  .osb_all { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: 40px; padding: 0 24px; border: 1px solid rgba(255, 255, 255, .4); border-radius: var(--radius-sm); color: #fff; font-size: 15px; font-weight: 600; text-decoration: none; transition: border-color .2s, background-color .2s; }
-  .osb_all:hover { border-color: #fff; background-color: rgba(255, 255, 255, .06); }
+  .osb_name { padding-right: 24px; color: var(--deep-blue); font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .osb_meta { font-size: 15px; line-height: 1.45; color: var(--muted); }
+  .osb_arrow { position: absolute; top: 22px; right: 22px; font-size: 18px; line-height: 1; color: var(--muted-2); transition: color .2s, transform .2s; }
+  .osb_tool:hover .osb_arrow { color: var(--green-ink); transform: translate(2px, -2px); }
+  .osb_all { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: 40px; padding: 0 24px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); color: var(--deep-blue); font-size: 15px; font-weight: 600; text-decoration: none; transition: border-color .2s, background-color .2s; }
+  .osb_all:hover { border-color: var(--deep-blue); background-color: var(--surface-muted); }
   @media (prefers-reduced-motion: reduce) {
     .osb_arrow { transition: none; }
     .osb_tool:hover .osb_arrow { transform: none; }

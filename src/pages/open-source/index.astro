@@ -4,15 +4,23 @@
 // by the top rule of the figures), then one card per tool (each tool has its
 // own page, src/content/tools), the counting rules and the standards and
 // other contributions (src/data/opensource.ts). The phones differ from the
-// home band's: Moonlight in front.
+// home band's: Moonlight in front. The tool tiles follow the home band's cells
+// (icon box, corner arrow), one white tile each on the paper band, with the
+// headline figure in a small tile.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import PhoneStack from '../../components/vx/PhoneStack.astro';
+import Icon from '../../components/Icon.astro';
+import NetMark from '../../components/home/NetMark.astro';
+import { toolIcons } from '../../lib/toolIcons';
 import { contributions } from '../../data/opensource';
 import { tools, nobr } from '../../lib/content';
 import { site, toolAdoption } from '../../data/site';
 
 const list = await tools();
+// The network marks for a tool's network field ("Stellar", "XRPL and Stellar").
+const netIds: Record<string, 'stellar' | 'xrpl' | 'canton' | 'ethereum'> = { stellar: 'stellar', xrpl: 'xrpl', canton: 'canton', ethereum: 'ethereum' };
+const netsOf = (s: string) => s.split(/ and |, /).map((n) => netIds[n.trim().toLowerCase()]).filter(Boolean);
 const metrics = [
   { figure: String(toolAdoption.count), label: `Projects using at least one of our tools (${toolAdoption.date})`, receipt: '' },
   { figure: '~20%', label: 'Of Stellar CLI commits, 2022 to 2025', receipt: 'https://github.com/stellar/stellar-cli' },
@@ -57,23 +65,29 @@ const ld = {
         </section>
       </div>
     </section>
-    <section class="ab_white">
+    <section class="ab_white os_tools" aria-labelledby="os-tools-title">
       <div class="ab_container">
-        <h2 class="ab_h2">The tools</h2>
+        <div class="os_toolshead">
+          <p class="v-eyebrow">Tools</p>
+          <h2 class="ab_h2" id="os-tools-title">The tools <span class="v-soft">we build and maintain.</span></h2>
+        </div>
         <ul class="os_grid" data-os="tools" role="list">
           {list.map((t) => (
             <li class="os_card" id={t.id} data-os-tool={t.id}>
               <a class="os_cardlink" href={`/open-source/${t.id}`}>
-                <span class="os_head">
-                  <span class="os_name">{t.data.name}</span>
-                  <span class="os_net">{t.data.network}</span>
+                <span class="os_top">
+                  <span class="v-iconbox v-iconbox--pink"><Icon name={toolIcons[t.id] ?? 'code'} size={26} /></span>
+                  <span aria-hidden="true" class="os_arrow">↗</span>
                 </span>
-                <span class="os_cat">{t.data.category}</span>
+                <span class="os_name">{t.data.name}</span>
+                <span class="os_meta">
+                  <span class="os_cat">{t.data.category}</span>
+                  <span class="os_net">{netsOf(t.data.network).map((n) => <NetMark net={n} size={12} lazy />)}{t.data.network}</span>
+                </span>
                 <span class="os_what">{t.data.summary}</span>
                 {t.data.headline?.figure && (
                   <span class="os_kpi"><span class="os_kpifig">{t.data.headline.figure}</span><span class="os_kpilabel">{t.data.headline.label}</span></span>
                 )}
-                <span class="os_more">Read about {t.data.name} →</span>
               </a>
             </li>
           ))}
@@ -168,21 +182,40 @@ const ld = {
     .osh_caselink { display: inline-flex; align-items: center; min-height: 44px; }
   }
 
-  .os_grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+  /* The tools: white tiles on the paper band, as the home band's cells */
+  .os_tools { background: var(--paper); }
+  .os_toolshead { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .os_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
   @media (min-width: 1200px) { .os_grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .os_card { display: flex; scroll-margin-top: 120px; }
-  .os_cardlink { display: flex; flex-direction: column; gap: 14px; width: 100%; padding: 28px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md); color: inherit; text-decoration: none; transition: border-color .2s; }
-  .os_cardlink:hover { border-color: var(--deep-blue); }
-  .os_cardlink:hover .os_more { color: var(--green-ink); }
-  .os_head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .os_name { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 30px; line-height: 1.1; color: var(--deep-blue); }
-  .os_net { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  .os_cat { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--green-ink); }
-  .os_what { font-size: 17px; line-height: 1.5; color: var(--ink); }
-  .os_kpi { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
-  .os_kpifig { font-size: 32px; font-weight: 500; letter-spacing: -.02em; line-height: 1; color: var(--deep-blue); }
-  .os_kpilabel { font-size: 14px; color: var(--muted); }
-  .os_more { font-size: 14px; font-weight: 600; color: var(--deep-blue); transition: color .2s; }
+  .os_card { display: flex; min-width: 0; scroll-margin-top: 120px; }
+  .os_cardlink { display: flex; flex-direction: column; gap: 10px; width: 100%; padding: 24px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); color: inherit; text-decoration: none; transition: border-color .2s, box-shadow .2s; }
+  .os_cardlink:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .os_top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .os_arrow { font-size: 18px; line-height: 1; color: var(--muted-2); transition: color .2s, transform .2s; }
+  .os_cardlink:hover .os_arrow { color: var(--green-ink); transform: translate(2px, -2px); }
+  .os_name { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 26px; line-height: 1.15; color: var(--deep-blue); }
+  .os_meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .os_cat { font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .os_net { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2); font-size: 12px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
+  .os_what { margin-bottom: 8px; font-size: 15px; line-height: 1.5; color: var(--ink-2); text-wrap: pretty; }
+  .os_kpi { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding: 12px 14px; border-radius: 12px; background: var(--tint-pink); }
+  .os_kpifig { color: var(--deep-blue); font-size: 24px; font-weight: 600; letter-spacing: -.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .os_kpilabel { color: var(--ink-2); font-size: 13px; line-height: 1.35; }
+  @media (prefers-reduced-motion: reduce) { .os_arrow { transition: none; } .os_cardlink:hover .os_arrow { transform: none; } }
+  /* Phones: compact tiles, the icon beside the name, the figure on one line */
+  @media (max-width: 599px) {
+    .os_grid { gap: 12px; }
+    .os_cardlink { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; align-items: center; padding: 18px 18px 18px 16px; }
+    .os_top { display: contents; }
+    .os_top .v-iconbox { grid-column: 1; grid-row: 1 / span 2; width: 40px; height: 40px; border-radius: 10px; }
+    .os_top .v-iconbox :global(svg) { width: 22px; height: 22px; }
+    .os_arrow { position: absolute; top: 16px; right: 16px; font-size: 16px; }
+    .os_name { grid-column: 2; padding-right: 24px; font-size: 22px; }
+    .os_meta { grid-column: 2; }
+    .os_what { grid-column: 1 / -1; margin: 8px 0 6px; }
+    .os_kpi { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 10px; padding: 10px 12px; }
+    .os_kpifig { font-size: 20px; }
+  }
   .os_count { display: flex; flex-direction: column; gap: 14px; max-width: 640px; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
   .os_count p { margin: 0; }
   .os_sthead { display: flex; flex-direction: column; gap: 16px; max-width: 720px; }

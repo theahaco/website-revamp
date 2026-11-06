@@ -133,6 +133,8 @@ a.work_case-link[href]:hover .work_h3{color:#367A12}
 .tl_codebar i:nth-child(3){background:#47A019}
 .tl_codefile{margin-left:12px;font:14px ui-monospace,Menlo,monospace;color:rgba(255,255,255,.62)}
 .tl_pre{margin:0;padding:24px 28px;overflow-x:auto;font:15px/1.7 ui-monospace,Menlo,monospace;color:#E8EEF6;background:transparent;border-radius:0}
+@media (max-width:599px){.tl_pre{padding:18px 16px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.6}}
+.tl_h1 .v-soft{display:block}
 .tl_str{color:#8FD068}
 .tl_chart{width:100%;max-width:820px;margin:0 auto;padding:28px;background:#fff;border:1px solid rgba(26,59,96,.14);border-radius:8px;display:flex;flex-direction:column;gap:20px}
 .tl_charttitle{margin:0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#5A6B7E}
@@ -234,7 +236,7 @@ a.work_case-link[href]:hover .work_h3{color:#367A12}
 /* Visible focus everywhere, white on the dark bands */
 :where(a,button,summary,[tabindex]:not([tabindex="-1"])):focus-visible{outline:2px solid var(--green-ink);outline-offset:2px}
 .process_tab:focus-visible{outline:2px solid #fff;outline-offset:-2px}
-.process_section :focus-visible,.net_route :focus-visible{outline-color:#fff}
+.cta_section :focus-visible,.process_section :focus-visible,.net_route :focus-visible{outline-color:#fff}
 /* Anchors and focused messages land below the sticky header */
 html{scroll-padding-top:125px}
 @media (max-width:991px){html{scroll-padding-top:101px}}
