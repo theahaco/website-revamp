@@ -2,13 +2,16 @@
 // Home page "Selected work": the case study tiles (WorkTile.astro, each with
 // its visual from src/lib/workVisuals.ts; the quotes are in the section under
 // the hero, home/Logos.astro), the block of the clients not named ("More work
-// for financial institutions") and the articles tab. Webflow tabs markup,
-// driven by src/scripts/tabs.js. The block's icons come from src/lib/visuals.ts.
-import { caseStudies, posts, pick, nobr, formatDate } from '../lib/content';
+// for financial institutions") and the articles tab: the newest article as
+// the lead tile, then the others as rows, as on the Work page
+// (ArticleList.astro). Webflow tabs markup, driven by src/scripts/tabs.js.
+// The block's icons come from src/lib/visuals.ts.
+import { caseStudies, posts, pick } from '../lib/content';
 import { homeFeaturedCases, homeNdaCases, homeArticles } from '../data/curation';
 import { caseVisual } from '../lib/visuals';
 import Icon from './Icon.astro';
 import WorkTile from './WorkTile.astro';
+import ArticleList from './ArticleList.astro';
 
 const all = await caseStudies();
 const nda = pick(all, homeNdaCases);
@@ -52,35 +55,15 @@ const iconbox = (tone: string) => ['v-iconbox', tone !== 'blue' && `v-iconbox--$
       )}
     </div>
     <div class="w-tab-pane" data-w-tab="Tab 2" id="work-articles">
-      <div class="w-dyn-list">
-        <div class="work_list w-dyn-items" role="list">
-          {articles.map((post) => (
-            <div class="work_item w-dyn-item" role="listitem">
-              <a class="work_article-link w-inline-block hw_link hw_link--article" href={`/blog/${post.id}`}>
-                <div class="work_num hw_num"></div>
-                <div class="work_stack">
-                  <div class="work_meta">
-                    {post.data.category && <p class="work_eyebrow">{post.data.category}</p>}
-                    <div class="work_yeararrow">
-                      {post.data.date && <div>{formatDate(post.data.date, 'short')}</div>}
-                      <div aria-hidden="true" class="work_arrow">↗</div>
-                    </div>
-                  </div>
-                  <h3 class="work_article-h3" set:html={nobr(post.data.title)} />
-                  {post.data.lede && <p class="work_para">{post.data.lede}</p>}
-                </div>
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ArticleList posts={articles} level={3} />
     </div>
   </div>
   <a class="btn-secondary work_all" href="/work">See all work →</a>
 </div>
 
 <style>
-  /* The case tiles have their styles in WorkTile.astro */
+  /* The case tiles have their styles in WorkTile.astro, the articles in ArticleList.astro */
+  /* Unused since the articles tab became ArticleList.astro: the old article rows */
   a.hw_link:hover .work_article-h3 { color: var(--green-ink); }
   .work_article-h3 { transition: color .2s; }
 

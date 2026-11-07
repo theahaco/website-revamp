@@ -6,15 +6,19 @@
 // other contributions (src/data/opensource.ts). The phones differ from the
 // home band's: Moonlight in front. The tool tiles follow the home band's cells
 // (icon box, corner arrow), one white tile each on the paper band, with the
-// headline figure in a small tile.
+// headline figure in a small tile. The counting rules and the contributions
+// are records, as the home hero's proof card: the rules for project counts in
+// a card on a pink panel (the rules for every figure beside it), the
+// contributions in one registry card (src/components/vx/Registry.astro).
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import PhoneStack from '../../components/vx/PhoneStack.astro';
+import Registry from '../../components/vx/Registry.astro';
 import Icon from '../../components/Icon.astro';
 import NetMark from '../../components/home/NetMark.astro';
 import { toolIcons } from '../../lib/toolIcons';
 import { contributions } from '../../data/opensource';
-import { tools, nobr } from '../../lib/content';
+import { tools } from '../../lib/content';
 import { site, toolAdoption } from '../../data/site';
 
 const list = await tools();
@@ -26,6 +30,20 @@ const metrics = [
   { figure: '~20%', label: 'Of Stellar CLI commits, 2022 to 2025', receipt: 'https://github.com/stellar/stellar-cli' },
   { figure: '125,107', label: 'Downloads of our Stellar crates since 2023 (November 2, 2026)', receipt: '' },
   { figure: '~$1.4M', label: 'Public goods funding the Stellar Community Fund voted on Tansu, Q2 to Q4 2026', receipt: 'https://app.tansu.dev' },
+];
+// How we count: the eleven rules of the page, sorted. The rules for every
+// figure sit beside the title (the date it was counted is the title's second
+// line); the card holds the rules for project counts, under its verdicts (a
+// check: counts; 1: counts once; a cross: does not count), floors in its foot.
+const countFacts = [
+  { icon: 'calendar-check', title: 'Counts that only grow are as of that date', sub: 'Such as downloads, calls and wallets' },
+  { icon: 'check-square-offset', title: 'Testnet counts include our own testing' },
+];
+const countRules: { label?: string; mark: 'yes' | 'once' | 'no'; rows: { title: string; sub?: string }[] }[] = [
+  { mark: 'yes', rows: [{ title: 'Its public repo uses a tool in code', sub: 'Configuration, dependencies, imports or CLI scripts' }, { title: 'Its contracts use it onchain' }] },
+  { label: 'Counts once', mark: 'once', rows: [{ title: 'Forks' }, { title: 'A project using several tools, in the total' }] },
+  { label: 'Counts like any other project', mark: 'yes', rows: [{ title: 'Our other tools and our team’s own projects' }] },
+  { label: 'Does not count', mark: 'no', rows: [{ title: 'A tool’s own repo, toward that tool' }, { title: 'Pages that only mention a tool' }] },
 ];
 const siteUrl = Astro.site ? new URL(import.meta.env.BASE_URL, Astro.site).href : site.productionOrigin;
 const ld = {
@@ -94,44 +112,51 @@ const ld = {
         </ul>
       </div>
     </section>
-    <section class="ab_white" data-os="count" id="how-we-count">
+    <section aria-labelledby="os-count-title" class="ab_white" data-os="count" id="how-we-count">
       <div class="ab_container">
-        <div class="ab_howgrid">
-          <div class="ab_howhead">
-            <h2 class="ab_h2">How we count</h2>
+        <div class="osc">
+          <div class="osc_head">
+            <p class="v-eyebrow">In numbers</p>
+            <h2 class="ab_h2 osc_h2" id="os-count-title">How we count. <span class="v-soft">Every figure carries the date it was counted.</span></h2>
+            <ul class="osc_facts" role="list">
+              {countFacts.map((f) => (
+                <li class="osc_fact"><span class="v-iconbox v-iconbox--sm"><Icon name={f.icon} size={20} /></span><span class="osc_ftext"><span class="osc_ftitle">{f.title}</span>{f.sub && <span class="osc_fsub">{f.sub}</span>}</span></li>
+              ))}
+            </ul>
           </div>
-          <div class="os_count">
-            <p>A project counts when its public repo uses a tool in code (configuration, dependencies, imports or CLI scripts), or when its contracts use it onchain. Forks count once, and a project using several tools counts once in the total.</p>
-            <p>A tool’s own repo never counts toward that tool; our other tools and our team’s own projects count like any other project. Pages that only mention a tool do not count. Code search does not index every repo, so project counts are floors, and testnet counts include our own testing.</p>
-            <p>Every figure carries the date it was counted. Counts that only grow, such as downloads, calls and wallets, are as of that date.</p>
+          <div class="osc_panel">
+            <div class="osc_card">
+              <p class="osc_cardhead" id="os-count-when">A project counts when</p>
+              {countRules.map((g, i) => (
+                <div class="osc_group">
+                  {g.label && <p class="osc_glabel" id={`os-count-${i}`}>{g.label}</p>}
+                  <ul aria-labelledby={g.label ? `os-count-${i}` : 'os-count-when'} class="osc_rules" role="list">
+                    {g.rows.map((r) => (
+                      <li class="osc_rule">
+                        <span aria-hidden="true" class:list={['osc_mark', `osc_mark--${g.mark}`]}>
+                          {g.mark === 'yes' && <svg fill="none" height="14" viewBox="0 0 14 14" width="14"><path d="M2.5 7.4 5.6 10.3 11.5 3.9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>}
+                          {g.mark === 'once' && '1'}
+                          {g.mark === 'no' && <svg fill="none" height="12" viewBox="0 0 12 12" width="12"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-linecap="round" stroke-width="1.9" /></svg>}
+                        </span>
+                        <span class="osc_rtext"><span class="osc_rtitle">{r.title}</span>{r.sub && <span class="osc_rsub">{r.sub}</span>}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <p class="osc_foot"><span class="v-iconbox v-iconbox--sm osc_footicon"><Icon name="magnifying-glass" size={20} /></span><span class="osc_ftext"><span class="osc_ftitle">Project counts are floors</span><span class="osc_fsub">Code search does not index every repo</span></span></p>
+            </div>
           </div>
         </div>
       </div>
     </section>
-    <section data-os="contributions">
+    <section aria-labelledby="os-st-title" data-os="contributions">
       <div class="ab_container">
-        <div class="os_sthead">
-          <h2 class="ab_h2">Standards and contributions</h2>
-          <p class="os_stlede">Beyond our own tools: the standards we wrote and our code in SDKs, wallets and libraries, across the networks we work on.</p>
+        <div class="os_toolshead">
+          <p class="v-eyebrow">Beyond our own tools</p>
+          <h2 class="ab_h2 osr_h2" id="os-st-title">Standards and contributions. <span class="v-soft">Across the networks we work on.</span></h2>
         </div>
-        <div class="os_stgroups" data-os="standards">
-          {contributions.map((g) => (
-            <div class="os_stgroup">
-              <h3 class="os_stlabel">{g.title}</h3>
-              <ul class="os_stlist" role="list">
-                {g.items.map((s) => (
-                  <li class="os_stitem">
-                    {s.href
-                      ? <a class="os_stname" href={s.href}><Fragment set:html={nobr(s.name)} /><span aria-hidden="true" class="os_starrow"> ↗</span></a>
-                      : <p class="os_stname" set:html={nobr(s.name)} />}
-                    <p class="os_stwhat" set:html={nobr(s.what)} />
-                    <p class="os_stmeta">{s.network}<span aria-hidden="true"> · </span><span class="os_ststatus">{s.status}</span></p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <Registry data-os="standards" groups={contributions} />
       </div>
     </section>
   </main>
@@ -216,6 +241,51 @@ const ld = {
     .os_kpi { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 10px; padding: 10px 12px; }
     .os_kpifig { font-size: 20px; }
   }
+  /* How we count: the rules for every figure beside the title, the rules for
+     project counts as a proof card (the home hero's: a deep blue head, rows,
+     a foot on the blue tint) on a pink panel, as the Selected work visuals */
+  .osc { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 64px; align-items: center; }
+  .osc_head { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; min-width: 0; }
+  .osc_h2 { max-width: 12em; text-wrap: balance; }
+  .osc_h2 .v-soft, .osr_h2 .v-soft { display: block; }
+  .osr_h2 { text-wrap: balance; }
+  .osc_facts { width: 100%; margin: 16px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .osc_fact { display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .osc_ftext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .osc_ftitle { color: var(--deep-blue); font-size: 15px; font-weight: 600; line-height: 1.35; text-wrap: balance; }
+  .osc_fsub { color: var(--muted); font-size: 14px; line-height: 1.4; }
+  .osc_panel { display: grid; place-items: center; min-width: 0; padding: 36px; border: 1px solid var(--line); border-radius: 20px; background: var(--tint-pink); }
+  .osc_card { width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--white); box-shadow: var(--shadow-2); }
+  .osc_cardhead { margin: 0; padding: 14px 20px; background: var(--deep-blue); color: var(--white); font-family: var(--font-display); font-size: 21px; font-style: italic; line-height: 1.2; }
+  .osc_group + .osc_group { border-top: 1px solid var(--line); }
+  .osc_glabel { margin: 0; padding: 14px 20px 2px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
+  .osc_rules { margin: 0; padding: 5px 0; list-style: none; }
+  .osc_rule { display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; align-items: center; padding: 6px 20px; }
+  /* The verdicts: Flow's check, 1 for once, a cross */
+  .osc_mark { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; }
+  .osc_mark--yes { background: var(--vibrant-green); color: var(--white); }
+  .osc_mark--once { background: var(--deep-blue); color: var(--white); font-size: 12px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .osc_mark--no { background: var(--tint-tan); color: var(--ink-2); }
+  .osc_rtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .osc_rtitle { color: var(--ink); font-size: 15px; font-weight: 500; line-height: 1.35; }
+  .osc_rsub { color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .osc_foot { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 20px 15px; border-top: 1px solid var(--line-strong); background: var(--tint-blue); }
+  .osc_footicon { background: var(--white); }
+  @media (max-width: 1199px) {
+    .osc { column-gap: 48px; }
+  }
+  @media (max-width: 991px) {
+    .osc { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+  }
+  @media (max-width: 767px) {
+    .osc_panel { padding: 28px 12px; }
+    .osc_cardhead { padding: 13px 16px; font-size: 20px; }
+    .osc_glabel { padding: 12px 16px 2px; }
+    .osc_rule { padding: 7px 16px; }
+    .osc_foot { padding: 14px 16px 15px; }
+  }
+
+  /* Unused since the proof cards (November 2026): the counting text and the standards lists they replaced */
   .os_count { display: flex; flex-direction: column; gap: 14px; max-width: 640px; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
   .os_count p { margin: 0; }
   .os_sthead { display: flex; flex-direction: column; gap: 16px; max-width: 720px; }

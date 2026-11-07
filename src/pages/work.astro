@@ -3,7 +3,8 @@
 // one sentence), one filter line (view, audience, count), then the case
 // studies as the home page's tiles, the open-source tools and the PwC US
 // alliance as compact rows (src/components/WorkRows.astro). The Articles view
-// (/work?view=articles, the Blog link) swaps the header text and the list;
+// (/work?view=articles, the Blog link) swaps the header text and the list:
+// the newest article as the lead tile, then rows (ArticleList.astro);
 // src/scripts/work.js holds both texts and the filter.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WorkRows from '../components/WorkRows.astro';
@@ -45,7 +46,8 @@ import Cta from '../components/Cta.astro';
   var soft = document.querySelector('[data-wk="h1b"]');
   if (soft) soft.hidden = true;
   set('lede', 'What we learned taking regulated assets, protocol integrations and developer tooling to mainnet.');
-  if (a) set('count', a.querySelectorAll('.work_item').length + ' items');
+  var n = a ? a.querySelectorAll('.ar_item').length : 0;
+  if (a) set('count', n + (n === 1 ? ' item' : ' items'));
 })();
 </script>
 <Cta heading={'Working on something similar? Talk to an engineer.'} />

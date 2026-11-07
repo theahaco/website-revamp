@@ -1,0 +1,170 @@
+---
+// A registry of records: one white card on two offset sheets (the home hero's
+// proof card, src/components/home/HeroProof.astro), a strip per group, then
+// one row per record in the manner of the service precedents
+// (src/components/services/Precedents.astro): its identifier (a SEP number or
+// an icon in a tinted tile), its name and one line, a status pill with the
+// network and the date, the faces of who did it, and where its proof lives.
+// A row with a link is one link (the name's link covers the row); a row
+// without one stays static. The faces carry the credit: the names are in
+// their tooltip and in screen-reader text.
+// Used on /open-source for the standards and other contributions
+// (src/data/opensource.ts). The rows adapt to the card's own width.
+import Icon from '../Icon.astro';
+import NetMark from '../home/NetMark.astro';
+import { nobr, team } from '../../lib/content';
+import type { ContributionGroup } from '../../data/opensource';
+
+interface Props {
+  groups: ContributionGroup[];
+  /** Heading level of the group labels: 3 under a section heading. */
+  level?: 3 | 4;
+  /** Prefix of the group labels' ids, when a page has more than one registry. */
+  idPrefix?: string;
+  /** data-* attributes, set on the card. */
+  [attr: `data-${string}`]: string;
+}
+const { groups, level = 3, idPrefix = 'rg', ...attrs } = Astro.props;
+const Label = level === 4 ? 'h4' : 'h3';
+const nets = { Stellar: 'stellar', XRPL: 'xrpl' } as const;
+
+// Every face is a team member (src/content/team), whose avatar is
+// public/images/team/avatars/<id>-96.webp
+const members = new Set((await team()).map((m) => m.id));
+for (const g of groups) for (const s of g.items) for (const id of s.by ?? []) {
+  if (!members.has(id)) throw new Error(`Registry: "${id}", in the credit of ${s.name}, is not a team member (src/content/team)`);
+}
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// The line: hyphenated words kept whole, code names (between backticks) in mono
+const line = (t: string) => nobr(t).replace(/`([^`]+)`/g, '<code>$1</code>');
+---
+<div class="rg">
+  <div aria-hidden="true" class="rg_sheet rg_sheet--back"></div>
+  <div aria-hidden="true" class="rg_sheet rg_sheet--mid"></div>
+  <div class="rg_card" {...attrs}>
+    {groups.map((g) => {
+      const id = `${idPrefix}-${slug(g.title)}`;
+      return (
+        <div class="rg_group">
+          <Label class="rg_label" id={id}>{g.title}<span aria-hidden="true" class="rg_count">{g.items.length}</span></Label>
+          <ul aria-labelledby={id} class="rg_rows" role="list">
+            {g.items.map((s) => (
+              <li class:list={['rg_row', !s.href && 'rg_row--static']}>
+                {s.sep
+                  ? <span aria-hidden="true" class="rg_tile rg_tile--sep"><span class="rg_sepk">SEP</span><span class="rg_sepn">{s.sep}</span></span>
+                  : <span class="rg_tile"><Icon name={s.icon ?? 'cube'} size={22} /></span>}
+                <span class="rg_text">
+                  {s.href
+                    ? <a class="rg_name rg_link" href={s.href}>{s.sep && <span class="rg_sr">SEP-{s.sep}, </span>}{s.name}{s.linkLabel && <span class="rg_sr">, {s.linkLabel}</span>}</a>
+                    : <span class="rg_name">{s.sep && <span class="rg_sr">SEP-{s.sep}, </span>}{s.name}</span>}
+                  <span class="rg_what" set:html={line(s.what)} />
+                </span>
+                <span class="rg_status">
+                  <span class:list={['rg_pill', `rg_pill--${s.tone}`]}><span aria-hidden="true" class="rg_dot"></span>{s.status}</span>
+                  <span class="rg_meta"><NetMark net={nets[s.network]} size={12} lazy /><span>{s.network}</span>{s.date && <Fragment><span aria-hidden="true" class="rg_sep">·</span><span>{s.date}</span></Fragment>}</span>
+                </span>
+                <span class="rg_by" title={s.by?.length ? s.credit : undefined}>
+                  {s.by?.length ? (
+                    <Fragment>
+                      <span aria-hidden="true" class="rg_faces">{s.by.map((who) => <img alt="" class="tm_portraitimg rg_face" decoding="async" height="28" loading="lazy" src={`/images/team/avatars/${who}-96.webp`} width="28" />)}</span>
+                      {s.credit && <span class="rg_sr">{s.credit}</span>}
+                    </Fragment>
+                  ) : null}
+                </span>
+                <span aria-hidden="true" class="rg_go">{s.href && <Fragment>{s.linkLabel && <span class="rg_host">{s.linkLabel}</span>}<span class="rg_arrow">↗</span></Fragment>}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  /* The card on two offset sheets, as the home hero's card: a stack of records */
+  .rg { position: relative; padding-bottom: 20px; container-type: inline-size; }
+  .rg_sheet { position: absolute; border: 1px solid var(--line); border-radius: 18px; }
+  .rg_sheet--back { top: 48px; right: 56px; bottom: 0; left: 56px; background: var(--tint-pink); }
+  .rg_sheet--mid { top: 24px; right: 28px; bottom: 10px; left: 28px; background: var(--tint-blue); }
+  .rg_card { position: relative; z-index: 1; overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--white); box-shadow: var(--shadow-2); }
+
+  /* A strip per group, its label and how many records it holds */
+  .rg_group + .rg_group { border-top: 1px solid var(--line-strong); }
+  .rg_label { display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--tint-paper); color: var(--deep-blue); font-family: var(--font-ui); font-size: 12px; font-weight: 600; letter-spacing: .08em; line-height: 1.3; text-transform: uppercase; }
+  .rg_count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--white); color: var(--muted); font-size: 11px; letter-spacing: 0; }
+
+  /* A row: identifier, text, status, faces, link */
+  .rg_rows { margin: 0; padding: 0; list-style: none; }
+  .rg_row { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) 216px 92px 76px; column-gap: 20px; align-items: center; padding: 13px 24px; border-top: 1px solid var(--line); transition: background-color .2s; }
+  .rg_row:first-child { border-top: 0; }
+  .rg_row:not(.rg_row--static):hover { background: var(--paper); }
+  .rg_tile { display: grid; place-items: center; width: 52px; height: 48px; border-radius: 12px; background: var(--tint-blue); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+  .rg_tile--sep { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+  .rg_sepk { color: var(--muted); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; line-height: 1; }
+  .rg_sepn { color: var(--deep-blue); font-size: 19px; font-weight: 600; letter-spacing: -.01em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .rg_text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .rg_name { color: var(--deep-blue); font-size: 16px; font-weight: 600; line-height: 1.3; transition: color .2s; }
+  .rg_link { text-decoration: none; }
+  /* The name's link covers the row: the row is one link */
+  .rg_link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+  .rg_link:focus-visible { outline: none; }
+  .rg_link:focus-visible::after { outline: 2px solid var(--green-ink); outline-offset: -3px; }
+  .rg_row:hover .rg_link { color: var(--green-ink); }
+  .rg_what { color: var(--ink-2); font-size: 15px; line-height: 1.45; text-wrap: pretty; }
+  .rg_what :global(code) { padding: 1px 5px; border-radius: 5px; background: var(--tint-blue); color: var(--deep-blue); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; white-space: nowrap; }
+
+  /* The status pill (green: final, shipped or in use; blue: draft; outlined:
+     contributor or since; tan: testnet demo), then the network and its date */
+  .rg_status { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; min-width: 0; }
+  .rg_pill { display: inline-flex; align-items: center; gap: 7px; height: 24px; padding: 0 10px 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1; white-space: nowrap; }
+  .rg_dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; }
+  .rg_pill--done { background: var(--tint-green); color: #2f6e10; }
+  .rg_pill--done .rg_dot { background: var(--vibrant-green); }
+  .rg_pill--draft { background: var(--tint-blue); color: var(--deep-blue); }
+  .rg_pill--draft .rg_dot { box-shadow: inset 0 0 0 1.6px var(--deep-blue); }
+  .rg_pill--plain { border: 1px solid var(--line-strong); background: var(--white); color: var(--ink-2); }
+  .rg_pill--plain .rg_dot { background: var(--muted-2); }
+  .rg_pill--demo { background: var(--tint-tan); color: var(--ink-2); }
+  .rg_pill--demo .rg_dot { box-shadow: inset 0 0 0 1.6px #9c7f80; }
+  .rg_meta { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; line-height: 1.35; white-space: nowrap; }
+  .rg_sep { color: var(--muted-2); }
+
+  /* The faces, in one tone (the portrait filter), above the row's link so their tooltip shows */
+  .rg_by { position: relative; z-index: 2; display: flex; justify-self: start; min-width: 0; }
+  .rg_faces { display: flex; }
+  .rg_face { display: block; width: 28px; height: 28px; border-radius: 50%; background: var(--tint-tan); box-shadow: 0 0 0 2px var(--white); }
+  .rg_face + .rg_face { margin-left: -7px; }
+
+  /* Where the proof lives, and the arrow */
+  .rg_go { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap; }
+  .rg_arrow { color: var(--deep-blue); font-size: 16px; opacity: .55; transition: transform .2s, color .2s, opacity .2s; }
+  .rg_row:hover .rg_arrow { color: var(--green-ink); opacity: 1; transform: translate(2px, -2px); }
+  .rg_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .rg_row, .rg_name, .rg_arrow { transition: none; } .rg_row:hover .rg_arrow { transform: none; } }
+
+  /* A narrower card (1024 px screens): the link is its arrow */
+  @container (max-width: 1039px) {
+    .rg_row { grid-template-columns: 52px minmax(0, 1fr) 216px 92px 24px; column-gap: 16px; }
+    .rg_host { display: none; }
+  }
+  /* Tablets and phones: each record stacks, its status and faces under the
+     text, the arrow in its corner */
+  @container (max-width: 879px) {
+    .rg_row { grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'tile text text' 'st st by'; column-gap: 14px; row-gap: 12px; align-items: start; padding: 16px; }
+    .rg_tile { grid-area: tile; width: 40px; height: 40px; border-radius: 10px; }
+    .rg_tile :global(svg) { width: 20px; height: 20px; }
+    .rg_sepk { font-size: 8.5px; }
+    .rg_sepn { font-size: 16px; }
+    .rg_text { grid-area: text; }
+    .rg_link { padding-right: 20px; }
+    .rg_status { grid-area: st; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+    .rg_by { grid-area: by; align-self: center; }
+    .rg_go { position: absolute; top: 16px; right: 16px; }
+    .rg_label { padding: 11px 16px; }
+  }
+  @media (max-width: 767px) {
+    .rg_sheet--back { top: 32px; right: 24px; left: 24px; }
+    .rg_sheet--mid { top: 16px; right: 12px; left: 12px; }
+  }
+</style>

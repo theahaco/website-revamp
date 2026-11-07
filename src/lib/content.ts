@@ -22,6 +22,17 @@ export function coverFor(id: string, cover = ''): string {
   return ext ? `/images/covers/${id}.${ext}` : '';
 }
 
+/**
+ * Article thumbnail, the square in the rows of the article lists
+ * (src/components/ArticleList.astro): the image named after the article in
+ * public/images/covers/thumbs/ (webp, png, jpg or jpeg), if any, otherwise
+ * the cover, which the rows show by its right side, where its diagram is.
+ */
+export function thumbFor(id: string, cover = ''): string {
+  const ext = ['webp', 'png', 'jpg', 'jpeg'].find((e) => existsSync(join(process.cwd(), 'public', 'images', 'covers', 'thumbs', `${id}.${e}`)));
+  return ext ? `/images/covers/thumbs/${id}.${ext}` : coverFor(id, cover);
+}
+
 /** Title text for set:html, with hyphenated words kept on one line (no font here has a non-breaking hyphen). */
 export const nobr = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/(\S+-\S+)/g, '<span class="nobr">$1</span>');
 

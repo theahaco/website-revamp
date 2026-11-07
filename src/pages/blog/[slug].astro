@@ -1,9 +1,11 @@
 ---
 // Article template (Webflow collection "Blog Posts"). The body is the
-// Markdown file's content; "In this article" lists its H2 headings.
+// Markdown file's content; "In this article" lists its H2 headings. "More
+// articles": the rows of the article lists (ArticleList.astro), without a lead.
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
+import ArticleList from '../../components/ArticleList.astro';
 import { posts, team, formatDate, parseDate, ogImageFor, coverFor, nobr } from '../../lib/content';
 import { siteUrl, ld } from '../../lib/ld';
 
@@ -104,23 +106,7 @@ const articleLd = ld({
             <h2 class="more_h2">More articles</h2>
             <a class="more_all" href="/work?view=articles">All articles ↗</a>
           </div>
-          <div class="w-dyn-list">
-            <div class="work_list w-dyn-items" role="list">
-              {more.map((p) => (
-                <div class="work_item w-dyn-item" role="listitem">
-                  <a class="more_row w-inline-block" href={`/blog/${p.id}`}>
-                    <div class="more_stack">
-                      <span class="work_eyebrow">{p.data.category}</span>
-                      <span class="more_title">{p.data.title}</span>
-                    </div>
-                    <div class="more_meta">
-                      <span class="inline-text">{formatDate(p.data.date, 'long')}</span><span class="inline-text"> · </span>{p.data.readMinutes && <span class="inline-text">{p.data.readMinutes}</span>}<span class="inline-text"> min ↗</span>
-                    </div>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ArticleList posts={more} lead={false} level={3} />
         </div>
       </section>
     )}

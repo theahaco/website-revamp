@@ -2,22 +2,23 @@
 // The lists of the Work page. Case studies: the home page's tiles
 // (WorkTile.astro), in the order of src/data/curation.ts (workOrder), then the
 // open-source tools and the PwC US alliance as compact rows, the rows of the
-// Services page (services/Precedents.astro). Articles: numbered rows with
-// their text. Eyebrows, filter data and links are computed here;
-// src/scripts/work.js only filters and switches views. Each filtered item
+// Services page (services/Precedents.astro). Articles: the newest as the
+// lead tile, the others as compact rows (ArticleList.astro). Filter data and
+// links are computed here; src/scripts/work.js filters, switches views and
+// gives the lead to the first article the filter keeps. Each filtered item
 // carries its audience (data-fa); the tools count as one item each
 // (data-wk-count).
-import { caseStudies, posts, tools, formatDate, nobr, orderBy } from '../lib/content';
+import { caseStudies, posts, tools, orderBy } from '../lib/content';
 import { workOrder, workWideCases } from '../data/curation';
 import { toolIcons } from '../lib/toolIcons';
 import WorkTile from './WorkTile.astro';
+import ArticleList from './ArticleList.astro';
 import Precedents, { type PrecedentRow } from './services/Precedents.astro';
 
 interface Props {
   kind: 'cases' | 'articles';
 }
 const { kind } = Astro.props;
-const eyebrow = (aud: string, net: string) => (aud && net ? `${aud} · ${net}` : aud || net);
 const allCases = kind === 'cases' ? orderBy(await caseStudies(), workOrder) : [];
 // Alliances (PwC US) are not client engagements: one row, last, without a link.
 const tileIds = allCases.filter((c) => !c.data.alliance).map((c) => c.id);
@@ -57,40 +58,12 @@ const allianceRow = (cs: (typeof alliances)[number]): PrecedentRow => ({
     ))}
   </Fragment>
 )}
-{kind === 'articles' && (
-  <div class="w-dyn-list">
-    <div class="work_list w-dyn-items" role="list">
-      {articles.map((post) => (
-        <div class="work_item w-dyn-item" role="listitem" data-fa={post.data.audience}>
-          <a class="work_article-link w-inline-block wr_link" href={`/blog/${post.id}`}>
-            <span class="work_num"></span>
-            <div class="work_stack">
-              <div class="wr_head">
-                <div class="work_meta">
-                  <span class="work_eyebrow" data-row="eyebrow">{eyebrow(post.data.audience, post.data.network)}</span>
-                  <span class="work_yeararrow"><span data-row="date">{formatDate(post.data.date, 'long')}</span><span> ↗</span></span>
-                </div>
-              </div>
-              <h2 class="work_article-h3" data-row="title" set:html={nobr(post.data.title)} />
-              {(post.data.readMinutes || post.data.authorName) && (
-                <p class="wk_rowline">
-                  {post.data.readMinutes && <span data-row="min">{post.data.readMinutes}</span>}
-                  {post.data.readMinutes && <span> min · </span>}
-                  {post.data.authorName && <span data-row="author">{post.data.authorName}</span>}
-                </p>
-              )}
-            </div>
-          </a>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+{kind === 'articles' && <ArticleList posts={articles} level={2} />}
 
 <style>
   /* Tools and alliance: the Services rows, under the tiles */
   .wr_group { margin-top: 56px; }
-  /* Articles: number and text; on phones the number sits above the text (site.css) */
+  /* Unused since the Articles view became ArticleList.astro: the numbered article rows */
   .wr_head { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .wr_link .work_meta { min-height: 18px; }
   .work_article-h3 { transition: color .2s; }

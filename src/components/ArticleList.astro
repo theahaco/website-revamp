@@ -1,0 +1,184 @@
+---
+// Article lists, newest first. The Work page's Articles view (WorkRows.astro)
+// and the home page's Articles tab (HomeWork.astro) draw the first article as
+// the lead, then the others as rows; "More articles" under an article and a
+// team page's Writing list show the rows alone (lead={false}).
+// The lead is the case study tile (WorkTile.astro, its wide tile): the cover
+// by its right side as the visual, where the cover template puts the
+// diagram (public/images/covers/thumbs/README.md), so the title the cover
+// carries on its left never repeats the heading; then the eyebrow, the title,
+// the description and the byline. The rows are the Services precedent rows
+// with a figure (services/Precedents.astro): the article's thumbnail in the
+// tile, the byline in the figure's column.
+// One markup per article: the lead is a class (is-lead), so the Work page
+// filter (src/scripts/work.js) gives it to the first article it keeps, and
+// is-firstrow to the next one (the rule above the rows). Without JavaScript
+// the newest article is the lead. Each article is one link, its title's,
+// stretched over the tile or the row (as WorkTile's title link).
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Icon from './Icon.astro';
+import { coverFor, thumbFor, formatDate, parseDate, nobr, team, type Post } from '../lib/content';
+
+interface Props {
+  posts: Post[];
+  /** The first article as the lead tile; false for rows alone. */
+  lead?: boolean;
+  /** Heading level of the titles: 2 under the page title, 3 under a section heading. */
+  level?: 2 | 3;
+}
+const { posts, lead = true, level = 3 } = Astro.props;
+const Title = level === 2 ? 'h2' : 'h3';
+const eyebrow = (aud: string, net: string) => (aud && net ? `${aud} · ${net}` : aud || net);
+// Faces: the 96 px avatar (public/images/team/avatars), or the portrait when a
+// person has no avatar yet, as TeamGrid.astro.
+const members = await team();
+const face = (id: string) => {
+  if (!id) return '';
+  const avatar = `/images/team/avatars/${id}-96.webp`;
+  return existsSync(join(process.cwd(), 'public', avatar)) ? avatar : members.find((m) => m.id === id)?.data.portrait || '';
+};
+const isoDay = (date: string) => {
+  const d = parseDate(date);
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString().slice(0, 10);
+};
+---
+<div class:list={['ar', !lead && 'ar--rows']}>
+  <ul class="ar_list" role="list">
+    {posts.map((p, i) => {
+      const d = p.data;
+      const cover = coverFor(p.id, d.cover);
+      const thumb = thumbFor(p.id, d.cover);
+      const avatar = face(d.author);
+      const first = lead ? i === 1 : i === 0;
+      return (
+        <li class:list={['ar_item', lead && i === 0 && 'is-lead', first && 'is-firstrow', !cover && 'ar_item--nocover']} data-fa={d.audience}>
+          <div class="ar_row">
+            <span aria-hidden="true" class="ar_thumb">
+              {thumb ? <img alt="" decoding="async" height="72" loading="lazy" src={thumb} width="72" /> : <Icon name="file-text" size={26} />}
+            </span>
+            {lead && cover && <span aria-hidden="true" class="ar_visual"><img alt="" decoding="async" height="360" loading="lazy" src={cover} width="360" /></span>}
+            <div class="ar_text">
+              {lead && eyebrow(d.audience, d.network) && <p class="ar_eyebrow">{eyebrow(d.audience, d.network)}</p>}
+              <Title class="ar_title"><a class="ar_tlink" href={`/blog/${p.id}`} set:html={nobr(d.title)} /><span aria-hidden="true" class="ar_arrow">&nbsp;→</span></Title>
+              {d.description && <p class="ar_line" set:html={nobr(d.description)} />}
+            </div>
+            <p class="ar_by">
+              {avatar && <span class="ar_face"><img alt="" class="cs_avatarimg" decoding="async" height="32" loading="lazy" src={avatar} width="32" /></span>}
+              <span class="ar_bytext">
+                {d.authorName && <span class="ar_author">{d.authorName}</span>}
+                {d.date && <span class="ar_date"><time datetime={isoDay(d.date)}>{formatDate(d.date, 'long')}</time>{lead && d.readMinutes && <span class="ar_min"> · {d.readMinutes} min</span>}</span>}
+              </span>
+              {lead && <span aria-hidden="true" class="ar_corner">↗</span>}
+            </p>
+          </div>
+        </li>
+      );
+    })}
+  </ul>
+</div>
+
+<style>
+  .ar { display: flex; flex-direction: column; }
+  .ar_list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+
+  /* A row: the Services precedent row with its figure column */
+  .ar_item { position: relative; border-bottom: 1px solid var(--line); }
+  .ar_item.is-firstrow { border-top: 1px solid var(--line); }
+  .ar_row { display: grid; grid-template-columns: 72px minmax(0, 1fr) 188px; grid-template-areas: "thumb text by"; column-gap: 16px; align-items: center; padding: 16px 0; }
+  .ar_thumb { grid-area: thumb; display: grid; place-items: center; width: 72px; height: 72px; overflow: hidden; border-radius: 12px; background: var(--tint-blue); color: var(--deep-blue); --icon-tint: var(--vibrant-green); --icon-tint-opacity: .55; }
+  .ar_thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 100% 50%; }
+  .ar_text { grid-area: text; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .ar_title { margin: 0; color: var(--deep-blue); font-family: var(--font-ui); font-size: 16px; font-style: normal; font-weight: 600; line-height: 1.3; letter-spacing: 0; text-wrap: balance; transition: color .2s; }
+  .ar_tlink { color: inherit; text-decoration: none; }
+  .ar_tlink::after { content: ''; position: absolute; inset: 0; z-index: 2; }
+  .ar_tlink:focus-visible { outline: none; }
+  .ar_item:has(.ar_tlink:focus-visible) .ar_row { outline: 2px solid var(--green-ink); outline-offset: 2px; border-radius: 8px; }
+  .ar_arrow { position: relative; left: 0; color: var(--muted); font-weight: 500; transition: left .2s, color .2s; }
+  .ar_item:hover .ar_title { color: var(--green-ink); }
+  .ar_item:hover .ar_arrow { left: 3px; color: var(--green-ink); }
+  .ar_line { display: -webkit-box; overflow: hidden; max-width: 68ch; margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; text-wrap: pretty; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  /* The byline in the figure's column: the face (one tone, .cs_avatarimg in
+     visual.css), then the name over the date */
+  .ar_by { grid-area: by; display: flex; align-items: center; gap: 10px; min-width: 0; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .ar_face { display: block; flex-shrink: 0; width: 32px; height: 32px; }
+  .ar_face img { display: block; }
+  .ar_bytext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ar_author { color: var(--deep-blue); font-size: 14px; font-weight: 600; }
+  .ar_date { white-space: nowrap; }
+  /* The lead's parts, in every article's markup since the lead follows the filter */
+  .ar_eyebrow, .ar_visual, .ar_corner, .ar_min { display: none; }
+
+  /* The lead: WorkTile's wide tile, the text beside the cover's diagram */
+  .ar_item.is-lead { margin-bottom: 40px; padding: 8px; border: 1px solid var(--line); border-radius: 20px; background: var(--white); transition: border-color .2s, box-shadow .2s; }
+  .ar_item.is-lead:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .ar_item.is-lead:has(.ar_tlink:focus-visible) { box-shadow: inset 0 0 0 2px var(--green-ink); }
+  .ar_item.is-lead:has(.ar_tlink:focus-visible) .ar_row { outline: none; }
+  .ar_item.is-lead .ar_tlink::after { border-radius: 20px; }
+  .ar_item.is-lead .ar_row { grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "text visual" "by visual"; column-gap: 8px; align-items: stretch; padding: 0; }
+  .ar_item.is-lead.ar_item--nocover .ar_row { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "by"; }
+  .ar_item.is-lead .ar_thumb, .ar_item.is-lead .ar_arrow { display: none; }
+  /* A square at the cover's right edge shows the diagram alone */
+  .ar_item.is-lead .ar_visual { grid-area: visual; align-self: start; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 14px; background: var(--tint-blue); }
+  .ar_visual img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 100% 50%; }
+  .ar_item.is-lead .ar_text { gap: 12px; padding: 40px 36px 0; }
+  .ar_item.is-lead .ar_eyebrow { display: block; margin: 0; color: var(--green-ink); font-size: 12px; font-weight: 600; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; }
+  .ar_item.is-lead .ar_title { max-width: 17em; font-family: var(--font-display); font-size: 40px; font-style: italic; font-weight: 400; line-height: 1.1; letter-spacing: -.005em; }
+  .ar_item.is-lead:hover .ar_title { color: var(--deep-blue); }
+  .ar_item.is-lead .ar_line { display: block; max-width: 36em; font-size: 17px; line-height: 1.55; -webkit-line-clamp: none; }
+  /* WorkTile's byline: the name, the date and reading time, the corner arrow */
+  .ar_item.is-lead .ar_by { padding: 16px 36px 26px; font-size: 14px; }
+  .ar_item.is-lead .ar_bytext { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+  .ar_item.is-lead .ar_min { display: inline; }
+  .ar_item.is-lead .ar_corner { display: block; margin-left: auto; color: var(--deep-blue); font-size: 18px; line-height: 1; opacity: .5; transition: opacity .2s, transform .2s, color .2s; }
+  .ar_item.is-lead:hover .ar_corner { color: var(--green-ink); opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) { .ar_item.is-lead:hover .ar_corner { transform: translate(2px, -2px); } }
+
+  /* Tablets: the square beside the text, smaller */
+  @media (max-width: 991px) {
+    .ar_row { grid-template-columns: 72px minmax(0, 1fr) 168px; }
+    .ar_item.is-lead .ar_row { grid-template-columns: minmax(0, 1fr) 280px; }
+    .ar_item.is-lead .ar_text { padding: 24px 20px 0; }
+    .ar_item.is-lead .ar_by { padding: 12px 20px 18px; }
+    .ar_item.is-lead .ar_title { font-size: 30px; }
+    .ar_item.is-lead .ar_line { font-size: 16px; }
+  }
+  /* Large phones: the square still beside the text, a third of the tile */
+  @media (max-width: 767px) {
+    .ar_item.is-lead { margin-bottom: 32px; }
+    .ar_item.is-lead .ar_row { grid-template-columns: minmax(0, 1fr) 38%; }
+    .ar_item.is-lead .ar_text { padding: 20px 16px 0; gap: 10px; }
+    .ar_item.is-lead .ar_by { padding: 14px 16px 16px; }
+    .ar_item.is-lead .ar_date { white-space: normal; }
+    .ar_item.is-lead .ar_title { font-size: 26px; line-height: 1.15; }
+    .ar_item.is-lead .ar_line { display: -webkit-box; font-size: 15px; -webkit-line-clamp: 4; }
+  }
+  /* Phones: the lead stacks, the diagram on top in a 4:3 band (the middle of
+     the square, as the thumbnails' wide strip); the rows' byline goes under
+     the text, as Precedents drops its figure under the text */
+  @media (max-width: 599px) {
+    .ar_item.is-lead .ar_row { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; grid-template-areas: "visual" "text" "by"; }
+    .ar_item.is-lead.ar_item--nocover .ar_row { grid-template-areas: "text" "text" "by"; }
+    .ar_item.is-lead .ar_visual { position: relative; aspect-ratio: 4 / 3; }
+    .ar_item.is-lead .ar_visual img { position: absolute; top: 50%; left: 0; height: auto; aspect-ratio: 1; transform: translateY(-50%); }
+    .ar_item.is-lead .ar_line { display: block; font-size: 16px; -webkit-line-clamp: none; }
+    .ar_row { grid-template-columns: 72px minmax(0, 1fr); grid-template-areas: "thumb text" "thumb by"; align-items: start; }
+    .ar_by { margin-top: 10px; gap: 8px; }
+    .ar_face { width: 20px; height: 20px; }
+    .ar_bytext { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+    .ar_author { font-size: 13px; }
+    .ar_item.is-lead .ar_face { width: 32px; height: 32px; }
+    .ar_item.is-lead .ar_author { font-size: 14px; }
+    .ar_item.is-lead .ar_by { margin-top: 0; gap: 10px; }
+  }
+  @media (max-width: 479px) {
+    .ar_row { grid-template-columns: 56px minmax(0, 1fr); column-gap: 14px; padding: 14px 0; }
+    .ar_thumb { width: 56px; height: 56px; border-radius: 10px; }
+    .ar_thumb :global(svg) { width: 22px; height: 22px; }
+    .ar_item.is-lead .ar_title { font-size: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ar_item.is-lead, .ar_corner, .ar_title, .ar_arrow { transition: none; }
+    .ar_item:hover .ar_arrow { left: 0; }
+  }
+</style>

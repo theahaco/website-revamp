@@ -5,7 +5,9 @@ import { href } from './base.js';
 // the current view matches it, so no filter leads to an empty list. Items are
 // the elements with a data-fa (audience) attribute: the case study tiles, the
 // group of open-source tool rows (it counts as data-wk-count items), the
-// alliance row, the article rows.
+// alliance row, the articles. The first article the filter keeps is drawn as
+// the lead tile (is-lead), the next one opens the rows (is-firstrow): see
+// src/components/ArticleList.astro.
 const AUDS = ['All', 'Financial institutions', 'Protocols and products', 'Ecosystems and open source'];
 // The title in two tones: h1 in the page's colour, soft in the lighter one
 // (no soft part: one tone). The first paint of /work?view=articles uses the
@@ -116,11 +118,20 @@ export function initWork() {
       group.hidden = group.querySelectorAll('.wk_chip:not([hidden])').length <= 2;
     }
     let n = 0;
+    const kept = [];
     items.forEach((it) => {
       const show = state.aud === 'All' || it.getAttribute('data-fa') === state.aud;
       it.style.display = show ? '' : 'none';
-      if (show) n += countOf(it);
+      if (show) {
+        n += countOf(it);
+        kept.push(it);
+      }
     });
+    if (isArt) {
+      items.forEach((it) => it.classList.remove('is-lead', 'is-firstrow'));
+      if (kept[0]) kept[0].classList.add('is-lead');
+      if (kept[1]) kept[1].classList.add('is-firstrow');
+    }
     if (countEl) countEl.textContent = n + (n === 1 ? ' item' : ' items');
     if (emptyEl) emptyEl.classList.toggle('is-shown', n === 0);
   }

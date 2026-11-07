@@ -55,6 +55,9 @@ computer, give the cover image the same name: `what-a-bank-should-ask.jpg`
 3. Keep **Commit directly to the jane-patch-1 branch**, click **Commit
    changes**.
 
+Keep the cover template, the title on the left and the diagram on the right:
+the article lists show the cover cut to its diagram.
+
 ### 5. Check the preview
 
 After about two minutes the pull request shows:

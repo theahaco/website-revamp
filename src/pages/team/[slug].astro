@@ -10,15 +10,17 @@
 // client's logo (its case study's quote.logo) on the tint of the case
 // study's audience, or the lock on tan for a client not named, never a logo;
 // a tool shows its icon (src/lib/toolIcons.ts) and its headline figure, as
-// before. The rest of the team: compact chips with their faces (TeamGrid).
+// before. Writing: the rows of the article lists (ArticleList.astro), without
+// a lead. The rest of the team: compact chips with their faces (TeamGrid).
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import Icon from '../../components/Icon.astro';
 import TeamGrid from '../../components/TeamGrid.astro';
+import ArticleList from '../../components/ArticleList.astro';
 import Precedents, { type PrecedentRow } from '../../components/services/Precedents.astro';
-import { team, caseStudies, posts, tools, orderBy, formatDate } from '../../lib/content';
+import { team, caseStudies, posts, tools, orderBy } from '../../lib/content';
 import { factIcon } from '../../lib/factIcons';
 import { toolIcons } from '../../lib/toolIcons';
 import { siteUrl, ld } from '../../lib/ld';
@@ -156,23 +158,7 @@ const hasCard = Boolean(d.portrait) || facts.length > 0;
             <h2 class="more_h2">Writing</h2>
             <a class="more_all" href="/work?view=articles">All articles ↗</a>
           </div>
-          <div class="w-dyn-list">
-            <div class="w-dyn-items" role="list">
-              {writing.map((p) => (
-                <div class="work_item w-dyn-item" role="listitem">
-                  <a class="more_row w-inline-block" href={`/blog/${p.id}`}>
-                    <div class="more_stack">
-                      <span class="work_eyebrow" data-wri="cat">{p.data.category}</span>
-                      <span class="more_title" data-wri="title">{p.data.title}</span>
-                    </div>
-                    <div class="more_meta">
-                      <span class="inline-text" data-wri="date">{formatDate(p.data.date, 'long')}</span><span class="inline-text"> · </span>{p.data.readMinutes && <span class="inline-text" data-wri="min">{p.data.readMinutes}</span>}<span class="inline-text"> min ↗</span>
-                    </div>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ArticleList posts={writing} lead={false} level={3} />
         </section>
       )}
       <section class="tm_teampanel" data-tm="team">
