@@ -3,14 +3,14 @@ title: Société Générale-FORGE
 metaTitle: 'EURCV on Stellar: SG-FORGE euro stablecoin case study'
 order: 1
 eyebrow: Financial institution · Stellar
-lede: EURCV, Société Générale-FORGE's regulated euro stablecoin, live on Stellar mainnet since Q1 2026. We built its issuance and governance on Stellar, and guided its move to compliance on the network's built-in controls.
+lede: EURCV, Société Générale-FORGE's MiCA-compliant euro stablecoin, live on Stellar mainnet since Q1 2026. We built it with the SG-FORGE compliance team, as a native Stellar asset with its compliance flags built in.
 cta: Issuing a regulated stablecoin? Talk to the engineers who took one to mainnet.
 facts:
 - label: Client
   value: Société Générale-FORGE
   style: plain
 - label: Role
-  value: Smart contract engineering and onchain architecture
+  value: Asset design and onchain architecture
   style: plain
 - label: Network
   value: Stellar
@@ -35,35 +35,33 @@ metrics:
 - figure: Live
   label: On Stellar mainnet since Q1 2026
   receipt: https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G
-- figure: Audited
-  label: By Hacken, before mainnet
-  receipt: ''
+- figure: Built-in
+  label: Compliance flags, freeze and clawback
+  receipt: https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G
 sections:
 - id: challenge
   title: Challenge
-  body: A regulated subsidiary of Société Générale needed a euro stablecoin with institutional compliance controls and auditable issuance, on a public network where anyone can read the ledger. The design had to be production-grade from day one, and able to evolve as compliance requirements and the ecosystem moved, without reissuing the asset.
+  body: A regulated subsidiary of Société Générale needed a euro stablecoin with institutional compliance controls and auditable issuance, on a public network where anyone can read the ledger. The design had to be production-grade from day one, with the controls SG-FORGE requires for a MiCA-compliant stablecoin.
 - id: solution
   title: Solution
   body: |-
-    We designed EURCV’s issuance on Stellar and built its launch governance on Soroban: issuer, compliance and pause authorities as separate roles, a denylist and pausable transfers, audited by Hacken before mainnet. Compliance controls were agreed with the SG-FORGE compliance team before the first line of contract code.
+    We designed EURCV with the SG-FORGE compliance team as a native Stellar asset, its compliance on the network’s built-in flags: authorization revocable, to freeze an address, and clawback. The controls were agreed with the compliance team before launch.
 
-    We then guided FORGE’s move to reactive compliance on Stellar’s built-in issuer controls: no contract screens transfers in advance, and the compliance team freezes an address when it is flagged. EURCV stayed the same native Stellar asset throughout.
+    There is no contract in the transfer path: the compliance team freezes an address when it is flagged, and every privileged action shows on the public ledger.
 - id: architecture
   title: Architecture highlights
   body: |-
-    - A native Stellar asset, reached by Soroban contracts through the Stellar Asset Contract
+    - A native Stellar asset, with its compliance flags set by the issuer: authorization revocable and clawback
     - Compliance on the protocol’s issuer controls: a flagged address is frozen, with no contract in the transfer path
-    - Launch governance on Soroban (issuer, compliance and pause roles, denylist), audited by Hacken before mainnet
+    - Controls agreed with the SG-FORGE compliance team before launch, and operated by that team
     - Every privileged action explicit and visible on the public ledger
 - id: outcome
   title: Outcome
   body: 'EURCV is live on Stellar mainnet with €20M+ issued onchain. Its compliance runs on Stellar’s built-in controls, operated by the SG-FORGE compliance team.'
 tech:
-- Soroban
-- Rust
 - Stellar
-- SEP-41
-- Stellar Asset Contract
+- Native Stellar asset
+- Freeze and clawback
 receipts: |-
   - [EURCV on the Stellar explorer](https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G)
 relatedService: Stablecoin issuance and governance
@@ -85,13 +83,14 @@ ndaSummary: ''
 client: Société Générale-FORGE
 nda: false
 workTitle: EURCV, a regulated euro stablecoin on Stellar mainnet
-# "MiCA-compliant" is SG-FORGE's own word for EURCV (its press release of July 1,
-# 2024) and Stellar's (press release of February 20, 2025); the flags are
-# Stellar's built-in issuer controls (see the Solution section).
+# "MiCA-compliant" (lede, challenge, workLine) is SG-FORGE's own word for EURCV
+# (its press release of July 1, 2024) and Stellar's (press release of February
+# 20, 2025); the flags are Stellar's built-in issuer controls (see the Solution
+# section), as the asset page on the Stellar explorer shows them.
 workLine: EURCV's asset design on Stellar, with compliance flags for a MiCA-compliant euro stablecoin.
 audience: Financial institutions
 network: Stellar
 year: 2025-2026
 shortTitle: Société Générale-FORGE
-description: 'EURCV, Société Générale-FORGE’s regulated euro stablecoin, live on Stellar since Q1 2026: we built its issuance and governance, audited by Hacken.'
+description: 'EURCV, SG-FORGE’s MiCA-compliant euro stablecoin, live on Stellar since Q1 2026: built with its compliance team, on Stellar’s built-in compliance flags.'
 ---

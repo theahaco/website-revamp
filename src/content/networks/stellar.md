@@ -82,7 +82,7 @@ involves:
   description: Passkey and smart-account flows, custodian integration where users are institutions, fiat rails through anchors.
 - title: Issuer controls
   icon: shield-check
-  description: Compliance on Stellar’s built-in issuer controls, as EURCV runs today. A flagged address is frozen, with no contract in the transfer path.
+  description: Compliance on Stellar’s built-in issuer controls, as for EURCV. A flagged address is frozen, with no contract in the transfer path.
 - title: Mint, burn and custody
   icon: vault
   description: Minting and redemption tied to your core banking, keys in your own custody setup, as for a top US commercial bank.

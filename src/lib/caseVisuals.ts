@@ -167,25 +167,26 @@ export const caseVisuals: Record<string, CaseVisual> = {
   // societe-generale-forge.md
   'societe-generale-forge': {
     kind: 'flow',
-    label: 'EURCV on Stellar: compliance controls agreed first, launch governance on Soroban audited by Hacken, live on mainnet since Q1 2026; compliance has since moved to Stellar’s built-in controls',
+    label: 'EURCV on Stellar: compliance controls agreed with the SG-FORGE compliance team, compliance flags built into the asset, no contract in the transfer path, live on mainnet since Q1 2026',
     panel: 'blue',
     steps: [
-      // line 6 ("EURCV, Société Générale-FORGE's regulated euro stablecoin"); the
-      // short name SG-FORGE: lines 48 and 60
+      // line 6 ("EURCV, Société Générale-FORGE's MiCA-compliant euro
+      // stablecoin") and line 33 ("Regulated stablecoin"); the short name
+      // SG-FORGE: lines 48 and 60
       { kind: 'anchor', logo: { src: `${LOGOS}/logo-light-sgforge.svg`, w: 44, h: 13 }, tone: 'tan', title: 'EURCV', sub: 'Regulated euro stablecoin of SG-FORGE' },
-      // line 48: "Compliance controls were agreed with the SG-FORGE compliance team
-      // before the first line of contract code"
-      { kind: 'check', title: 'Compliance controls agreed first', sub: 'Before the first line of contract code' },
-      // lines 48 and 56: launch governance on Soroban, issuer, compliance and
-      // pause roles
-      { kind: 'check', title: 'Launch governance on Soroban', sub: 'Issuer, compliance and pause roles' },
-      // lines 38-39 (metric: "Audited, by Hacken, before mainnet"), 48 and 56
-      { kind: 'check', title: 'Audited by Hacken', sub: 'Before mainnet' },
+      // lines 48 and 56: "The controls were agreed with the compliance team
+      // before launch"
+      { kind: 'check', title: 'Compliance controls agreed', sub: 'With the SG-FORGE compliance team' },
+      // lines 38-39 (metric: "Built-in, compliance flags, freeze and
+      // clawback"), 48 and 54
+      { kind: 'check', title: 'Built-in compliance flags', sub: 'Freeze and clawback' },
+      // lines 50 and 55: "a flagged address is frozen, with no contract in the
+      // transfer path"
+      { kind: 'check', title: 'No contract in the transfer path', sub: 'A flagged address is frozen' },
       // title: line 6 and lines 35-36 (metric: "On Stellar mainnet since Q1 2026");
-      // sub: lines 50, 55 and 60 (compliance then moved to, and now runs on,
-      // Stellar's built-in issuer controls: "Now", as on /services, since the
-      // launch ran on the governance contracts); status: lines 18-19
-      { kind: 'anchor', net: 'stellar', title: 'Mainnet since Q1 2026', sub: 'Now: compliance on built-in controls', status: 'Live' },
+      // sub: lines 56 and 60 (operated by the SG-FORGE compliance team);
+      // status: lines 18-19
+      { kind: 'anchor', net: 'stellar', title: 'Mainnet since Q1 2026', sub: 'Run by the SG-FORGE compliance team', status: 'Live' },
     ],
     // Caption: the case file's hero caption (line 30).
   },
@@ -282,14 +283,14 @@ export type BodyVisual =
 
 export const bodyVisuals: Record<string, BodyVisual> = {
   // societe-generale-forge.md, after the Solution (lines 45-50), which the
-  // visual draws: the asset (line 6, "regulated euro stablecoin"; lines 50
-  // and 54, "native Stellar asset"; lines 18-19, "Live since Q1 2026"); at
-  // launch, governance on Soroban with issuer, compliance and pause roles, a
-  // denylist and pausable transfers, audited by Hacken before mainnet (line
-  // 48, lines 38-39 and 56); now, Stellar's built-in issuer controls, a
-  // flagged address frozen, no contract in the transfer path, operated by the
-  // SG-FORGE compliance team (lines 50, 55 and 60); every privileged action
-  // visible on the public ledger (line 57).
+  // visual draws: the asset (line 33, "regulated stablecoin"; lines 6, 48 and
+  // 54, "native Stellar asset"; lines 18-19, "Live since Q1 2026"); on the
+  // asset, Stellar's built-in compliance flags, authorization revocable to
+  // freeze an address and clawback (lines 38-39, 48 and 54), for a
+  // MiCA-compliant euro stablecoin (line 6); in operation, the SG-FORGE
+  // compliance team, a flagged address frozen, no contract in the transfer
+  // path, the controls agreed before launch (lines 48, 50, 55, 56 and 60);
+  // every privileged action visible on the public ledger (line 57).
   'societe-generale-forge': { kind: 'eurcv', after: 'solution' },
 
   // lifi.md, after the Outcome (lines 62-64), which the routes card draws:
