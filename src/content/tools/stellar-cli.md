@@ -81,7 +81,7 @@ sections:
 - id: related-work
   title: Related work
   body: |-
-    TypeScript clients generated from a contract’s interface run on `contract.Client` and `AssembledTransaction` in Stellar’s official JavaScript SDK, which Chad Ostrowski, on our team, wrote. Two of our Rust crates ship inside the CLI: sep5 for key derivation (225k downloads) and stellar-ledger for Ledger signing (87k downloads).
+    TypeScript clients generated from a contract’s interface run on `contract.Client` and `AssembledTransaction` in Stellar’s official JavaScript SDK (written by [Chad](../../team/chad-ostrowski)). Two of our Rust crates ship inside the CLI: sep5 for key derivation (225k downloads; written by [Willem](../../team/willem-wyndham)) and stellar-ledger for Ledger signing (87k downloads; written by [Elizabeth](../../team/elizabeth-engelman)).
 tech:
 - Rust
 - Soroban

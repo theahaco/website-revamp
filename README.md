@@ -1,14 +1,10 @@
-> **Preview repository.** This is a snapshot of the visual revamp (branch `visual-revamp` of
-> [theahaco/website](https://github.com/theahaco/website)), deployed to GitHub Pages for review at
-> https://theahaco.github.io/website-revamp/. Edit the site in theahaco/website, not here.
-
 # theaha.co
 
 The Aha Company website.
 
 > **Publishing an article, a case study or a team member?** You need no installation and no code: follow [Publishing on theaha.co](docs/CONTENT.md), from the GitHub website.
 
-The rest of this page is for developers. A static site built with [Astro](https://astro.build): every push to `main` rebuilds the preview on GitHub Pages and theaha.co on Cloudflare Pages.
+The rest of this page is for developers. A static site built with [Astro](https://astro.build): every push to `main` deploys theaha.co on GitHub Pages.
 
 It started as a rebuild of a Webflow design: same pages, URLs, copy, design and behavior, with the Webflow runtime and CMS replaced by plain HTML, a few small scripts and Markdown content files.
 
@@ -58,16 +54,14 @@ Testimonials still waiting for approval carry the quote label `Placeholder quote
 
 ## Deployment
 
-Two builds come from `main`:
+Production is hosted by GitHub Pages from `theahaco/theahaco.github.io`:
 
-- **Preview, GitHub Pages**: `.github/workflows/deploy.yml` builds and publishes https://theahaco.github.io/website/ on every push, every morning at 05:30 UTC and on demand. Every page is `noindex`, the review overlay and the scheduled articles show, and there are no analytics. Keep GitHub Pages **without a custom domain**: it stays the preview.
-- **theaha.co, Cloudflare Pages**: Cloudflare builds the same branch on every push, and `.github/workflows/daily-production.yml` triggers one build every morning so that scheduled articles go live on their date. Setup and the switch from Webflow: [`docs/LAUNCH.md`](docs/LAUNCH.md).
+- `.github/workflows/deploy.yml` builds and publishes https://theaha.co/ on every push to `main` (including merges), every morning at 05:30 UTC and on demand. Scheduled runs may be delayed by GitHub.
+- Repository Settings → Pages uses **GitHub Actions**, custom domain **theaha.co**, and **Enforce HTTPS**.
+- The workflow explicitly builds for `https://theaha.co` at `/`: production is indexable, hides future articles, and enables configured analytics.
+- Pull requests run `.github/workflows/check.yml`, including production and preview-mode builds, but do not publish a hosted preview. For a local preview with future articles, run `SITE_URL=http://localhost:4321 npm run dev`.
 
-Safeguards: a build with a broken link, image or anchor fails before it is published (in the GitHub workflow, and on Cloudflare with the build command given in `docs/LAUNCH.md`), and the GitHub workflow refuses a theaha.co build that would be `noindex`. Only a build for `https://theaha.co` (`site.productionOrigin` in `src/data/site.ts`) is indexable; `www.theaha.co` and `http://` builds are treated as theaha.co. On Cloudflare, `public/_headers` keeps the `*.pages.dev` addresses out of search engines and `public/_redirects` holds the permanent redirects.
-
-### Review mode (preview only)
-
-Open points for the owner are listed in `src/data/review.ts`: each entry names a page, the elements it concerns and a note. On the preview every listed element is outlined and numbered, a panel in the bottom-left corner lists the notes, and `/review/` gathers them all. A production build renders none of it. The file is public, like the whole repository: notes say what to check, never confidential details. Once a point is settled, delete its entry; an empty list switches the overlay off.
+Safeguards: a build with a broken link, image or anchor fails before it is published, and a mandatory production check verifies indexability and the homepage canonical URL. Failed builds leave the previous deployment live. Only a build for `https://theaha.co` (`site.productionOrigin` in `src/data/site.ts`) is indexable; `www.theaha.co` and `http://` builds are treated as theaha.co. GitHub Pages ignores the legacy Cloudflare files `public/_headers` and `public/_redirects`; redirect stubs in `src/pages/` provide the supported page redirects. Deployment checks and operational notes: [`docs/LAUNCH.md`](docs/LAUNCH.md).
 
 ## Contact form
 

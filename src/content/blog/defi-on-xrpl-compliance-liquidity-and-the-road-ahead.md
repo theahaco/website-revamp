@@ -2,16 +2,19 @@
 title: 'DeFi on XRPL: compliance, liquidity and the road ahead'
 category: Protocols
 lede: 'XRPL keeps adding the pieces regulated DeFi needs at the protocol level: issuer controls, credentials, permissioned domains and a permissioned exchange. What is live, what is still missing, and how we advise teams issuing regulated assets on it today.'
-author: enzo-soyer
-authorName: Enzo Soyer
-authorRole: Chief Executive Officer
+author: the-aha-company
+authorBio: A Ripple program partner for accelerator mentoring and developer experience on the XRP Ledger.
 date: November 13, 2026
 readMinutes: '4'
 cover: /images/covers/defi-on-xrpl-compliance-liquidity-and-the-road-ahead.webp
 coverCaption: ''
-authorBio: CEO of The Aha Company, a Ripple program partner for accelerator mentoring and developer experience on the XRP Ledger.
 relatedWork: ripple
 relatedWorkLabel: Ripple's accelerator cohorts and hackathons
+# While Ripple is hidden (src/data/curation.ts), this bio replaces the one above
+# and the Related work link is left out.
+ifClientHidden:
+  ripple:
+    authorBio: An integration partner for financial institutions bringing assets onchain.
 audience: Protocols and products
 network: XRPL
 order: 1
@@ -27,7 +30,7 @@ Clawback went live in 2024. Deep Freeze, Credentials and Multi-Purpose Tokens (M
 
 ## Liquidity: what exists today
 
-The native exchange and its AMM give issued tokens a market without a separate protocol, and the Permissioned DEX lets institutions trade on the same ledger while enforcing KYC and AML rules, though it cannot draw on the AMM's pools yet. The market is still small: RWA.xyz counted $0.5B of tokenized assets on XRPL in October 2026, plus $1.3B of stablecoins, almost all of it Ripple's RLUSD.
+The native exchange and its AMM give issued tokens a market without a separate protocol, and the Permissioned DEX lets institutions trade on the same ledger while enforcing KYC and AML rules, though it cannot draw on the AMM's pools yet.
 
 ## What is still missing
 

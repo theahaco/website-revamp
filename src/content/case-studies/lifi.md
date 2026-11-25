@@ -81,10 +81,9 @@ quote:
   role: Chief Technology Officer, LI.FI
   portrait: /images/people/max-klenk.webp
   portraitAlt: Max Klenk
-  logo: /images/logos/logo-light-lifi.svg
-  logoAlt: LI.FI
 ndaSummary: ''
 client: LI.FI
+logo: /images/logos/logo-light-lifi.svg
 nda: false
 workTitle: Soroban contracts behind the Stellar integration
 workLine: EVM routing brought to Stellar with contracts written from scratch, matching the guarantees LI.FI gives users elsewhere.

@@ -2,11 +2,12 @@
 // One page per open-source tool (src/content/tools), laid out like a case
 // study: facts, dated figures with receipts, a visual, the story, builders.
 import Icon from '../../components/Icon.astro';
+import NetMark from '../../components/home/NetMark.astro';
 import ToolStage from '../../components/tools/ToolStage.astro';
 import { factIcon } from '../../lib/factIcons';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
-import { tools, team, posts, networks, md, mdInline, wrapTables, unlinkPosts, networkMarks, ogImageFor, nobr } from '../../lib/content';
+import { tools, team, posts, networks, md, mdInline, wrapTables, unlinkPosts, networkIds, ogImageFor, nobr } from '../../lib/content';
 import { site } from '../../data/site';
 
 export async function getStaticPaths() {
@@ -34,7 +35,7 @@ const v = { kind: '', image: '', alt: '', tone: 'dark' as 'dark' | 'light', file
 const maxBar = Math.max(1, ...v.bars.map((b) => b.value));
 
 // Network marks for "Stellar", "XRPL and Stellar"...
-const marksFor = (value: string) => value.split(/,| and /).map((n) => networkMarks[n.trim()]).filter(Boolean);
+const marksFor = (value: string) => value.split(/,| and /).map((n) => networkIds[n.trim()]).filter(Boolean);
 // ...and each network name links to its page, when it has one.
 const networkPages = new Map((await networks()).filter((n) => n.data.heading).map((n) => [n.data.name, `/networks/${n.id}`]));
 const netParts = (value: string) => value.split(/(,\s*| and )/).map((part) => ({ part, href: networkPages.get(part.trim()) }));
@@ -95,7 +96,7 @@ const json = (o: object) => JSON.stringify(o).replace(/</g, '\\u003c');
                   <dt class="cs_dt">{factIcon(f.label) && <Icon name={factIcon(f.label)!} size={15} class="cs_dticon" />}{f.label}</dt>
                   {marks.length > 0 || f.live ? (
                     <dd class="cs_dd-net">
-                      {marks.map((src) => <img alt="" class="cs_netmark" src={src} />)}
+                      {marks.map((net) => <NetMark net={net} class="cs_netmark" />)}
                       {f.live && <span aria-hidden="true" class="cs_dot"></span>}
                       {marks.length > 0 ? <span>{netParts(f.value).map((p) => (p.href ? <a class="cs_netlink" href={p.href}>{p.part}</a> : p.part))}</span> : <span>{f.value}</span>}
                     </dd>

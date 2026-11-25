@@ -84,7 +84,7 @@ const cli = [
                 </li>
               ))}
             </ul>
-            <div class="wd-precedent" data-rv={r.services.find((s) => s.rv)?.rv}>
+            <div class="wd-precedent">
               <p class="wd-label">Precedents</p>
               <ul class="wd-chips" role="list">
                 {precedentsOf(r.services, r.id === 'institutions').map((p) => (

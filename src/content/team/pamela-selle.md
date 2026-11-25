@@ -3,7 +3,7 @@ name: Pamela Selle
 order: 5
 role: Principal Engineer
 location: United States
-focus: Developer tooling, contract registries
+focus: Developer tooling, contract registries, financial integrations
 networks: Stellar
 since: ''
 portrait: /images/team/pamela-selle.webp
@@ -12,6 +12,6 @@ links:
   github: https://github.com/pselle
   email: ''
 ---
-Pamela was a senior engineer at HashiCorp, where she maintained Terraform Core, and led cloud infrastructure at Comcast.
+Pamela has over a decade of experience in software engineering and leadership. She maintained Terraform Core as a Senior Software Engineer at HashiCorp, and before that was first hire at a TechStars startup, and worked on web properties and cloud infrastructure at Comcast.
 
-At The Aha Company she has led the Stellar Registry since June 2026 and runs Stellar Scaffold's CI, releases and contract generation. She also upgraded Trezor's Stellar package to Stellar SDK v17, fixed issues in the Stellar Wallets Kit and ran workshops at HackMeridian 2026.
+At The Aha Company she was project lead for launching Stellar Scaffold, worked on [a major financial institution's stablecoin project](../../case-studies/nda-settlement-stablecoin), and maintains Stellar Registry. She often gives talks and workshops for the community, including at HackMeridian 2026, Stellar Week in Argentina in 2025, and speaking at local universities.

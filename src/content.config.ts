@@ -15,18 +15,31 @@ const toText = (v: unknown) => {
   return v;
 };
 const str = z.preprocess(toText, z.string().default(''));
-const quote = z
-  .object({
-    label: str, // small tag above the quote ("Placeholder quote" until approved)
-    text: str,
-    author: str,
+const quote = z.object({
+  label: str, // small tag above the quote ("Placeholder quote" until approved)
+  text: str,
+  author: str,
+  role: str,
+  portrait: str,
+  portraitAlt: str,
+});
+
+// Fields replaced while a client is hidden: { <client>: { field: value } }
+// (src/data/curation.ts, hiddenClients; src/lib/hidden.ts).
+const ifClientHidden = z.record(z.string(), z.record(z.string(), z.any())).optional();
+
+// Authors without a team profile: the company, guests and former teammates.
+const authors = defineCollection({
+  loader: glob({ pattern: ['*.md', '!README.md'], base: './src/content/authors' }),
+  schema: z.object({
+    draft: z.boolean().default(false),
+    name: z.string(),
+    type: z.enum(['Person', 'Organization']).default('Person'),
     role: str,
     portrait: str,
-    portraitAlt: str,
-    logo: str,
-    logoAlt: str,
-  })
-  .default({});
+    link: str.refine((v) => !v || /^\/(?!\/)/.test(v) || /^https?:\/\/[^/\s]+(?:[/?#]\S*)?$/.test(v), 'Author link must be empty, a site path starting with /, or an http(s) URL.'),
+  }),
+});
 
 const caseStudies = defineCollection({
   loader: glob({ pattern: ['*.md', '!README.md'], base: './src/content/case-studies' }),
@@ -43,6 +56,7 @@ const caseStudies = defineCollection({
     ndaSummary: str, // one-liner in the "More work for financial institutions" block on home (clients not named)
     cta: str, // heading of the closing call-to-action band
     client: str,
+    logo: str, // client branding in team engagement rows
     nda: z.boolean().default(false), // client not named: the "Client not named" pill on the Work page and the case page
     workTitle: str, // title of its tile (home page and Work page)
     workLine: str, // line of its tile (home page and Work page)
@@ -58,7 +72,7 @@ const caseStudies = defineCollection({
     receipts: str, // Markdown list of links
     relatedService: str,
     team: z.array(z.string()).default([]), // team member slugs
-    quote,
+    quote: quote.default({}),
   }),
 });
 
@@ -66,13 +80,14 @@ const blog = defineCollection({
   loader: glob({ pattern: ['*.md', '!README.md'], base: './src/content/blog' }),
   schema: z.object({
     draft: z.boolean().default(false),
+    ifClientHidden: ifClientHidden, // replacements while a client is hidden (src/lib/hidden.ts)
     title: z.string(),
     metaTitle: str, // <title> for search engines (60 characters max); defaults to "<title> | The Aha Company"
     order: z.number().default(100),
     category: str, // eyebrow
     lede: str,
     description: str, // search description (160 characters max); defaults to the lede
-    author: str, // team member slug (for the team page "Writing" list)
+    author: str, // slug from team or authors (team members also list the post under "Writing")
     authorName: str,
     authorRole: str,
     authorBio: str,
@@ -92,6 +107,7 @@ const networks = defineCollection({
   loader: glob({ pattern: ['*.md', '!README.md'], base: './src/content/networks' }),
   schema: z.object({
     draft: z.boolean().default(false),
+    ifClientHidden: ifClientHidden, // replacements while a client is hidden (src/lib/hidden.ts)
     name: z.string(),
     order: z.number().default(100),
     mark: str,
@@ -102,7 +118,7 @@ const networks = defineCollection({
     lede: str,
     description: str, // search description (160 characters max); defaults to the lede
     secondaryCta: z.object({ label: str, href: str }).default({}),
-    stats: z.array(z.object({ value: z.string(), label: str })).default([]),
+    stats: z.array(z.object({ value: z.string(), label: str, client: str })).default([]),
     ship: z
       .object({ title: str, meta: str, rows: z.array(z.object({ name: z.string(), description: str, badge: str, href: str, live: z.boolean().default(false) })).default([]) }) // live: the badge says it runs on mainnet (green dot); other badges are a neutral chip
       .default({}),
@@ -110,7 +126,7 @@ const networks = defineCollection({
     stepsLede: str,
     steps: z.array(z.object({ title: z.string(), description: str, output: str })).default([]),
     proof: z
-      .object({ eyebrow: str, heading: str, body: str, caseStudy: str, linkLabel: str, quote })
+      .object({ eyebrow: str, heading: str, body: str, caseStudy: str, linkLabel: str, quote: quote.extend({ logo: str, logoAlt: str }).default({}) })
       .default({}),
     funding: z
       .object({ heading: str, body: str, rows: z.array(z.object({ name: z.string(), description: str, badge: str })).default([]) })
@@ -126,6 +142,7 @@ const team = defineCollection({
   loader: glob({ pattern: ['*.md', '!README.md'], base: './src/content/team' }),
   schema: z.object({
     draft: z.boolean().default(false),
+    ifClientHidden: ifClientHidden, // replacements while a client is hidden (src/lib/hidden.ts)
     name: z.string(),
     order: z.number().default(100),
     role: str,
@@ -135,6 +152,7 @@ const team = defineCollection({
     since: str,
     portrait: str,
     links: z.object({ linkedin: str, github: str, email: str }).default({}),
+    bio: str, // replaces the text under the front matter; only set through ifClientHidden
   }),
 });
 
@@ -195,4 +213,4 @@ const tools = defineCollection({
   }),
 });
 
-export const collections = { caseStudies, blog, networks, team, tools };
+export const collections = { caseStudies, blog, networks, team, authors, tools };

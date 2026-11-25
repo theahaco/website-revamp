@@ -1,5 +1,6 @@
 // Content helpers shared by pages and components.
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { isHiddenClient, withoutHiddenClients } from './hidden';
 import { marked } from 'marked';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -20,17 +21,6 @@ export function coverFor(id: string, cover = ''): string {
   if (cover) return cover;
   const ext = ['webp', 'jpg', 'jpeg', 'png'].find((e) => existsSync(join(process.cwd(), 'public', 'images', 'covers', `${id}.${e}`)));
   return ext ? `/images/covers/${id}.${ext}` : '';
-}
-
-/**
- * Article thumbnail, the square in the rows of the article lists
- * (src/components/ArticleList.astro): the image named after the article in
- * public/images/covers/thumbs/ (webp, png, jpg or jpeg), if any, otherwise
- * the cover, which the rows show by its right side, where its diagram is.
- */
-export function thumbFor(id: string, cover = ''): string {
-  const ext = ['webp', 'png', 'jpg', 'jpeg'].find((e) => existsSync(join(process.cwd(), 'public', 'images', 'covers', 'thumbs', `${id}.${e}`)));
-  return ext ? `/images/covers/thumbs/${id}.${ext}` : coverFor(id, cover);
 }
 
 /** Title text for set:html, with hyphenated words kept on one line (no font here has a non-breaking hyphen). */
@@ -66,11 +56,11 @@ export function wrapTables(html: string): string {
   return html.replace(/<table>/g, '<div class="tl_tablewrap"><table>').replace(/<\/table>/g, '</table></div>');
 }
 
-type Quote = { label: string; text: string; author: string; role: string; portrait: string; portraitAlt: string; logo: string; logoAlt: string };
+type Quote = { label: string; text: string; author: string; role: string; portrait: string; portraitAlt: string };
 /**
  * Testimonials still waiting for approval carry the label "Placeholder quote".
  * The preview shows them for review; the production build (theaha.co) never
- * publishes them: the slot keeps the logo, labelled "Client".
+ * publishes them. Any other fields are preserved.
  */
 export function publicQuote<Q extends Quote>(q: Q, production: boolean): Q {
   if (!q || !production || !/placeholder/i.test(q.label || '')) return q;
@@ -85,7 +75,7 @@ export type Member = CollectionEntry<'team'>;
 const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) => a.data.order - b.data.order;
 
 export async function caseStudies() {
-  return (await getCollection('caseStudies', (e) => !e.data.draft)).sort(byOrder);
+  return (await getCollection('caseStudies', (e) => !e.data.draft && !isHiddenClient(e.id))).sort(byOrder);
 }
 /**
  * Articles dated in the future are scheduled: the production build
@@ -105,13 +95,14 @@ const byDateDesc = (a: Post, b: Post) => {
   return db - da || a.data.order - b.data.order;
 };
 export async function posts() {
-  const members = await team();
+  const allAuthors = await authors();
   return (await getCollection('blog', (e) => !e.data.draft && !(PRODUCTION && isScheduled(e.data.date))))
+    .map((p) => ({ ...p, data: withoutHiddenClients(p.data) }))
     .map((p) => {
-      // Name and role come from the author's team file unless the article sets them.
-      const m = members.find((x) => x.id === p.data.author);
-      if (!m) return p;
-      return { ...p, data: { ...p.data, authorName: p.data.authorName || m.data.name.replace(/ \(.*\)/, ''), authorRole: p.data.authorRole || m.data.role } };
+      const author = allAuthors.find((a) => a.id === p.data.author);
+      if (p.data.author && !author) throw new Error(`Blog post "${p.id}" references unknown or draft author "${p.data.author}". Add a published file to src/content/team/ or src/content/authors/.`);
+      // List bylines keep article overrides; the article uses the author record.
+      return { ...p, author, data: { ...p.data, authorName: p.data.authorName || author?.name.replace(/ \(.*\)/, '') || '', authorRole: p.data.authorRole || author?.role || '' } };
     })
     .sort(byDateDesc);
 }
@@ -120,10 +111,23 @@ export function unlinkPosts(html: string, published: Set<string>): string {
   return html.replace(/<a href="\/blog\/([^"\/]+)\/?">(.*?)<\/a>/g, (m, id, text) => (published.has(id) ? m : text));
 }
 export async function networks() {
-  return (await getCollection('networks', (e) => !e.data.draft)).sort(byOrder);
+  return (await getCollection('networks', (e) => !e.data.draft)).map((n) => ({ ...n, data: withoutHiddenClients(n.data) })).sort(byOrder);
 }
 export async function team() {
-  return (await getCollection('team', (e) => !e.data.draft)).sort(byOrder);
+  return (await getCollection('team', (e) => !e.data.draft)).map((m) => ({ ...m, data: withoutHiddenClients(m.data) })).sort(byOrder);
+}
+/** Both collections share one author namespace, including unpublished entries. */
+export async function authors() {
+  const [members, standalone] = await Promise.all([getCollection('team'), getCollection('authors')]);
+  for (const a of standalone) {
+    if (members.some((m) => m.id === a.id)) {
+      throw new Error(`Author ID collision: "${a.id}" exists in both src/content/team/ and src/content/authors/. Rename one file or keep the author in only one collection.`);
+    }
+  }
+  return [
+    ...members.filter((m) => !m.data.draft).map((m) => ({ id: m.id, name: m.data.name, role: m.data.role, portrait: m.data.portrait, link: `/team/${m.id}`, type: 'Person' as const })),
+    ...standalone.filter((a) => !a.data.draft).map((a) => ({ id: a.id, ...a.data })),
+  ];
 }
 export type Tool = CollectionEntry<'tools'>;
 export async function tools() {
@@ -151,13 +155,8 @@ export function serviceAnchor(eyebrow: string): string {
   return '/services#institutions';
 }
 
-/** Network marks shown next to the network name on case studies and tool pages: each network's own logo, in its official colors. */
-export const networkMarks: Record<string, string> = {
-  Stellar: '/images/logos/logo-light-stellar.svg',
-  XRPL: '/images/logos/logo-xrpl-transparent.webp',
-  Canton: '/images/logos/logo-light-canton.svg',
-  Ethereum: '/images/logos/logo-ethereum.webp',
-};
+export { networkMarks, networkIds } from './networkMarks';
+export { isHiddenClient, linksToHiddenClient } from './hidden';
 
 /** Dates are written "September 1, 2026"; lists show "Sep 1, 2026", pages "September 1, 2026". */
 export function formatDate(value: string, style: 'short' | 'long'): string {

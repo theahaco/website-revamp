@@ -71,7 +71,7 @@ sections:
 - id: status
   title: Status
   body: |-
-    GhostSig is in beta: mainnet is enabled, it has not been audited yet, and the work continues. Pamphile Roy built it and maintains it, under the MIT license. Our other passkey wallet, [Nido](/open-source/nido), is a smart-account wallet for Stellar only, with its rules enforced onchain.
+    GhostSig is in beta: mainnet is enabled, it has not been audited yet, and the work continues. [Pamphile](../../team/pamphile-roy) built it and maintains it, under the MIT license. Our other passkey wallet, [Nido](../../open-source/nido), is a smart-account wallet for Stellar only, with its rules enforced onchain.
 tech:
 - TypeScript
 - WebAuthn PRF

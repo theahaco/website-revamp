@@ -3,22 +3,19 @@
 // public/images/logos (each of these wordmarks starts with the symbol;
 // `ratio` is the symbol's width over its height, measured on the file).
 // Decorative: the network's name is always written next to it.
+import { networkSymbols, type NetworkId } from '../../lib/networkMarks';
 interface Props {
-  net: 'stellar' | 'xrpl' | 'canton' | 'ethereum';
+  net: NetworkId;
   size?: number;
   lazy?: boolean;
+  class?: string;
+  'data-cs'?: string;
 }
-const marks = {
-  stellar: { src: '/images/logos/logo-light-stellar.svg', ratio: 1.21 },
-  xrpl: { src: '/images/logos/logo-xrpl-transparent.webp', ratio: 1.31 },
-  canton: { src: '/images/logos/logo-light-canton.svg', ratio: 0.9 },
-  ethereum: { src: '/images/logos/logo-ethereum.webp', ratio: 0.63 },
-};
-const { net, size = 16, lazy = false } = Astro.props;
-const m = marks[net];
+const { net, size = 16, lazy = false, class: cls, 'data-cs': dataCs } = Astro.props;
+const m = networkSymbols[net];
 const width = Math.ceil(size * m.ratio);
 ---
-<img alt="" class="netmark" src={m.src} width={width} height={size} loading={lazy ? 'lazy' : undefined} decoding="async" />
+<img alt="" class:list={['netmark', cls]} data-cs={dataCs} src={m.src} width={width} height={size} style={`width:${width}px;height:${size}px`} loading={lazy ? 'lazy' : undefined} decoding="async" />
 
 <style>
   .netmark { display: block; flex-shrink: 0; max-width: none; object-fit: cover; object-position: left center; }

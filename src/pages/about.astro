@@ -20,14 +20,14 @@ import TeamGrid from '../components/TeamGrid.astro';
 import Cta from '../components/Cta.astro';
 import Icon from '../components/Icon.astro';
 import { keyFigures, toolAdoption } from '../data/site';
-import { team } from '../lib/content';
+import { team, isHiddenClient } from '../lib/content';
 import { toolIcons } from '../lib/toolIcons';
 
 const figures = [
-  { value: String(keyFigures.founded), plus: false, label: 'Founded', rv: 'fact-founded' },
-  { value: keyFigures.deployments.replace('+', ''), plus: keyFigures.deployments.endsWith('+'), label: 'Deployments on mainnet', rv: 'fact-deployments' },
-  { value: String(keyFigures.audits), plus: false, label: 'Third-party security audits', rv: 'fact-audits' },
-  { value: String(toolAdoption.count), plus: false, label: 'Projects using our open-source tools', rv: 'fact-projects' },
+  { value: String(keyFigures.founded), plus: false, label: 'Founded' },
+  { value: keyFigures.deployments.replace('+', ''), plus: keyFigures.deployments.endsWith('+'), label: 'Deployments on mainnet' },
+  { value: String(keyFigures.audits), plus: false, label: 'Third-party security audits' },
+  { value: String(toolAdoption.count), plus: false, label: 'Projects using our open-source tools' },
 ];
 
 const how = [
@@ -42,9 +42,9 @@ const how = [
 const members = await team();
 const facesIn = (country: string) => members.filter((m) => m.data.location === country).map((m) => `/images/team/avatars/${m.id}-96.webp`);
 const offices = [
-  { country: 'United States', icon: 'buildings', entity: 'Dawning Inc. (dba The Aha Company)', desc: 'Our company, incorporated in Delaware. It operates this site and employs our US-based engineers.', address: ['108 W. 13th Street, Suite 100', 'Wilmington, DE 19801'], rv: 'office-us' },
-  { country: 'France', icon: 'map-pin', entity: 'Paris', desc: 'Engineers in France.', address: [], rv: 'office-fr' },
-  { country: 'Brazil', icon: 'map-pin', entity: 'São Paulo', desc: 'Engineers in Brazil, led by Fabricius Zatti.', address: [], rv: 'office-br' },
+  { country: 'United States', icon: 'buildings', entity: 'Dawning Inc. (dba The Aha Company)', desc: 'Our company, incorporated in Delaware. It operates this site and employs our US-based engineers.', address: ['108 W. 13th Street, Suite 100', 'Wilmington, DE 19801'] },
+  { country: 'France', icon: 'map-pin', entity: 'Paris', desc: 'Engineers in France.', address: [] },
+  { country: 'Brazil', icon: 'map-pin', entity: 'São Paulo', desc: 'Engineers in Brazil, led by Fabricius Zatti.', address: [] },
 ].map((o) => ({ ...o, faces: facesIn(o.country) }));
 
 // Roles we hold, one cell per network. Canton has no page of its own.
@@ -55,7 +55,6 @@ interface NetworkCell {
   roles?: string[];
   status?: string;
   tools?: { id: string; label: string }[];
-  rv?: string;
 }
 const networks: NetworkCell[] = [
   {
@@ -72,15 +71,14 @@ const networks: NetworkCell[] = [
       { id: 'moonlight', label: 'Moonlight' },
       { id: 'tansu', label: 'Tansu' },
     ],
-    rv: 'about-roles',
   },
   {
     name: 'XRPL',
     href: '/networks/xrpl',
     mark: { src: '/images/logos/logo-xrpl-transparent.webp', w: 313, h: 80, xrpl: true },
-    roles: ['Ripple program partner: accelerator cohorts and hackathons', 'Continuous work on developer experience'],
+    // While Ripple is hidden (src/data/curation.ts), roles that do not name it.
+    roles: isHiddenClient('ripple') ? ['Contributor to the XRPL Rust library', 'Token design with MPTs and issuer controls'] : ['Ripple program partner: accelerator cohorts and hackathons', 'Continuous work on developer experience'],
     tools: [{ id: 'ghostsig', label: 'GhostSig' }],
-    rv: 'about-roles-xrpl',
   },
   {
     name: 'Canton',
@@ -97,11 +95,11 @@ const networks: NetworkCell[] = [
         <div class="ab_introhead">
           <p class="v-eyebrow page_eyebrow">About</p>
           <h1 class="intro_h1">We build the tooling. <span class="v-soft">We do the integrations.</span></h1>
-          <p class="art_lede" data-rv="about-lede">Engineers across the United States, France and Brazil. Core contributors on Stellar, program partners on XRPL, integrations in progress on Canton.</p>
+          <p class="art_lede">Engineers across the United States, France and Brazil. Core contributors on Stellar, program partners on XRPL, integrations in progress on Canton.</p>
         </div>
         <ul aria-label="Key figures" class="ab_figs" role="list">
           {figures.map((f) => (
-            <li class="ab_fig" data-rv={f.rv}><span class="ab_figv">{f.value}{f.plus && <span class="ab_figplus">+</span>}</span><span class="ab_figl">{f.label}</span></li>
+            <li class="ab_fig"><span class="ab_figv">{f.value}{f.plus && <span class="ab_figplus">+</span>}</span><span class="ab_figl">{f.label}</span></li>
           ))}
         </ul>
       </div>
@@ -110,7 +108,7 @@ const networks: NetworkCell[] = [
           <source height="1065" media="(max-width: 767px)" sizes="100vw" srcset="/images/photos/team-photo-office-960.webp 960w, /images/photos/team-photo-office.webp 1600w" width="1600" />
           <img alt="The Aha Company team around a table in the office" class="ab_photoimg" fetchpriority="high" height="966" sizes="(max-width: 1199px) 100vw, 1104px" src="/images/photos/team-band-2208.webp" srcset="/images/photos/team-band-1104.webp 1104w, /images/photos/team-band-2208.webp 2208w" width="2208" />
         </picture>
-        <figcaption class="ab_cap" data-rv="about-photo-caption"><Icon name="users-three" size={18} /><span class="ab_captitle">The team</span><span aria-hidden="true" class="ab_capsep">·</span><span>United States · France · Brazil</span></figcaption>
+        <figcaption class="ab_cap"><Icon name="users-three" size={18} /><span class="ab_captitle">The team</span><span aria-hidden="true" class="ab_capsep">·</span><span>United States · France · Brazil</span></figcaption>
       </figure>
     </div>
   </section>
@@ -150,8 +148,8 @@ const networks: NetworkCell[] = [
             <li class="abo_cell">
               <span class="v-iconbox"><Icon name={o.icon} size={26} /></span>
               <h4 class="ab_officecountry">{o.country}</h4>
-              <p class="ab_officeentity" data-rv={o.rv}>{o.entity}</p>
-              <p class="abo_desc" data-rv={`${o.rv}-desc`}>{o.desc}</p>
+              <p class="ab_officeentity">{o.entity}</p>
+              <p class="abo_desc">{o.desc}</p>
               {o.address.length > 0 && <p class="ab_officeaddr">{o.address.map((line, i) => <Fragment>{i > 0 && <br />}<span>{line}</span></Fragment>)}</p>}
               {o.faces.length > 0 && (
                 <div aria-hidden="true" class="abo_faces">
@@ -171,9 +169,9 @@ const networks: NetworkCell[] = [
         <div class="abr_text">
           <p class="v-eyebrow">Ecosystems</p>
           <h2 class="ab_h2 abr_h2" id="ab-roles">Roles we hold in the ecosystems. <span class="v-soft">Inside the tooling and the programs.</span></h2>
-          <p class="abr_lede">Our engineers wrote parts of the Stellar CLI that developers use every day, and maintain the tools around it. On XRPL, our architects mentor the teams in Ripple’s programs.</p>
+          <p class="abr_lede">Our engineers wrote parts of the Stellar CLI that developers use every day, and maintain the tools around it. {isHiddenClient('ripple') ? 'On XRPL, we build GhostSig, a passkey wallet, and contribute fixes to the XRPL Rust library.' : 'On XRPL, our architects mentor the teams in Ripple’s programs.'}</p>
         </div>
-        <a class="abr_all" data-rv="about-os" href="/open-source">See the tools we build and maintain <span aria-hidden="true">→</span></a>
+        <a class="abr_all" href="/open-source">See the tools we build and maintain <span aria-hidden="true">→</span></a>
       </div>
       <ul class="abr_cells" role="list">
         {networks.map((n) => (
@@ -184,7 +182,7 @@ const networks: NetworkCell[] = [
               <span class="abr_mark"><img alt={n.name} class="abr_logo" height={n.mark.h} loading="lazy" src={n.mark.src} width={n.mark.w} /></span>
             )}
             {n.roles && (
-              <ul class="abr_roles" data-rv={n.rv} role="list">
+              <ul class="abr_roles" role="list">
                 {n.roles.map((r) => <li>{r}</li>)}
               </ul>
             )}

@@ -1,12 +1,10 @@
 ---
 // Article template (Webflow collection "Blog Posts"). The body is the
-// Markdown file's content; "In this article" lists its H2 headings. "More
-// articles": the rows of the article lists (ArticleList.astro), without a lead.
+// Markdown file's content; "In this article" lists its H2 headings.
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
-import ArticleList from '../../components/ArticleList.astro';
-import { posts, team, formatDate, parseDate, ogImageFor, coverFor, nobr } from '../../lib/content';
+import { posts, formatDate, parseDate, ogImageFor, coverFor, nobr } from '../../lib/content';
 import { siteUrl, ld } from '../../lib/ld';
 
 export async function getStaticPaths() {
@@ -18,8 +16,7 @@ const d = post.data;
 const cover = coverFor(post.id, d.cover);
 const { Content, headings } = await render(post);
 const toc = headings.filter((h) => h.depth === 2);
-const author = d.author ? (await team()).find((m) => m.id === d.author) : undefined;
-const portrait = author?.data.portrait || '';
+const author = post.author;
 const more = (await posts()).filter((p) => p.id !== post.id).slice(0, 2);
 const base = siteUrl(Astro.site);
 const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
@@ -35,7 +32,7 @@ const articleLd = ld({
   mainEntityOfPage: pageUrl,
   datePublished: published,
   image: cover ? new URL(cover.replace(/^\//, ''), base).href : undefined,
-  author: d.authorName ? { '@type': 'Person', name: d.authorName, url: d.author ? new URL(`team/${d.author}/`, base).href : undefined } : undefined,
+  author: author && { '@type': author.type, name: author.name, url: author.link ? new URL(author.link, base).href : undefined },
   publisher: { '@type': 'Organization', '@id': base + '#organization', name: 'The Aha Company', url: base },
 });
 ---
@@ -52,10 +49,10 @@ const articleLd = ld({
         </div>
         <div class="art_byline">
           <div class="art_author">
-            {portrait && <img alt="" class="art_avatar" src={portrait} />}
+            {author?.portrait && <img alt="" class="art_avatar" src={author.portrait} />}
             <div>
-              {d.authorName && <p class="art_author-name">{d.authorName}</p>}
-              {d.authorRole && <p class="art_author-role">{d.authorRole}</p>}
+              {author && <p class="art_author-name">{author.link ? <a href={author.link}>{author.name}</a> : author.name}</p>}
+              {author?.role && <p class="art_author-role">{author.role}</p>}
             </div>
           </div>
           <div class="blog_author">
@@ -84,9 +81,9 @@ const articleLd = ld({
         <div class="blog_richtext w-richtext"><Content /></div>
         <div class="art_footer">
           <div class="art_authorcard">
-            {portrait && <img alt="" class="art_avatar48" src={portrait} />}
+            {author?.portrait && <img alt="" class="art_avatar48" src={author.portrait} />}
             <div>
-              {d.authorName && <p class="art_author-name">{d.authorName}</p>}
+              {author && <p class="art_author-name">{author.link ? <a href={author.link}>{author.name}</a> : author.name}</p>}
               {d.authorBio && <p class="art_bio">{d.authorBio}</p>}
             </div>
           </div>
@@ -106,7 +103,23 @@ const articleLd = ld({
             <h2 class="more_h2">More articles</h2>
             <a class="more_all" href="/work?view=articles">All articles ↗</a>
           </div>
-          <ArticleList posts={more} lead={false} level={3} />
+          <div class="w-dyn-list">
+            <div class="work_list w-dyn-items" role="list">
+              {more.map((p) => (
+                <div class="work_item w-dyn-item" role="listitem">
+                  <a class="more_row w-inline-block" href={`/blog/${p.id}`}>
+                    <div class="more_stack">
+                      <span class="work_eyebrow">{p.data.category}</span>
+                      <span class="more_title">{p.data.title}</span>
+                    </div>
+                    <div class="more_meta">
+                      <span class="inline-text">{formatDate(p.data.date, 'long')}</span><span class="inline-text"> · </span>{p.data.readMinutes && <span class="inline-text">{p.data.readMinutes}</span>}<span class="inline-text"> min ↗</span>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     )}

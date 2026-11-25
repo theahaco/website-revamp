@@ -4,18 +4,17 @@
 // spec sheet on hairline rules, then the two calls to action.
 export interface Item { title: string; desc: string }
 interface Props {
-  id: string;
   offer: Item[];
   steps: Item[];
   tech: string[];
   work: string;
 }
-const { id, offer, steps, tech, work } = Astro.props;
+const { offer, steps, tech, work } = Astro.props;
 ---
 <div class="dd">
   <div class="dd_row">
     <h3 class="dd_label">The offer</h3>
-    <ul class="dd_offer" data-rv={`svc-${id}-offer`} role="list">
+    <ul class="dd_offer" role="list">
       {offer.map((o) => (
         <li class="dd_item"><p class="dd_title">{o.title}</p><p class="dd_desc">{o.desc}</p></li>
       ))}
@@ -23,7 +22,7 @@ const { id, offer, steps, tech, work } = Astro.props;
   </div>
   <div class="dd_row">
     <h3 class="dd_label">How it runs</h3>
-    <ol class="dd_steps" data-rv={`svc-${id}-steps`} role="list">
+    <ol class="dd_steps" role="list">
       {steps.map((s, i) => (
         <li class="dd_step"><span aria-hidden="true" class="dd_num">{i + 1}</span><p class="dd_title">{s.title}</p><p class="dd_desc">{s.desc}</p></li>
       ))}
@@ -31,7 +30,7 @@ const { id, offer, steps, tech, work } = Astro.props;
   </div>
   <div class="dd_row dd_row--tech">
     <h3 class="dd_label">Relevant tech</h3>
-    <ul class="dd_tech" data-rv={`svc-${id}-tech`} role="list">
+    <ul class="dd_tech" role="list">
       {tech.map((t) => <li class="dd_tag">{t}</li>)}
     </ul>
   </div>

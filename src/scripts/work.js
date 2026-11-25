@@ -5,9 +5,7 @@ import { href } from './base.js';
 // the current view matches it, so no filter leads to an empty list. Items are
 // the elements with a data-fa (audience) attribute: the case study tiles, the
 // group of open-source tool rows (it counts as data-wk-count items), the
-// alliance row, the articles. The first article the filter keeps is drawn as
-// the lead tile (is-lead), the next one opens the rows (is-firstrow): see
-// src/components/ArticleList.astro.
+// alliance row, the article rows.
 const AUDS = ['All', 'Financial institutions', 'Protocols and products', 'Ecosystems and open source'];
 // The title in two tones: h1 in the page's colour, soft in the lighter one
 // (no soft part: one tone). The first paint of /work?view=articles uses the
@@ -68,7 +66,7 @@ export function initWork() {
       b.setAttribute('data-val', v);
       b.addEventListener('click', () => {
         select(v);
-        render();
+        render(true);
       });
       group.appendChild(b);
     });
@@ -77,7 +75,7 @@ export function initWork() {
 
   const countOf = (it) => Number(it.getAttribute('data-wk-count')) || 1;
 
-  function render() {
+  function render(updateUrl = false) {
     const isArt = state.view === 'articles';
     const copy = COPY[state.view];
     casesWrap.style.display = isArt ? 'none' : '';
@@ -118,30 +116,29 @@ export function initWork() {
       group.hidden = group.querySelectorAll('.wk_chip:not([hidden])').length <= 2;
     }
     let n = 0;
-    const kept = [];
     items.forEach((it) => {
       const show = state.aud === 'All' || it.getAttribute('data-fa') === state.aud;
       it.style.display = show ? '' : 'none';
-      if (show) {
-        n += countOf(it);
-        kept.push(it);
-      }
+      if (show) n += countOf(it);
     });
-    if (isArt) {
-      items.forEach((it) => it.classList.remove('is-lead', 'is-firstrow'));
-      if (kept[0]) kept[0].classList.add('is-lead');
-      if (kept[1]) kept[1].classList.add('is-firstrow');
-    }
     if (countEl) countEl.textContent = n + (n === 1 ? ' item' : ' items');
     if (emptyEl) emptyEl.classList.toggle('is-shown', n === 0);
+    if (updateUrl) {
+      const url = new URL(location.href);
+      const audience = Object.keys(FOR).find((key) => FOR[key] === state.aud);
+      if (audience) url.searchParams.set('for', audience);
+      else url.searchParams.delete('for');
+      if (isArt) url.searchParams.set('view', 'articles');
+      else url.searchParams.delete('view');
+      history.replaceState(history.state, '', url);
+    }
   }
 
   tabs.forEach((t) => {
     t.addEventListener('click', (e) => {
       e.preventDefault();
       state.view = t.getAttribute('data-view');
-      history.replaceState(null, '', state.view === 'articles' ? href('/work/?view=articles') : href('/work/'));
-      render();
+      render(true);
     });
   });
   const clearBtn = document.querySelector('[data-wk="clear"]');
@@ -149,7 +146,7 @@ export function initWork() {
     clearBtn.addEventListener('click', (e) => {
       e.preventDefault();
       select('All');
-      render();
+      render(true);
     });
   }
   render();

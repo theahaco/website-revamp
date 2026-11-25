@@ -1,12 +1,23 @@
 // Editorial choices that Webflow encoded as list filters and sort orders.
 // Each list holds content slugs (file names without .md), in display order.
 
+/** Clients kept off the site until they approve what it says about them.
+ * While a client is listed here, the site leaves out its case study, logo
+ * and quote, and every line that names it as a client or partner
+ * (src/lib/hidden.ts). Articles that report on its products stay. The
+ * files are untouched: remove the id to show everything again.
+ * Ripple: hidden on November 25, 2026, until Ripple approves the content. */
+// Review preview (theahaco/website-revamp): every client is shown, for approval.
+export const hiddenClients: string[] = [];
+
 /** Home page, "Selected work" > Case studies. */
 // Société Générale-FORGE first (a regulated issuer, for the banks reading the
 // page), then LI.FI, Talwex and Ripple, two tiles across. The Stellar
 // Development Foundation is left out here: its tools fill the open-source
 // band further down. Each tile's visual: src/lib/workVisuals.ts.
 export const homeFeaturedCases = ["societe-generale-forge", "lifi", "talwex", "ripple"];
+/** Takes the place of a featured case study whose client is hidden (hiddenClients). */
+export const homeFeaturedBackup = ["starknet"];
 
 /** Work page, the case study tiles: the home page's four first, in the same
  * order, then the others. A case study not listed here comes after them, by

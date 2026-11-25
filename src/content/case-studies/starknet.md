@@ -70,10 +70,9 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: /images/logos/logo-light-starknet.svg
-  logoAlt: Starknet
 ndaSummary: ''
 client: Starknet
+logo: /images/logos/logo-light-starknet.svg
 nda: false
 workTitle: A DevX audit of Starknet's developer onboarding
 workLine: Two engineers, one week, three documents, toward a 30 to 60 minute onboarding instead of several working days.

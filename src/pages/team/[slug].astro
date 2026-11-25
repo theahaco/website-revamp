@@ -7,20 +7,18 @@
 // portrait in one tone, round, then the facts as rows with their icons
 // (src/lib/factIcons.ts). Engagements and open-source tools are the rows of
 // the Services precedents (components/services/Precedents.astro): the
-// client's logo (its case study's quote.logo) on the tint of the case
+// client's logo (its case study's logo) on the tint of the case
 // study's audience, or the lock on tan for a client not named, never a logo;
 // a tool shows its icon (src/lib/toolIcons.ts) and its headline figure, as
-// before. Writing: the rows of the article lists (ArticleList.astro), without
-// a lead. The rest of the team: compact chips with their faces (TeamGrid).
+// before. The rest of the team: compact chips with their faces (TeamGrid).
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
 import Icon from '../../components/Icon.astro';
 import TeamGrid from '../../components/TeamGrid.astro';
-import ArticleList from '../../components/ArticleList.astro';
 import Precedents, { type PrecedentRow } from '../../components/services/Precedents.astro';
-import { team, caseStudies, posts, tools, orderBy } from '../../lib/content';
+import { team, caseStudies, posts, tools, orderBy, formatDate, md } from '../../lib/content';
 import { factIcon } from '../../lib/factIcons';
 import { toolIcons } from '../../lib/toolIcons';
 import { siteUrl, ld } from '../../lib/ld';
@@ -34,7 +32,9 @@ const { member } = Astro.props;
 const d = member.data;
 const { render } = await import('astro:content');
 const { Content } = await render(member);
-const hasBio = Boolean(member.body && member.body.trim());
+const hasBio = Boolean(d.bio || (member.body && member.body.trim()));
+// While a client named in the bio is hidden, `bio` (from ifClientHidden) replaces it.
+const bioOverride = d.bio ? md(d.bio) : '';
 const facts = [
   { key: 'location', label: 'Based in', value: d.location },
   { key: 'focus', label: 'Focus', value: d.focus },
@@ -61,7 +61,7 @@ const logoSize = (src: string) => {
 };
 const tintOf: Record<string, PrecedentRow['tint']> = { 'Financial institutions': 'blue', 'Protocols and products': 'green', 'Ecosystems and open source': 'pink' };
 const engagementRows: PrecedentRow[] = engagements.map((c) => {
-  const logo = !c.data.nda && c.data.quote?.logo ? c.data.quote.logo : '';
+  const logo = !c.data.nda ? c.data.logo : '';
   return {
     href: `/case-studies/${c.id}`,
     name: c.data.client || c.data.shortTitle || c.data.title,
@@ -110,7 +110,7 @@ const hasCard = Boolean(d.portrait) || facts.length > 0;
             <p class="v-eyebrow page_eyebrow">Team</p>
             <h1 class="intro_h1 tm_h1">{d.name}{d.role && <Fragment> <span class="v-soft" data-tm="role">{d.role}</span></Fragment>}</h1>
           </div>
-          {hasBio && <div class="blog_richtext w-richtext" data-tm="bio"><Content /></div>}
+          {hasBio && (bioOverride ? <div class="blog_richtext w-richtext" data-tm="bio" set:html={bioOverride} /> : <div class="blog_richtext w-richtext" data-tm="bio"><Content /></div>)}
           {links.length > 0 && (
             <ul aria-label="Links" class="tm_links" role="list">
               {links.map((l) => <li data-pill={l.key}><a class="share_pill" href={l.href}>{l.label}</a></li>)}
@@ -158,13 +158,29 @@ const hasCard = Boolean(d.portrait) || facts.length > 0;
             <h2 class="more_h2">Writing</h2>
             <a class="more_all" href="/work?view=articles">All articles ↗</a>
           </div>
-          <ArticleList posts={writing} lead={false} level={3} />
+          <div class="w-dyn-list">
+            <div class="w-dyn-items" role="list">
+              {writing.map((p) => (
+                <div class="work_item w-dyn-item" role="listitem">
+                  <a class="more_row w-inline-block" href={`/blog/${p.id}`}>
+                    <div class="more_stack">
+                      <span class="work_eyebrow" data-wri="cat">{p.data.category}</span>
+                      <span class="more_title" data-wri="title">{p.data.title}</span>
+                    </div>
+                    <div class="more_meta">
+                      <span class="inline-text" data-wri="date">{formatDate(p.data.date, 'long')}</span><span class="inline-text"> · </span>{p.data.readMinutes && <span class="inline-text" data-wri="min">{p.data.readMinutes}</span>}<span class="inline-text"> min ↗</span>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
       )}
       <section class="tm_teampanel" data-tm="team">
         <div class="tm_teamhead">
           <h2 class="tm_teamh2">The rest of the team</h2>
-          <p class="tm_count" data-rv="team-count">United States · France · Brazil</p>
+          <p class="tm_count">United States · France · Brazil</p>
         </div>
         <TeamGrid variant="member" exclude={member.id} />
       </section>

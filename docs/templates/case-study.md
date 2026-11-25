@@ -20,6 +20,8 @@ cta: Issuing a stablecoin? Talk to the engineers who built this one.
 # Heading of the call-to-action band at the bottom.
 
 client: Acme Bank
+logo: ''
+# Optional image path for team engagement rows; leave empty for an NDA client.
 nda: false
 # true shows the "Client not named" pill; then use a description as client ("Top US commercial bank").
 ndaSummary: ''
@@ -112,8 +114,6 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: ''
-  logoAlt: ''
 
 draft: false
 ---

@@ -1,78 +1,55 @@
-# Launch: moving theaha.co from Webflow to Cloudflare Pages
+# Deployment: theaha.co on GitHub Pages
 
-theaha.co is served by Cloudflare Pages, built from `main`. GitHub Pages keeps
-serving the preview at https://theahaco.github.io/website/ and never gets a
-custom domain: a custom domain there would publish the preview build (noindex,
-review notes) on theaha.co.
+The production repository is `theahaco/theahaco.github.io`. GitHub Pages
+serves https://theaha.co/; Cloudflare Pages is not the production deployment.
 
-## Two days before
+## Repository settings
 
-1. **Cloudflare zone.** Add `theaha.co` to Cloudflare (Free plan). Compare the
-   imported DNS records with the current ones, record by record: every `MX`, and
-   every `TXT` for SPF, DKIM, DMARC and domain verifications. If DNSSEC is on at
-   the registrar, turn it off. Switch the nameservers at the registrar and wait
-   until the zone shows "Active".
-2. **Pages project.** Workers & Pages, Create, Pages, Connect to Git:
-   `theahaco/website`, branch `main`, preset Astro.
-   - Build command: `npm run build && npm run check`
-   - Output directory: `dist`
-   - Environment variable (Production and Preview): `NODE_VERSION` = `24`
-   - Do not set `SITE_URL` or `BASE_PATH`: the defaults are theaha.co.
+- Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+- Custom domain: **theaha.co**.
+- Enable **Enforce HTTPS** once GitHub has issued the domain certificate.
+- Keep DNS configured for GitHub Pages. Preserve unrelated mail and domain
+  verification records when changing DNS.
 
-   Check the site on `<project>.pages.dev` (it is not indexable, see
-   `public/_headers`).
-3. **Daily rebuild.** Pages settings, Builds, Deploy hooks: create a hook for
-   `main`. In GitHub, repository Settings, Secrets and variables, Actions: add it
-   as `CF_PAGES_DEPLOY_HOOK`. Run "Daily production rebuild" from the Actions
-   tab once and check that a Cloudflare build starts. Scheduled articles go live
-   with this 05:30 UTC build.
-4. **Contact form.** Create a Formspree form that delivers to hello@theaha.co,
-   confirm the address, paste the form URL in `src/data/site.ts`
-   (`contact.formEndpoint`), push, and send a test from the pages.dev address.
-5. **Calendly.** Check that the event type is active and reusable (not one-off),
-   the availability and time zone, that notifications reach an inbox someone
-   reads, and that no Google Analytics or Meta pixel is connected to it.
-6. **Umami.** Website domain `theaha.co`, data region EU.
+The Actions-based deployment uses the custom domain saved in repository
+settings; it does not require a `CNAME` file in `public/`.
 
-## Launch day
+## Builds and publishing
 
-7. **Custom domain.** Pages, Custom domains: add `theaha.co`. If it reports a
-   conflict, delete the Webflow apex records. Wait for the certificate.
-8. **www and HTTPS.** DNS: a proxied `CNAME` `www` to `theaha.co`. Rules,
-   Redirect Rules: the template "Redirect from WWW to root" (301, keep the query
-   string). SSL/TLS: turn on Always Use HTTPS.
-9. **Checks.**
-   - `https://theaha.co/` answers 200, has no `noindex` and loads Umami.
-   - `http://theaha.co/` and `https://www.theaha.co/` answer 301 to
-     `https://theaha.co/`; `/blog` answers 301.
-   - An unknown path shows the 404 page with status 404.
-   - `https://theaha.co/robots.txt` says `Allow: /` and names the sitemap.
-   - /contact shows the full calendar: book and cancel a test slot. A test
-     message from the form arrives.
-   - Umami's realtime view shows the visit, then the "Call booked" and "Contact
-     form sent" events.
-10. **Webflow.** Remove the custom domain from the Webflow project, archive the
-    project without deleting it, then end its hosting. In both Webflow projects,
-    turn on Site settings, SEO, "Disable Webflow subdomain indexing", or
-    unpublish the staging site.
+`.github/workflows/deploy.yml` runs on every push to `main`, including merges,
+on demand, and daily at 05:30 UTC so scheduled articles become available.
+Scheduled Actions runs can be delayed.
+
+The workflow uses Node 24, installs with `npm ci`, builds with
+`SITE_URL=https://theaha.co` and `BASE_PATH=/`, then checks internal links,
+images, anchors, indexability, robots.txt and the homepage canonical URL.
+It uploads `dist/` and deploys through the `github-pages` environment.
+If a build or check fails, the previous site remains live.
+
+Pull requests run production and preview-mode builds and link checks.
+They do not create hosted previews. Developers can inspect future articles
+locally with `SITE_URL=http://localhost:4321 npm run dev`.
+
+## Verify a deployment
+
+- In Actions, check that both **build** and **deploy** succeeded for the
+  expected `main` commit.
+- `https://theaha.co/` should return 200, have no `noindex`, and use
+  `https://theaha.co/` as its canonical URL.
+- HTTP should redirect to HTTPS; `https://www.theaha.co/` should redirect
+  to `https://theaha.co/`.
+- An unknown path should return the custom 404 page with status 404.
+- `https://theaha.co/robots.txt` should say `Allow: /` and name the sitemap.
+- Check the contact form, Calendly and any configured analytics separately.
+
+GitHub Pages ignores `public/_headers` and `public/_redirects`, which remain
+as legacy Cloudflare configuration. Existing redirect stubs in `src/pages/`
+handle page redirects rather than server-side 301 rules. New redirects need
+equivalent page stubs, not just entries in `_redirects`.
 
 ## Search engines
 
-11. **Search Console.** Add a Domain property for `theaha.co`, verified by a DNS
-    `TXT` record (it covers www, http and https). Submit
-    `https://theaha.co/sitemap-index.xml`. Import the property into Bing
-    Webmaster Tools.
-12. **Request indexing** (URL Inspection, live test, then Request indexing) for
-    the home page, /services, /networks/stellar, /networks/xrpl, /work, /about,
-    /open-source, the Société Générale-FORGE, LI.FI and money-market fund case
-    studies, and the Stellar Scaffold and Stellar Registry pages.
-13. **Links to the site.** Point the LinkedIn company page, the GitHub
-    organization, each tool's README and site, and the ecosystem directory
-    entries at `https://theaha.co/` or the tool's page
-    (`https://theaha.co/open-source/<tool>/`).
-14. **First two weeks.** In Search Console, the indexed page count should rise
-    toward about 40, and "Excluded by noindex" should list only the 404 page and
-    the redirect stubs. Watch 404s (Umami logs them by path) and add a line to
-    `public/_redirects` for each old address that still gets visits. After each
-    article date (November 4, 9 and 13), check that the article is in the
-    sitemap and request its indexing.
+Verify the `theaha.co` Domain property in Search Console using a DNS TXT
+record, submit `https://theaha.co/sitemap-index.xml`, and import the property
+into Bing Webmaster Tools. Watch indexing and missing-page reports after
+content or URL changes.

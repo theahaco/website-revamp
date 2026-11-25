@@ -12,7 +12,7 @@
 // client, or else to the client's own website (`site`). The key figures are in the hero's
 // "Live on mainnet" card (deployments, audits) and in the open-source band
 // (projects).
-import { caseStudies, publicQuote } from '../../lib/content';
+import { caseStudies, publicQuote, linksToHiddenClient } from '../../lib/content';
 import { homeQuotes } from '../../data/curation';
 import { site } from '../../data/site';
 
@@ -32,21 +32,27 @@ const voices = homeQuotes
 
 // h: logo height in px on desktop (per file, for an even optical weight);
 // w: its width at that height (from the file's proportions).
-const logos = [
+const allLogos = [
   { name: 'Stellar Development Foundation', src: '/images/logos/logo-light-stellar.svg', h: 22, w: 90, href: '/case-studies/stellar-development-foundation' },
   { name: 'Société Générale-FORGE', src: '/images/logos/logo-light-sgforge.svg', h: 26, w: 90, href: '/case-studies/societe-generale-forge' },
-  { name: 'Ripple', src: '/images/logos/logo-light-ripple.svg', h: 22, w: 85, href: '/case-studies/ripple' },
+  // Ripple: the files of its official logo kit (brand.ripple.com), never
+  // filtered, faded, recolored or stretched. In its colors at rest like the
+  // others; on hover, its official black logo (`mono`) instead of the grey
+  // filter the other logos take (see .vc_logo--brand below).
+  { name: 'Ripple', src: '/images/logos/logo-light-ripple.svg', mono: '/images/logos/logo-light-ripple-black.svg', h: 22, w: 86, href: '/case-studies/ripple' },
   // Talwex: symbol and wordmark as on talwex.com (Inter Bold, outlined).
   { name: 'Talwex', src: '/images/logos/logo-light-talwex.svg', h: 20, w: 101, href: '/case-studies/talwex' },
   { name: 'LI.FI', src: '/images/logos/logo-light-lifi.svg', h: 23, w: 63, href: '/case-studies/lifi' },
   { name: 'Banque Delubac et Cie', src: '/images/logos/logo-light-delubac.svg', h: 25, w: 111, site: 'https://www.delubac.com/' },
 ];
+// Clients kept off the site for now (src/data/curation.ts, hiddenClients) are left out.
+const logos = allLogos.filter((l) => !linksToHiddenClient(l.href));
 ---
-<section aria-labelledby="vc-label" class="vc" data-rv="logos">
+<section aria-labelledby="vc-label" class="vc">
   <div class="vc_inner">
     <p class="v-eyebrow" id="vc-label">Clients and partners</p>
     {voices.length > 0 && (
-      <div class="vc_voices" data-rv="home-quote">
+      <div class="vc_voices">
         <div class="vc_quotes">
           {voices.map((v) => (
             <figure class="vc_quote" id={`vc-q-${v.id}`}>
@@ -76,12 +82,19 @@ const logos = [
         )}
       </div>
     )}
-    <ul aria-labelledby="vc-label" class="vc_row" role="list">
+    <ul aria-labelledby="vc-label" class="vc_row" role="list" style={`--vc-n:${logos.length}`}>
       {logos.map((l) => (
         <li class="vc_cell">
           {l.href || l.site ? (
             <a class="vc_tile vc_tile--link" href={l.href || l.site}>
-              <img alt={l.name} class="vc_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+              {l.mono ? (
+                <Fragment>
+                  <img alt={l.name} class="vc_logo vc_logo--brand vc_logo--color" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+                  <img alt="" class="vc_logo vc_logo--brand vc_logo--mono" loading="lazy" src={l.mono} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+                </Fragment>
+              ) : (
+                <img alt={l.name} class="vc_logo" loading="lazy" src={l.src} width={l.w} height={l.h} style={`--h:${l.h}px`} />
+              )}
               <span class="vc_sr">{l.href ? ' case study' : ' website'}</span>
               <span aria-hidden="true" class="vc_arrow">↗</span>
             </a>
@@ -138,14 +151,19 @@ const logos = [
     .vc_quote, .vc_chip, .vc_pic { transition: none !important; }
   }
 
-  /* One framed tile per client, the logos in one tone until hovered */
-  .vc_row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; width: 100%; margin: 72px 0 0; padding: 0; list-style: none; }
+  /* One framed tile per client, the logos in their colors; hovered, in one tone */
+  .vc_row { display: grid; grid-template-columns: repeat(var(--vc-n, 6), minmax(0, 1fr)); gap: 16px; width: 100%; margin: 72px 0 0; padding: 0; list-style: none; }
   .vc_cell { display: flex; min-width: 0; }
   .vc_tile { position: relative; display: grid; place-items: center; flex: 1; min-width: 0; height: 104px; padding: 0 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-decoration: none; transition: border-color .2s, box-shadow .2s, background-color .2s; }
-  .vc_logo { display: block; width: auto; max-width: 100%; height: var(--h); filter: grayscale(1); opacity: .82; transition: filter .2s, opacity .2s; }
+  .vc_logo { display: block; width: auto; max-width: 100%; height: var(--h); transition: filter .2s, opacity .2s; }
   .vc_arrow { position: absolute; top: 12px; right: 14px; color: var(--muted); font-size: 14px; line-height: 1; opacity: .55; transition: opacity .2s, color .2s, transform .2s; }
   .vc_tile--link:hover { border-color: var(--line-strong); background: var(--white); box-shadow: var(--shadow-1); }
-  .vc_tile--link:hover .vc_logo, .vc_tile--link:focus-visible .vc_logo { filter: none; opacity: 1; }
+  .vc_tile--link:hover .vc_logo, .vc_tile--link:focus-visible .vc_logo { filter: grayscale(1); opacity: .82; }
+  /* Logos whose brand rules forbid filters (Ripple): never greyed or faded; on hover, their official one-color file */
+  .vc_logo--brand, .vc_tile--link:hover .vc_logo--brand, .vc_tile--link:focus-visible .vc_logo--brand { filter: none; opacity: 1; }
+  .vc_logo--mono { display: none; }
+  .vc_tile--link:hover .vc_logo--color, .vc_tile--link:focus-visible .vc_logo--color { display: none; }
+  .vc_tile--link:hover .vc_logo--mono, .vc_tile--link:focus-visible .vc_logo--mono { display: block; }
   .vc_tile--link:hover .vc_arrow { color: var(--green-ink); opacity: 1; }
   .vc_tile--link:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
   @media (prefers-reduced-motion: no-preference) { .vc_tile--link:hover .vc_arrow { transform: translate(2px, -2px); } }

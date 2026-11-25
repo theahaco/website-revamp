@@ -77,10 +77,9 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: /images/logos/logo-light-sgforge.svg
-  logoAlt: Société Générale-FORGE
 ndaSummary: ''
 client: Société Générale-FORGE
+logo: /images/logos/logo-light-sgforge.svg
 nda: false
 workTitle: EURCV, a regulated euro stablecoin on Stellar mainnet
 # "MiCA-compliant" (lede, challenge, workLine) is SG-FORGE's own word for EURCV

@@ -87,8 +87,6 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: ''
-  logoAlt: ''
 ndaSummary: A Luxembourg real estate fund issuing its interests natively on Stellar. In design.
 client: European real estate fund sponsor
 nda: true

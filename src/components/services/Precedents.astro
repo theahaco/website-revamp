@@ -25,7 +25,6 @@ export interface PrecedentRow {
   icon?: string;
   /** This row's tint, when it is not the list's (team pages: each case study's audience). */
   tint?: 'blue' | 'green' | 'pink';
-  rv?: string;
 }
 interface Props {
   rows: PrecedentRow[];
@@ -42,7 +41,7 @@ const { rows, tint = 'blue', label = 'Precedents' } = Astro.props;
       const Row = r.href ? 'a' : 'div';
       return (
       <li class="pc_item">
-        <Row class:list={['pc_row', r.figure && 'pc_row--fig', !r.href && 'pc_row--static']} data-rv={r.rv} href={r.href}>
+        <Row class:list={['pc_row', r.figure && 'pc_row--fig', !r.href && 'pc_row--static']} href={r.href}>
           <span class:list={['pc_tile', `pc_tile--${r.icon === 'lock-simple' ? 'nda' : r.tint ?? tint}`]}>
             {r.logo ? <img alt="" height={r.logo.h} loading="lazy" src={r.logo.src} width={r.logo.w} /> : <Icon name={r.icon ?? 'cube'} size={22} />}
           </span>

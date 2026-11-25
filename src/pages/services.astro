@@ -15,6 +15,7 @@ import EurcvControls from '../components/services/EurcvControls.astro';
 import IntegrationMap from '../components/services/IntegrationMap.astro';
 import Precedents, { type PrecedentRow } from '../components/services/Precedents.astro';
 import ToolPhones from '../components/services/ToolPhones.astro';
+import { linksToHiddenClient } from '../lib/hidden';
 
 type DoorId = 'institutions' | 'protocols' | 'ecosystems';
 interface Door {
@@ -47,7 +48,7 @@ const doors: Door[] = [
     index: 'Regulated assets onchain',
     cases: [
       { href: '/case-studies/societe-generale-forge', name: 'Société Générale-FORGE', line: 'EURCV, a regulated euro stablecoin on Stellar', meta: 'Live since Q1 2026 · Issuance and governance', live: true, figure: { value: '€20M+', label: 'issued' }, logo: { src: `${LOGOS}/logo-light-sgforge.svg`, w: 77, h: 22 } },
-      { href: '/case-studies/nda-settlement-stablecoin', rv: 'svc-bank', name: 'Top US commercial bank', line: 'An internal settlement stablecoin on Stellar', meta: 'Live since Q3 2026 · Architecture and delivery lead', live: true, figure: { value: '5 months', label: 'to handover' }, icon: 'lock-simple' },
+      { href: '/case-studies/nda-settlement-stablecoin', name: 'Top US commercial bank', line: 'An internal settlement stablecoin on Stellar', meta: 'Live since Q3 2026 · Architecture and delivery lead', live: true, figure: { value: '5 months', label: 'to handover' }, icon: 'lock-simple' },
       { href: '/case-studies/nda-money-market-fund', name: 'Regulated European asset manager', line: 'A tokenized share class of a money market fund', meta: 'In build on Stellar', icon: 'lock-simple' },
     ],
     offer: [
@@ -106,11 +107,11 @@ const doors: Door[] = [
       { href: '/case-studies/stellar-development-foundation', name: 'Stellar Development Foundation', line: 'Stellar Scaffold, Stellar CLI plugin system, Stellar Registry, Nido', meta: 'Stellar · 2021-today', logo: { src: `${LOGOS}/logo-light-stellar.svg`, w: 77, h: 19 } },
       { href: '/case-studies/ripple', name: 'Ripple', line: 'Accelerator cohorts, hackathons and a two-week DevX audit of XRPL’s developer path', meta: 'XRPL · Since Q4 2025', logo: { src: `${LOGOS}/logo-light-ripple.svg`, w: 70, h: 18 } },
       { href: '/case-studies/starknet', name: 'Starknet', line: 'A DevX audit of the developer onboarding: two engineers, one week, three documents', meta: 'Starknet · DevX audit', logo: { src: `${LOGOS}/logo-light-starknet.svg`, w: 78, h: 18 } },
-      { href: '/open-source', rv: 'svc-tools', name: 'Open source', line: 'Each tool has its own page: Stellar CLI, Stellar Scaffold, Stellar Registry, Nido, Perch, Moonlight, Tansu and GhostSig', meta: 'Stellar and XRPL', icon: 'terminal-window' },
+      { href: '/open-source', name: 'Open source', line: 'Each tool has its own page: Stellar CLI, Stellar Scaffold, Stellar Registry, Nido, Perch, Moonlight, Tansu and GhostSig', meta: 'Stellar and XRPL', icon: 'terminal-window' },
     ],
     offer: [
       { title: 'DevX audit', desc: 'Two senior engineers, two weeks full time, on your real onboarding path.' },
-      { title: 'Tooling roadmap', desc: 'Agreed with the ecosystem’s engineering team.' },
+      { title: 'Tooling roadmap', desc: 'Agreed with stakeholder engineering teams.' },
       { title: 'Open-source tooling', desc: 'CLIs, scaffolding, registries, sandboxes and wallets, built as public goods.' },
       { title: 'Accelerator and hackathon mentoring', desc: 'Architecture reviews, token and issuer design, hands-on help on the path to go live.' },
     ],
@@ -159,7 +160,7 @@ const doors: Door[] = [
             <p class="v-eyebrow">{d.label}</p>
             <h2 class="sv-h2" id={`${d.id}-title`}>{d.title} <span class="v-soft">{d.soft}</span></h2>
             <p class="sv-lede">{d.lede}</p>
-            <Precedents rows={d.cases} tint={d.tint} />
+            <Precedents rows={d.cases.filter((c) => !linksToHiddenClient(c.href))} tint={d.tint} />
           </div>
           <div class="sv-visual">
             {d.id === 'institutions' && <EurcvControls />}
@@ -167,12 +168,12 @@ const doors: Door[] = [
             {d.id === 'ecosystems' && <ToolPhones />}
           </div>
         </div>
-        <DoorDetails id={d.id} offer={d.offer} steps={d.steps} tech={d.tech} work={d.work} />
+        <DoorDetails offer={d.offer} steps={d.steps} tech={d.tech} work={d.work} />
       </div>
     </section>
   ))}
 </main>
-<Cta heading={'Which door is yours? Thirty minutes with an engineer settles it.'} />
+<Cta heading={'Talk to an engineer, not a sales team.'} />
 </BaseLayout>
 
 <style>

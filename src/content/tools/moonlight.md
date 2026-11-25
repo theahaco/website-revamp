@@ -67,7 +67,9 @@ sections:
     - **Browser wallet**: beta.
     - **Compliance connectors** (KYC vendors, screening, approval workflows, reporting exports): built per institution.
 
-    The audit report and its fixes are public, with the hashes that match the contracts deployed on mainnet. We publish no usage figure yet.
+    The audit report and its fixes are public, with the hashes that match the contracts deployed on mainnet.
+
+    Moonlight is ready. [Schedule a call](/contact) to see how we can make it work for you.
 - id: recognition
   title: Recognition
   body: |-

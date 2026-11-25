@@ -12,6 +12,6 @@ links:
   github: https://github.com/elizabethengelman
   email: ''
 ---
-Elizabeth spent a decade consulting across healthcare, insurance and finance, with production work on Ethereum, Polygon, Stellar and Flow.
+Elizabeth has spent over a decade as a software engineer, much of it in consulting. She has led projects across healthcare, insurance and finance, and shipped production work on Ethereum, Stellar and Flow. She's especially drawn to decentralized systems and how they shape developer experience.
 
-She is a core contributor to the Stellar CLI (contract init, Ledger signing through the stellar-ledger crate, the Docker local network) and on Nido built the integration tests, the relayer and the mainnet switchover.
+She joined The Aha Company in 2023 and is currently building [Nido](../../open-source/nido), a smart contract wallet on Stellar. She also worked on [a major financial institution's stablecoin project](../../case-studies/nda-settlement-stablecoin), and was a core contributor to the Stellar CLI, where she built contract init, Ledger signing through the stellar-ledger crate and the Docker local network.

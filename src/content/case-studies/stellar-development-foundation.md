@@ -44,7 +44,7 @@ metrics:
 sections:
 - id: challenge
   title: Challenge
-  body: 'When Stellar added smart contracts with Soroban, it needed developer tooling to match: a command line that builds, deploys and calls contracts, typed clients for front ends, and a way to start a project without assembling it by hand. The Foundation looked for teams that could build that tooling, and keep maintaining it.'
+  body: 'When Stellar added smart contracts with Soroban, it needed developer tooling to match: a command line that builds, deploys and calls contracts, typed clients for frontends, and a way to start a project without assembling it by hand. The Foundation looked for teams that could build that tooling, and keep maintaining it.'
 - id: devx-audit
   title: DevX audit
   body: |-
@@ -61,7 +61,7 @@ sections:
   title: Architecture highlights
   body: |-
     - [Stellar CLI](/open-source/stellar-cli): plugin system, typed contract calls, SEP-5 key management, Ledger signing
-    - [Stellar Scaffold](/open-source/stellar-scaffold): one command from an empty folder to contracts, a front end, a local network and typed clients
+    - [Stellar Scaffold](/open-source/stellar-scaffold): one command from an empty folder to contracts, a frontend, a local network and typed clients
     - [Stellar Registry](/open-source/stellar-registry): an onchain package manager for Soroban contracts, audited by Veridise with no findings, on mainnet since July 2026
     - [Nido](/open-source/nido): our open-source passkey wallet, in a curated mainnet release since October 2026
     - JavaScript SDK: contract.Client and AssembledTransaction in Stellar's official SDK
@@ -97,10 +97,9 @@ quote:
   role: Chief Product Officer, Stellar Development Foundation
   portrait: /images/people/tomer-weller.webp
   portraitAlt: Tomer Weller
-  logo: /images/logos/logo-light-stellar.svg
-  logoAlt: Stellar Development Foundation
 ndaSummary: ''
 client: Stellar Development Foundation
+logo: /images/logos/logo-light-stellar.svg
 nda: false
 workTitle: Stellar Scaffold, Stellar CLI plugin system, Stellar Registry, Nido
 workLine: Tooling the Stellar ecosystem runs on, maintained as public goods, and a core contributor to the Stellar Architect Program.

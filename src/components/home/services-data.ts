@@ -29,14 +29,14 @@ export interface Service {
   precedents: Precedent[];
   /** A short status after the precedents (e.g. "in build"), when one applies. */
   note?: string;
-  /** Review-overlay hook on the precedent line (data-rv). */
-  rv?: string;
 }
+
+import { linksToHiddenClient } from '../../lib/hidden';
 
 const LOGOS = '/images/logos';
 const NDA_BANK = '/case-studies/nda-settlement-stablecoin';
 
-export const services: Service[] = [
+const allServices: Service[] = [
   {
     id: 'stablecoin-issuance',
     title: 'Stablecoin issuance and governance',
@@ -58,7 +58,6 @@ export const services: Service[] = [
     bullets: ['Transfer restrictions enforced onchain', 'Subscriptions and redemptions onchain', 'Custody integration'],
     precedents: [{ kind: 'nda', text: 'Regulated European asset manager', href: '/case-studies/nda-money-market-fund' }],
     note: 'A tokenized share class of a money market fund, in build',
-    rv: 'precedent-fund',
   },
   {
     id: 'protocol-integration',
@@ -97,7 +96,7 @@ export const services: Service[] = [
       // study). The alt text says what the link opens.
       { kind: 'client', logo: `${LOGOS}/logo-light-stellar.svg`, alt: 'Stellar DevX audit', w: 61, h: 15, href: '/case-studies/stellar-development-foundation#devx-audit' },
       { kind: 'client', logo: `${LOGOS}/logo-light-starknet.svg`, alt: 'Starknet DevX audit', w: 69, h: 16, href: '/case-studies/starknet' },
-      { kind: 'client', logo: `${LOGOS}/logo-light-ripple.svg`, alt: 'Ripple', w: 54, h: 14, href: '/case-studies/ripple' },
+      { kind: 'client', logo: `${LOGOS}/logo-light-ripple.svg`, alt: 'Ripple', w: 55, h: 14, href: '/case-studies/ripple' },
       { kind: 'tool', icon: 'terminal-window', text: 'Stellar CLI plugins and bindings', href: '/open-source/stellar-cli' },
       { kind: 'tool', icon: 'stack', text: 'Stellar Scaffold', href: '/open-source/stellar-scaffold' },
     ],
@@ -113,9 +112,10 @@ export const services: Service[] = [
       { kind: 'nda', text: 'Top US commercial bank', href: NDA_BANK },
       { kind: 'mark', logo: `${LOGOS}/logo-light-stellar.svg`, text: 'SDF Architect Program', href: '/case-studies/stellar-development-foundation' },
     ],
-    rv: 'precedent-arch',
   },
 ];
+// Precedents of clients kept off the site for now (src/data/curation.ts, hiddenClients) are left out.
+export const services: Service[] = allServices.map((s) => ({ ...s, precedents: s.precedents.filter((p) => !linksToHiddenClient(p.href)) }));
 
 /** Icon-box modifier per audience (visual.css: .v-iconbox, --green, --pink, --tan). */
 export const tint: Record<Audience, string> = { institutions: '', protocols: 'green', ecosystems: 'pink', any: 'tan' };

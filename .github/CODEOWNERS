@@ -1,0 +1,4 @@
+# Pull requests that change the site's content ask for a review automatically.
+/src/content/   @Dgetsylver
+/public/images/ @Dgetsylver
+/docs/          @Dgetsylver

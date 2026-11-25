@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { parseDocument, LineCounter } from 'yaml';
 
 const ROOT = new URL('..', import.meta.url).pathname;
-const DIRS = ['blog', 'case-studies', 'team', 'tools', 'networks'];
+const DIRS = ['blog', 'case-studies', 'team', 'authors', 'tools', 'networks'];
 const MONTHS = 'January|February|March|April|May|June|July|August|September|October|November|December';
 const BOM = String.fromCharCode(0xfeff);
 const EM_DASH = String.fromCharCode(0x2014);
@@ -18,6 +18,10 @@ const files = (dir) => readdirSync(join(ROOT, dir)).filter((f) => !f.startsWith(
 // Entry ids: the file name without .md, or the `slug` field when a file sets one.
 const idOf = (d, f) => (readFileSync(join(ROOT, 'src/content', d, f), 'utf8').match(/^---[\s\S]*?^slug:\s*['"]?([\w-]+)/m) || [])[1] || f.slice(0, -3);
 const ids = Object.fromEntries(DIRS.map((d) => [d, files(`src/content/${d}`).filter((f) => f.endsWith('.md')).map((f) => idOf(d, f))]));
+for (const f of files('src/content/authors').filter((f) => f.endsWith('.md'))) {
+  const id = idOf('authors', f);
+  if (ids.team.includes(id)) add(`src/content/authors/${f}`, 1, `Author ID collision: "${id}" exists in both src/content/team/ and src/content/authors/. Rename one file or keep the author in only one collection.`);
+}
 const allImages = [];
 (function walk(dir) {
   for (const e of readdirSync(join(ROOT, dir), { withFileTypes: true })) e.isDirectory() ? walk(`${dir}/${e.name}`) : allImages.push(`${dir}/${e.name}`);
@@ -81,7 +85,7 @@ for (const dir of DIRS) {
       add(file, lineOf(key), guess ? `Write ${guess} (the file name in src/content/${coll}/, without .md), not "${value}".` : `"${value}" is not ${label}. Use a file name from src/content/${coll}/ without .md: ${ids[coll].join(', ')}.`);
     };
     const text = String(data.title ?? data.name ?? '').trim();
-    if (!text) add(file, 2, `The ${dir === 'team' ? 'name' : 'title'} field is missing or empty.`);
+    if (!text) add(file, 2, `The ${['team', 'authors'].includes(dir) ? 'name' : 'title'} field is missing or empty.`);
     if ('draft' in data && typeof data.draft !== 'boolean') add(file, lineOf('draft'), 'Write draft: false (to publish) or draft: true (to keep it off the site).');
     if (['blog', 'case-studies', 'tools'].includes(dir)) {
       if ((data.metaTitle || text).length > 60) add(file, lineOf(data.metaTitle ? 'metaTitle' : 'title'), `The title has ${(data.metaTitle || text).length} characters: Google shows about 60. Shorten it, or add a shorter metaTitle.`, 'warning');
@@ -92,7 +96,7 @@ for (const dir of DIRS) {
       // Work page filter (the audience): any other value hides the item from the
       // filtered list. The network is shown in the eyebrows.
       const AUDS = ['Financial institutions', 'Protocols and products', 'Ecosystems and open source', ...(dir === 'case-studies' ? ['Institutions'] : [])];
-      const NETS = ['Stellar', 'XRPL', 'Canton', 'Ethereum', 'Multi-network'];
+      const NETS = ['Stellar', 'XRPL', 'Canton', 'Cardano', 'Ethereum', 'Multi-network'];
       if (data.audience && !AUDS.includes(data.audience)) add(file, lineOf('audience'), `"${data.audience}" is not a Work page filter. Write one of: Financial institutions, Protocols and products, Ecosystems and open source.`);
       if (data.network && !NETS.includes(data.network)) add(file, lineOf('network'), `"${data.network}" is not a network the site lists. Write one of: ${NETS.join(', ')}.`);
     }
@@ -103,7 +107,9 @@ for (const dir of DIRS) {
       const date = String(data.date ?? '').trim();
       if (!new RegExp(`^(${MONTHS}) ([1-9]|[12][0-9]|3[01]), 20[0-9]{2}$`).test(date) && !/^20\d\d-\d\d-\d\d$/.test(date))
         add(file, lineOf('date'), date ? `Write the date like November 20, 2026 (month in English, day, comma, year). "${date}" would show a wrong date or publish the article at once.` : 'Add the publication date, written like November 20, 2026.');
-      ref('author', data.author, 'team', 'a team member file');
+      if (data.author && ![...ids.team, ...ids.authors].includes(data.author)) {
+        add(file, lineOf('author'), `"${data.author}" is not an author. Use a file name from src/content/team/ or src/content/authors/, without .md.`);
+      }
       ref('relatedWork', data.relatedWork, 'case-studies', 'a case study file');
       checkImage(file, lineOf('cover'), data.cover);
       if (!data.cover) {
@@ -127,8 +133,9 @@ for (const dir of DIRS) {
         if (/!\[[^\]]*\]\[[^\]]*\]|\]: <?data:image/.test(l)) add(file, n, 'An image pasted from Google Docs is embedded as code. Upload the image to public/images/blog/ and write ![What it shows](/images/blog/<file-name>.webp).');
       });
     }
-    if (dir === 'team') checkImage(file, lineOf('portrait'), data.portrait);
+    if (['team', 'authors'].includes(dir)) checkImage(file, lineOf('portrait'), data.portrait);
     if (dir === 'case-studies') {
+      checkImage(file, lineOf('logo'), data.logo);
       checkImage(file, lineOf('hero'), data.hero?.image);
       for (const m of data.team || []) ref('team', m, 'team', 'a team member file');
       (data.sections || []).forEach((s) => {

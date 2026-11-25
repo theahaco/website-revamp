@@ -26,7 +26,7 @@ audience: Financial institutions
 # Work page filter: Financial institutions, Protocols and products, or Ecosystems and open source.
 
 network: Stellar
-# Shown in the Work page eyebrow: Stellar, XRPL, Canton or Multi-network.
+# Shown in the Work page eyebrow: Stellar, XRPL, Canton, Cardano or Multi-network.
 
 date: November 20, 2026
 # Written exactly like this: month in English, day, comma, year.
@@ -37,9 +37,9 @@ readMinutes: 4
 # Reading time, in minutes.
 
 author: enzo-soyer
-# The author's file name in src/content/team/, without .md: enzo-soyer,
-# willem-wyndham... The name, role and photo come from that file, and the
-# article is listed on that person's team page.
+# The author's file name in src/content/team/ or src/content/authors/,
+# without .md: enzo-soyer, the-aha-company... Name, role and image come
+# from that file. Current team members also list the article on their profile.
 
 authorBio: "CEO of The Aha Company. Stellar Community Fund reviewer and co-author of SEP-61."
 # One line shown at the end of the article.

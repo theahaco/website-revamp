@@ -7,6 +7,7 @@
 // and its header image. Some pages have a second visual in their body, after
 // one section (bodyVisuals in the same file).
 import Icon from '../../components/Icon.astro';
+import NetMark from '../../components/home/NetMark.astro';
 import CaseVisual from '../../components/cases/CaseVisual.astro';
 import EurcvControls from '../../components/services/EurcvControls.astro';
 import WorkVisual from '../../components/home/WorkVisual.astro';
@@ -15,7 +16,7 @@ import { caseVisuals, bodyVisuals } from '../../lib/caseVisuals';
 import { workVisuals } from '../../lib/workVisuals';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Cta from '../../components/Cta.astro';
-import { caseStudies, team, tools, networks, orderBy, md, serviceAnchor, networkMarks, publicQuote, ogImageFor, nobr } from '../../lib/content';
+import { caseStudies, team, tools, networks, orderBy, md, serviceAnchor, networkIds, publicQuote, ogImageFor, nobr } from '../../lib/content';
 import { site as siteData } from '../../data/site';
 import { moreWork, moreWorkFor } from '../../data/curation';
 import WorkTile from '../../components/WorkTile.astro';
@@ -85,7 +86,7 @@ const bodyWork = bodyVisual?.kind === 'work' ? workVisuals[bodyVisual.work] : un
                 <dt class="cs_dt">{factIcon(f.label) && <Icon name={factIcon(f.label)!} size={15} class="cs_dticon" />}{f.label}</dt>
                 {f.style === 'net' ? (
                   <dd class="cs_dd-net">
-                    {f.label === 'Network' && networkMarks[f.value] && <img alt="" class="cs_netmark" data-cs="netmark" height="16" src={networkMarks[f.value]} width="16" />}
+                    {f.label === 'Network' && networkIds[f.value] && <NetMark net={networkIds[f.value]} class="cs_netmark" data-cs="netmark" />}
                     {f.live && <span aria-hidden="true" class="cs_dot" data-cs="dot"></span>}
                     {f.label === 'Network' && networkPages.has(f.value) ? <a class="cs_netlink" href={networkPages.get(f.value)}>{f.value}</a> : <span>{f.value}</span>}
                   </dd>

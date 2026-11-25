@@ -5,7 +5,7 @@
 // src/scripts/tabs.js (.w-tabs > .w-tab-menu / .w-tab-content).
 import Icon from '../Icon.astro';
 
-interface Step { title: string; icon: string; body: string; output: string; rv?: string }
+interface Step { title: string; icon: string; body: string; output: string }
 interface Track { tab: string; label: string; icon: string; steps: Step[] }
 
 const tracks: Track[] = [
@@ -51,9 +51,9 @@ const tracks: Track[] = [
     // track (proposal and review every quarter).
     steps: [
       { title: 'DevX audit', icon: 'list-magnifying-glass', body: 'Two senior engineers, two weeks full time, on your real onboarding path.', output: 'ranked findings, a docs report, pull requests for the small fixes, a readout.' },
-      { title: 'Roadmap', icon: 'map-trifold', body: 'We go through the findings with your team and agree the priorities.', output: 'a prioritized tooling roadmap, each item a project with its own milestones.' },
-      { title: 'Build', icon: 'terminal-window', body: 'CLIs, scaffolding, sandboxes, registries and wallets, built in the open.', output: 'open-source tools with their docs, shipped milestone by milestone.', rv: 'eco-build' },
-      { title: 'Maintain', icon: 'arrows-clockwise', body: 'Once a tool ships, its maintenance moves to a quarterly public-goods track.', output: 'maintained releases, with a proposal and a review every quarter.', rv: 'eco-maintain' },
+      { title: 'Roadmap', icon: 'map-trifold', body: 'We go through the findings with your team and agree on the priorities.', output: 'a prioritized tooling roadmap, each item a project with its own milestones.' },
+      { title: 'Build', icon: 'terminal-window', body: 'CLIs, scaffolding, sandboxes, registries and wallets, built in the open.', output: 'open-source tools with their docs, shipped milestone by milestone.' },
+      { title: 'Maintain', icon: 'arrows-clockwise', body: 'Once a tool ships, its maintenance moves to a quarterly public-goods track.', output: 'maintained releases, with a proposal and a review every quarter.' },
     ],
   },
 ];
@@ -77,7 +77,7 @@ const tracks: Track[] = [
           <div class:list={['w-tab-pane', i === 0 && 'w--tab-active']} data-w-tab={t.tab}>
             <ol aria-label={t.label} class="eg-steps" role="list">
               {t.steps.map((s, n) => (
-                <li class:list={['eg-step', n === t.steps.length - 1 && 'eg-step--last']} data-rv={s.rv}>
+                <li class:list={['eg-step', n === t.steps.length - 1 && 'eg-step--last']}>
                   <div aria-hidden="true" class="eg-rail">
                     <span class="eg-node"><Icon name={s.icon} size={26} /><span class="eg-num">{n + 1}</span></span>
                     <span class="eg-line"></span>

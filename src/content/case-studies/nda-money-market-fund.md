@@ -79,8 +79,6 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: ''
-  logoAlt: ''
 ndaSummary: A tokenized share class for the money market fund of a regulated European asset manager, in build on Stellar.
 client: Regulated European asset manager
 nda: true

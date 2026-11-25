@@ -1,12 +1,16 @@
-name: Deploy to GitHub Pages
+name: Deploy the preview to GitHub Pages
+
+# This repository is the review preview of theaha.co: a copy of the site's
+# main branch (theahaco/theahaco.github.io) where the clients hidden on
+# theaha.co are shown, for their approval (src/data/curation.ts). Every page
+# is marked noindex, because a build for any origin other than
+# https://theaha.co is a preview, and the site sits in an unlisted folder of
+# this Pages site, so only people who get the link can find it.
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Daily rebuild at 05:30 UTC, so scheduled articles go live on their date.
-  schedule:
-    - cron: '30 5 * * *'
 
 permissions:
   contents: read
@@ -16,6 +20,9 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: false
+
+env:
+  PREVIEW_DIR: p-w11w35ur7d
 
 jobs:
   build:
@@ -33,32 +40,27 @@ jobs:
 
       - run: npm ci
 
-      - name: Build
+      - name: Build the preview
         run: npm run build
         env:
-          # https://theahaco.github.io + /website on the default Pages URL,
-          # https://theaha.co + "" once the custom domain is set.
-          SITE_URL: ${{ steps.pages.outputs.origin }}
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Not https://theaha.co, so the build is a preview: noindex everywhere.
+          SITE_URL: https://theahaco.github.io
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/${{ env.PREVIEW_DIR }}
 
-      # A broken link, image or anchor stops the deploy: the live site keeps
-      # its previous version until the file is fixed.
       - name: Check links, images and anchors
         run: npm run check
         env:
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/${{ env.PREVIEW_DIR }}
 
-      # On theaha.co, refuse to publish a build that search engines would skip.
-      - name: Check the production build is indexable
-        if: endsWith(steps.pages.outputs.host, 'theaha.co')
-        run: |
-          if grep -q 'name="robots" content="noindex"' dist/index.html dist/services/index.html; then echo '::error::The production build is marked noindex'; exit 1; fi
-          grep -q '^Allow: /' dist/robots.txt
-          grep -q 'rel="canonical" href="https://theaha.co/"' dist/index.html
+      - name: Check the preview is marked noindex
+        run: grep -q 'name="robots" content="noindex"' dist/index.html dist/services/index.html
+
+      - name: Put the site in its unlisted folder
+        run: mkdir -p "site/${PREVIEW_DIR}" && cp -R dist/. "site/${PREVIEW_DIR}/"
 
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build

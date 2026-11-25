@@ -74,10 +74,9 @@ quote:
   role: Senior Developer Advocate, Ripple
   portrait: /images/people/maxime-dienger.webp
   portraitAlt: Maxime Dienger
-  logo: /images/logos/logo-light-ripple.svg
-  logoAlt: Ripple
 ndaSummary: ''
 client: Ripple
+logo: /images/logos/logo-light-ripple.svg
 nda: false
 workTitle: Accelerator cohorts and hackathons on XRPL
 workLine: Our architects mentor teams from prototype to go live; alongside, continuous work on Ripple's developer experience.

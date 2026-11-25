@@ -9,15 +9,15 @@ import { keyFigures, toolAdoption } from '../../data/site';
 <section aria-label="Key figures" class="kpi">
   <div class="kpi_inner">
     <ul class="kpi_grid" role="list">
-      <li class="kpi_cell" data-rv="stat-deploy">
+      <li class="kpi_cell">
         <p class="kpi_value">{keyFigures.deployments.replace('+', '')}<span class="kpi_plus">+</span></p>
         <p class="kpi_label">Deployments on mainnet</p>
       </li>
-      <li class="kpi_cell" data-rv="stat-audits">
+      <li class="kpi_cell">
         <p class="kpi_value">{keyFigures.audits}</p>
         <p class="kpi_label">Third-party security audits</p>
       </li>
-      <li class="kpi_cell" data-rv="stat-os">
+      <li class="kpi_cell">
         <p class="kpi_value">{toolAdoption.count}</p>
         <p class="kpi_label">Projects using our <span class="kpi_nowrap">open-source</span> tools</p>
       </li>

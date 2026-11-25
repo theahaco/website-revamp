@@ -43,7 +43,7 @@ visual:
   image: /images/tools/nido.webp
   alt: 'Nido’s site on a phone: a safe place for everything you own, set up with your face, ready in seconds, never locked out.'
   tone: dark
-  caption: nido.fyi. Mainnet access stays curated until an external audit completes.
+  caption: '[nido.fyi](https://nido.fyi). Mainnet access stays curated until an external audit completes.'
 sections:
 - id: what-it-does
   title: What it does
@@ -51,21 +51,12 @@ sections:
     A Nido wallet is a smart contract on Stellar, controlled by the passkeys on the user’s devices. There is no seed phrase to write down and no signing key on a server: setting one up takes a face or a fingerprint, in seconds.
 
     Every Nido mainnet wallet runs on a [Perch](/open-source/perch) account, so its rules are enforced onchain: spending caps, time-limited permissions for apps (session keys), and recovery by guardians, a zero-knowledge proof, or both. An app can ask for a session that spends up to a daily cap; the user approves once, and the account refuses anything beyond it.
+
+    Nido is smoother than any Web2 login, powered by the security and key-management primitives of Web3. The authentication layer the web always lacked, Nido follows the Progressive Security paradigm: add custodians and hardware wallets as signers to your account if and when you need them.
 - id: mainnet
-  title: Mainnet, day by day
+  title: Mainnet, launched
   body: |-
-    Nido moved from testnet to a curated mainnet release during Meridian 2026 in Lisbon. Its mainnet factory created 54 wallets in four days: 1 on October 26, 33 on October 27, 12 on October 28 and 8 on October 29.
-
-    On testnet, Nido’s successive factories have created 705 wallets since June 1, 2026, our own testing included:
-
-    | Month | Testnet wallets |
-    |---|---:|
-    | June 2026 | 248 |
-    | July | 53 |
-    | August | 39 |
-    | September | 106 |
-    | October | 237 |
-    | November 2 | 22 |
+    Nido moved from testnet to a curated mainnet release during Meridian 2026 in Lisbon. Its mainnet factory created 54 wallets in four days, 33 of them on October 27 at a cocktail hour that surreptitiously doubled as Nido's launch party. 43 accounts joined the Telegram support & feedback chat.
 - id: apps
   title: Apps integrating Nido
   body: |-

@@ -13,6 +13,7 @@ secondaryCta:
 stats:
 - value: Q4 2025
   label: Working with Ripple since
+  client: ripple
 - value: '2'
   label: Wallet kits that ship GhostSig by default
 - value: DevX
@@ -90,4 +91,14 @@ card:
   logo: /images/logos/logo-xrpl-transparent.webp
   logoAlt: XRPL
 description: 'XRPL integrations for regulated assets: issued tokens and MPTs with issuer controls, credentials and permissioned domains, wired to your custody and systems.'
+# While Ripple is hidden (src/data/curation.ts, hiddenClients), these lines
+# replace the ones that name it. The Ripple button, figure, row and precedent
+# above are left out on their own.
+ifClientHidden:
+  ripple:
+    ship:
+      meta: Open source and demos
+    homeDescription: 'Issued tokens and MPTs with issuer controls, credentials and permissioned domains.'
+    card:
+      line: 'Issued tokens and MPTs with issuer controls, credentials and permissioned domains.'
 ---

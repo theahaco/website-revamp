@@ -15,7 +15,6 @@
 .nav_wrap{-webkit-backdrop-filter:blur(8px)}
 .work_toggle-btn.w--current{background-color:#1A3B60;color:#fff}
 .process_tab.w--current{background-color:transparent;border-bottom-color:#47A019;color:#fff}
-/* .work_list, .work_num and .work_article-link: unused since the article lists moved to ArticleList.astro (November 2026) */
 .work_list{counter-reset:work}
 .work_item{counter-increment:work}
 .work_num::before{content:counter(work,decimal-leading-zero)}
@@ -257,9 +256,6 @@ html{scroll-padding-top:125px}
 @media (max-width:767px){.nav_logo{margin-left:-8px}}
 /* Hyphenated names stay on one line in display headings */
 .nobr{white-space:nowrap}
-/* Network marks in the facts: the symbol only (the name is written next to it) */
-.cs_netmark{width:16px;height:16px;object-fit:cover;object-position:left center}
-.cs_netmark[src*="xrpl"]{width:21px}
 /* Hover feedback on list rows, FAQ questions and filter chips */
 .more_title,.networks_h3,.faq_q{transition:color .2s}
 a.more_row:hover .more_title,a.networks_row:hover .networks_h3,summary.faq_q:hover{color:var(--green-ink)}

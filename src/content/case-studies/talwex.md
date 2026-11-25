@@ -65,10 +65,9 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: /images/logos/logo-light-talwex.svg
-  logoAlt: Talwex
 ndaSummary: ''
 client: Talwex
+logo: /images/logos/logo-light-talwex.svg
 nda: false
 workTitle: Soroban smart contracts for an institutional bond yield pool
 workLine: Talwex's bond yield pool on Stellar, a project awarded by the Stellar Community Fund. We develop its smart contracts; in build.

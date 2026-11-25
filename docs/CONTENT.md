@@ -2,13 +2,13 @@
 
 Articles, case studies and team members are text files in this repository.
 You add them from the GitHub website: nothing to install, no code. Every
-change goes through a pull request: you see a preview, someone checks it,
+change goes through a pull request: automated checks run, someone checks it,
 then it goes live.
 
 ## Before you start
 
-- **Ask Enzo for Write access** to `theahaco/website`. Without it, GitHub
-  saves your work in a copy of the site (a "fork") and there is no preview.
+- **Ask Enzo for Write access** to `theahaco/theahaco.github.io`. Without it, GitHub
+  saves your work in a copy of the site (a "fork").
 - **This repository is public.** Anyone can read every file, every pull
   request and every older version, even after a file is deleted or set to
   `draft: true`. Never write a client under NDA, a price or anything
@@ -55,36 +55,30 @@ computer, give the cover image the same name: `what-a-bank-should-ask.jpg`
 3. Keep **Commit directly to the jane-patch-1 branch**, click **Commit
    changes**.
 
-Keep the cover template, the title on the left and the diagram on the right:
-the article lists show the cover cut to its diagram.
+### 5. Check the pull request
 
-### 5. Check the preview
+After about two minutes the pull request shows the checks: a green tick,
+or a red cross (see "If the check fails"). These build the site in both
+production and preview modes, including future articles.
 
-After about two minutes the pull request shows:
-
-- the checks: a green tick, or a red cross (see "If the check fails");
-- a preview link from Cloudflare Pages (in its comment, or next to the
-  checks: Cloudflare Pages, Details). Open it and add
-  `/blog/what-a-bank-should-ask` to the address. The preview shows the
-  article even when its date is in the future. Numbered outlines and the
-  notes panel are Enzo's review notes: ignore them.
-
-Until theaha.co runs on Cloudflare Pages (see `docs/LAUNCH.md`) there is no
-preview link: the article shows on https://theahaco.github.io/website/ a few
-minutes after the merge.
+There is no automatic hosted preview. Ask a developer for a local preview
+before merging if you need to inspect the page. The live site changes only
+after the pull request is merged.
 
 ### 6. Ask for a review, then publish
 
 GitHub asks Enzo to review automatically. Once he approves, click **Merge
 pull request**, then **Confirm merge**. About two minutes later the article
 is on theaha.co: its own page, the home page (the three most recent
-articles), the Work page (Articles), the author's team page and the sitemap.
+articles), the Work page (Articles), the author's team page (if they have
+one) and the sitemap.
 
 ## Schedule an article
 
-Set `date` to the publication day. theaha.co shows the article from 05:30
-UTC that day (6:30 in Paris in winter, 7:30 in summer); the preview shows it
-at once. To postpone it, change the date.
+Set `date` to the publication day. A daily rebuild is scheduled at 05:30
+UTC (6:30 in Paris in winter, 7:30 in summer); GitHub may delay the run.
+A push to `main` also rebuilds the site. Local preview mode shows future
+articles at once. To postpone an article, change the date.
 
 ## Change or remove a published article
 
@@ -127,6 +121,29 @@ Same steps with [the team template](templates/team-member.md): the file
 `public/images/team/jane-doe.webp` (square, at least 400 x 400 px). The
 person then appears on About and on every team page.
 
+## Company, guest and former-team authors
+
+Set an article's `author` to `the-aha-company` to publish under the company
+name and logo, linked to the homepage.
+
+For other authors without a team profile, create
+`src/content/authors/jane-doe.md` with frontmatter fields `name`, optional
+`role`, optional `portrait` (an image path), and optional `link` (a site
+path, website or LinkedIn URL). Omit `link` or leave it empty for an
+unlinked byline. `type` defaults to `Person`; use `Organization` for a
+company. These entries have no profile pages and never appear in team lists.
+
+When someone leaves, move their file from `src/content/team/` into
+`src/content/authors/` without changing its filename. Their historic blog
+posts keep working. Add `link` only if their byline should link somewhere;
+otherwise it becomes plain text. Remove or reassign any case-study `team`
+and tool `built` references, which still require current team entries.
+Existing links to their old team profile need updating or a redirect.
+
+Each author filename must be unique across `team` and `authors`, even for
+drafts. The content checker stops the build with an explicit collision error
+if an ID exists in both collections.
+
 ## Add a case study
 
 Same steps with [the case study template](templates/case-study.md): the
@@ -137,6 +154,20 @@ in `src/lib/caseVisuals.ts`, which the web team adds). Keep the spaces at the st
 each line exactly as in the template. A case study always waits for Enzo's
 review (NDA). It appears on the Work page; Enzo decides whether it goes on
 the home page.
+
+## Hide a client until it approves
+
+Some clients approve what we say about them before it goes public. To keep one
+off the site for a while, add its case study's file name to `hiddenClients` in
+`src/data/curation.ts` (Ripple is there today). The site then leaves out its
+case study, its logo and quote on the home page, and every line that names it
+as a client or partner. Articles that only report on its products stay. Nothing
+is deleted: remove the name from the list and everything comes back as it was.
+
+In a content file, a list item that belongs to that client is left out on its
+own (through its `client`, `caseStudy` or `href` field). For a line that names
+it, add the wording to use meanwhile under `ifClientHidden`, as in
+`src/content/networks/xrpl.md`.
 
 ## Writing rules
 

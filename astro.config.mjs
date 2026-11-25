@@ -4,9 +4,9 @@ import sitemap from '@astrojs/sitemap';
 import basePath from './integrations/base-path.mjs';
 
 /**
- * SITE_URL and BASE_PATH are injected by the GitHub Pages workflow
- * (actions/configure-pages). With a custom domain (theaha.co) the base
- * path is "/", on the default github.io project URL it is "/website".
+ * The production workflow explicitly sets SITE_URL=https://theaha.co and
+ * BASE_PATH=/. Preview-mode checks can override them for a different host
+ * and base path.
  * Locally both fall back to the production values.
  */
 // Cloudflare Pages also builds every pull request branch: those builds are
@@ -32,7 +32,7 @@ export default defineConfig({
     sitemap({
       // Redirect stubs (/blog, networks without a page, /case-studies, /team)
       // and noindex pages stay out of the sitemap.
-      filter: (page) => !/\/(404|review(\/.*)?|blog|case-studies|case-studies\/pwc|team|networks\/canton|networks\/ethereum)\/?$/.test(page),
+      filter: (page) => !/\/(404|blog|case-studies|case-studies\/pwc|team|networks\/canton|networks\/ethereum)\/?$/.test(page),
     }),
     basePath(),
   ],

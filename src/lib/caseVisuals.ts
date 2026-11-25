@@ -109,7 +109,7 @@ export const caseVisuals: Record<string, CaseVisual> = {
     steps: [
       // line 6 ("Ripple's accelerator cohorts and hackathons"), line 44 ("Teams
       // arrive with a prototype and a deadline")
-      { kind: 'anchor', logo: { src: `${LOGOS}/logo-light-ripple.svg`, w: 44, h: 11 }, tone: 'pink', title: 'Teams in Ripple’s programs', sub: 'A prototype and a deadline' },
+      { kind: 'anchor', logo: { src: `${LOGOS}/logo-light-ripple.svg`, w: 43, h: 11 }, tone: 'pink', title: 'Teams in Ripple’s programs', sub: 'A prototype and a deadline' },
       // line 51: "Architecture reviews of each team's design, against the ledger's built-in functions"
       { kind: 'check', title: 'Architecture reviews', sub: 'Against the ledger’s built-in functions' },
       // line 52: "Token and issuer design: trust line tokens or MPTs, ..."

@@ -66,10 +66,9 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: /images/logos/logo-light-pwc.webp
-  logoAlt: PwC
 ndaSummary: ''
 client: PwC US
+logo: /images/logos/logo-light-pwc.webp
 nda: false
 workTitle: Co-selling alliance with PwC US
 workLine: 'Joint business relationship: PwC US''s advisory capabilities, our blockchain engineering.'

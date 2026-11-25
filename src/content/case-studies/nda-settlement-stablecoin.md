@@ -72,8 +72,6 @@ quote:
   role: ''
   portrait: ''
   portraitAlt: ''
-  logo: ''
-  logoAlt: ''
 ndaSummary: 'An internal settlement stablecoin on Stellar for a top US commercial bank: architecture and delivery lead.'
 client: Top US commercial bank
 nda: true

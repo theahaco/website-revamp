@@ -12,6 +12,6 @@ links:
   github: https://github.com/willemneal
   email: ''
 ---
-Willem is a programming-languages and security specialist (PhD track at the University of Maryland) who moved into blockchain runtime engineering at NEAR, with deep expertise in Rust and WebAssembly.
+Willem is a programming-languages and security specialist (PhD track at the University of Maryland) who moved into blockchain runtime engineering at NEAR, with deep expertise in Rust and WebAssembly. He co-founded The Aha Company with [Chad](./chad-ostrowski) in 2021.
 
-He leads Nido, our passkey smart-account wallet, and is the architect of Stellar Scaffold and of the Stellar Registry contract. On the Stellar CLI he built the plugin system, contract calls generated from each contract's interface, and Ledger signing. He co-authored SEP-61 and a draft standard for contract admin and upgrades with a Stellar Development Foundation engineer.
+As The Aha Company's Chief Science Officer, Willem keeps our work at the forefront of possibility, leap-frogging existing patterns and establishing new paradigms. His deep knowledge of technological substrata is Aha's secret sauce, pioneering novel approaches to [CLIs](../../open-source/stellar-cli), [naming systems](../../open-source/stellar-registry), [passkey smart wallets](../../open-source/nido), and [policy engines](../../open-source/perch).

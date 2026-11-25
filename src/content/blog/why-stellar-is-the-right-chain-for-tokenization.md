@@ -2,14 +2,12 @@
 title: Why Stellar is the right chain for tokenization
 category: Institutions
 lede: For a regulated issuer, the question is not which chain is fastest. It is where the controls a regulator expects are part of the ledger, where custodians already are, and where counterparties have already gone. On those three questions, Stellar is hard to beat.
-author: enzo-soyer
-authorName: Enzo Soyer
-authorRole: Chief Executive Officer
+author: the-aha-company
+authorBio: Stellar Community Fund reviewers and co-authors of SEP-61.
 date: November 9, 2026
 readMinutes: '3'
 cover: /images/covers/why-stellar-is-the-right-chain-for-tokenization.webp
 coverCaption: ''
-authorBio: CEO of The Aha Company. Stellar Community Fund reviewer and co-author of SEP-61.
 relatedWork: societe-generale-forge
 relatedWorkLabel: EURCV, a regulated euro stablecoin on Stellar
 audience: Financial institutions
