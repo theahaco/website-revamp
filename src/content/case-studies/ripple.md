@@ -44,7 +44,7 @@ sections:
   body: Ripple runs accelerator cohorts and hackathons for teams building on the XRP Ledger. Teams arrive with a prototype and a deadline; what slows them down is architecture, token design and the last steps before go live.
 - id: solution
   title: Solution
-  body: 'Our architects mentor teams through the programs: architecture reviews, token and issuer design, and hands-on help on the path to go live. Alongside the programs, we work with Ripple''s developer relations team on XRPL''s developer experience, from tooling to onboarding.'
+  body: 'Our architects mentor teams through the programs: architecture reviews, token and issuer design, and hands-on help on the path to go live. Alongside the programs, we work with Ripple on XRPL''s developer experience, from tooling to onboarding.'
 - id: architecture
   title: What we bring to the programs
   body: |-
